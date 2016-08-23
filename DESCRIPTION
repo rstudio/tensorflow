@@ -10,6 +10,6 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports:
-    Rcpp (>= 0.12.0)
+    Rcpp (>= 0.12.0), R6
 LinkingTo: Rcpp, BH
 RoxygenNote: 5.0.1
