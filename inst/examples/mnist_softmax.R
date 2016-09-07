@@ -19,7 +19,7 @@ library(tensorflow)
 mnist <- tf.read_example_data("minst")
 
 # initialize the session
-sess <- tf.Session()
+sess <- tf.Session$new()
 
 # Create the model
 x <- tf.placeholder(tf.float32, list(NULL, 784))
@@ -31,7 +31,7 @@ y <- tf.nn.softmax(tf.matmul(x, W) + b)
 # Define loss and optimizer
 y_ <- tf.placeholder(tf.float32, list(NULL, 10))
 cross_entropy <- tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y), reduction_indices=1))
-train_step <- tf.train.GradientDescentOptimizer(0.5)$minimize(cross_entropy)
+train_step <- tf.train.GradientDescentOptimizer$new(0.5)$minimize(cross_entropy)
 
 # Train
 sess$run(tf.initialize_all_variables())

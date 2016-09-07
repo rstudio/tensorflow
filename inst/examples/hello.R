@@ -1,6 +1,6 @@
 library(tensorflow)
 
-sess = tf.Session()
+sess = tf.InteractiveSession$new()
 
 hello <- tf.constant('Hello, TensorFlow!')
 sess$run(hello)

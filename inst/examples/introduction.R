@@ -13,11 +13,11 @@ y <- W * x_data + b
 
 # Minimize the mean squared errors.
 loss <- tf.reduce_mean(tf.square(y - y_data))
-optimizer <- tf.train.GradientDescentOptimizer(0.5)
+optimizer <- tf.train.GradientDescentOptimizer$new(0.5)
 train <- optimizer$minimize(loss)
 
 # Launch the graph and initialize the variables.
-sess = tf.Session()
+sess = tf.Session$new()
 sess$run(tf.initialize_all_variables())
 
 # Fit the line (Learns best fit is W: 0.1, b: 0.3)

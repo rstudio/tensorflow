@@ -1,99 +1,88 @@
-#
+
 #' @export
-`$.py_object` <- function(x, name) {
-  attr <- py_get_attr(x, name)
-  if (py_is_callable(attr)) {
-    function(...) {
-      args <- list()
-      keywords <- list()
-      dots <- list(...)
-      names <- names(dots)
-      if (!is.null(names)) {
-        for (i in 1:length(dots)) {
-          name <- names[[i]]
-          if (nzchar(name))
-            keywords[[name]] <- dots[[i]]
+PyObject <- R6Class("PyObject",
+  public = list(
+    initialize = function(instance) {
+      private$instance
+    },
+    print = function(...) {
+      py_print(private$instance)
+    },
+    .Attrib = function(name) {
+      attr <- py_get_attr(private$instance, name)
+      if (py_is_callable(attr)) {
+        function(...) {
+          args <- list()
+          keywords <- list()
+          dots <- list(...)
+          names <- names(dots)
+          if (!is.null(names)) {
+            for (i in 1:length(dots)) {
+              name <- names[[i]]
+              if (nzchar(name))
+                keywords[[name]] <- dots[[i]]
+              else
+                args[[length(args) + 1]] <- dots[[i]]
+            }
+          } else {
+            args <- dots
+          }
+          result = py_call(attr, args, keywords)
+          if (is.null(result))
+            invisible(result)
           else
-            args[[length(args) + 1]] <- dots[[i]]
+            result
         }
       } else {
-        args <- dots
+        py_to_r(attr)
       }
-      result = py_call(attr, args, keywords)
-      if (is.null(result))
-        invisible(result)
-      else
-        result
+    },
+    .DollarNames = function(pattern = "") {
+      # get the names and filter out internal attributes (_*)
+      names <- py_list_attributes(private$instance)
+      names <- names[substr(names, 1, 1) != '_']
+
+      # get the types
+      attr(names, "types") <- py_get_attribute_types(private$instance, names)
+
+      # get the doc strings
+      inspect <- py_import("inspect")
+      attr(names, "docs") <- sapply(names, function(name) {
+        inspect$getdoc(py_get_attr(private$instance, name))
+      })
+
+      # return
+      names
     }
-  } else {
-    py_to_r(attr)
-  }
+  ),
+  private = list(
+    instance = NULL
+  )
+)
+
+#' @export
+`$.PyObject` <- function(x, name) {
+
+  # if the name exists then return it
+  if (name %in% ls(x, all.names = TRUE, sorted = FALSE))
+    .subset2(x, name)
+
+  # otherwise dynamically dispatch to the object instance
+  else
+    x$.Attrib(name)
 }
 
 #' @export
-`[[.py_object` <- `$.py_object`
+`[[.PyObject` <- `$.PyObject`
 
 #' @export
-print.py_object <- function(x, ...) {
-  py_print(x)
+.DollarNames.PyObject <- function(x, pattern = "") {
+  x$.DollarNames(pattern)
 }
 
-#' @export
-str.py_object <- function(object, ...) {
-  py_str(object)
+wrap_py_object <- function(object) {
+  PyObject$new(object)
 }
-
-#' @importFrom utils .DollarNames
-#' @export
-.DollarNames.py_object <- function(x, pattern = "") {
-
-  # get the names and filter out internal attributes (_*)
-  names <- py_list_attributes(x)
-  names <- names[substr(names, 1, 1) != '_']
-
-  # get the types
-  attr(names, "types") <- py_get_attribute_types(x, names)
-
-  # get the doc strings
-  inspect <- py_import("inspect")
-  attr(names, "docs") <- sapply(names, function(name) {
-    inspect$getdoc(py_get_attr(x, name))
-  })
-
-  # return
-  names
-}
-
-
-#' R aliases for various Python literals
-#'
-#' Aliases for various Python literals which make it easier to port existing
-#' TensorFlow Python code to R (note that the R equivalent R literals e.g.
-#' \code{NULL}, \code{TRUE}, etc. can always still be used).
-#'
-#' @name python-aliases
-#'
-#' @details
-#' \code{None} is an alias for \code{NULL}.
-#'
-#' \code{True} is an alias for \code{TRUE}.
-#'
-#' \code{False} is an alias for \code{FALSE}.
-#'
-#' @format An R object semantically equivalent to the Python literal.
-#'
-#' @export
-None <- NULL
-
-#' @rdname python-aliases
-#' @export
-True <- TRUE
-
-#' @rdname python-aliases
-#' @export
-False <- FALSE
-
-
 
 # find the name of the python shared library
 pythonSharedLibrary <- function() {

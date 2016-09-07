@@ -16,6 +16,7 @@
 
 #' @useDynLib tensorflow
 #' @importFrom Rcpp evalCpp
+#' @importFrom R6 R6Class
 NULL
 
 # package level tf instance
