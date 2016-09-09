@@ -1,8 +1,5 @@
 library(tensorflow)
 
-# import tensorflow
-tf <- tensorflow()
-
 # import data
 input_data <- tensorflow("examples.tutorials.mnist.input_data")
 flags <- tf$app$flags

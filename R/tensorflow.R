@@ -4,22 +4,21 @@
 #' @importFrom utils str
 NULL
 
-# package level tf instance
-tf <- NULL
-
 .onLoad <- function(libname, pkgname) {
 
   # initialize python
   config <- py_config()
   py_initialize(config$libpython);
 
-  # attempt to load tensorflow
+  # attempt to load top level tensorflow modules
   tf <<- tensorflow(silent = TRUE)
+  tflearn <<- tensorflow("contrib.learn", silent = TRUE)
+  slim <<- tensorflow("contrib.slim", silent = TRUE)
 }
 
 
 .onAttach <- function(libname, pkgname) {
-  if (!is_tensorflow_installed()) {
+  if (is.null(tf)) {
     packageStartupMessage("TensorFlow not currently installed, please see ",
                           "https://www.tensorflow.org/get_started/")
   }
@@ -30,22 +29,34 @@ tf <- NULL
 }
 
 
-#' Import TensorFlow
+#' Import TensorFlow module
 #'
-#' Import the tensorflow python module (or one of it's sub-modules) for
-#' use in R.
+#' Import a tensorflow module for use in R. Note that the most
+#' commonly used modules (\code{tf}, \code{tflearn}, and \code{slim})
+#' are pre-imported and available for use when the package is loaded.
 #'
 #' @inheritParams py_module
 #' @param module Name of sub-module to import. Defaults to \code{NULL}, which
 #' imports the main tensorflow module.
 #'
-#' @return A tensorflow module
+#' @format A tensorflow module
+#'
+#' @details
+#'
+#' Three TensorFlow modules are pre-imported and ready for use when the
+#' \pkg{tensorflow} package is loaded:
+#'
+#' \describe{
+#'    \item{\code{tf}}{Main TensorFlow module (\href{https://www.tensorflow.org/api_docs/index.html}{\code{tensorflow}}).}
+#'    \item{\code{learn}}{Higher-level API for TensorFlow (\href{https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/learn/python/learn}{\code{tensorflow.contrib.learn}}).}
+#'    \item{\code{slim}}{Lightweight library for defining, training and
+#'    evaluating complex models in TensorFlow  (\href{https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/slim}{\code{tensorflow.contrib.slim}}).}
+#' }
 #'
 #' @examples
 #' \dontrun{
-#' tf <- tensorflow()
-#' tflearn <- tensorflow("contrib.learn")
-#' slim <- tenstensorflow("contrib.slim")
+#' metrics <- tensorflow("contrib.metrics")
+#' reader <- tensorflow("models.rnn.ptb")
 #' }
 #'
 #' @export
@@ -58,9 +69,15 @@ tensorflow <- function(module = NULL, silent = FALSE) {
 
 #' @rdname tensorflow
 #' @export
-is_tensorflow_installed <-function() {
-  !is.null(tf)
-}
+tf <- NULL
+
+#' @rdname tensorflow
+#' @export
+tflearn <- NULL
+
+#' @rdname tensorflow
+#' @export
+slim <- NULL
 
 #' Tensor shape
 #'
