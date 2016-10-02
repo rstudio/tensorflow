@@ -20,3 +20,10 @@ def reflect(x):
 
 def callFunc(f, x):
   return f(x)
+
+import numpy as np
+import sys
+m = np.matrix([[1,2], [3,4]])
+print(type(m))
+
+

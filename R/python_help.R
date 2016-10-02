@@ -203,6 +203,9 @@ source_as_object <- function(source) {
   if (is.character(source)) {
     source <- tryCatch(eval(parse(text = source), envir = globalenv()),
                        error = function(e) NULL)
+    if (inherits(source, "numpy.ndarray"))
+      source <- attr(source, "numpy.ndarray")
+
     if (is.null(source))
       return(NULL)
   }

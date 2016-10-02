@@ -94,7 +94,6 @@ str.tensorflow.builtin.object <- function(object, ...) {
 #' @export
 `[[.tensorflow.builtin.object` <- `$.tensorflow.builtin.object`
 
-
 #' @importFrom utils .DollarNames
 #' @export
 .DollarNames.tensorflow.builtin.object <- function(x, pattern = "") {
@@ -115,6 +114,16 @@ str.tensorflow.builtin.object <- function(object, ...) {
 
   # return
   names
+}
+
+#' @export
+`$.numpy.ndarray` <- function(x, name) {
+  `$.tensorflow.builtin.object`(attr(x, "numpy.ndarray"), name)
+}
+
+#' @export
+.DollarNames.numpy.ndarray <- function(x, pattern = "") {
+  .DollarNames.tensorflow.builtin.object(attr(x, "numpy.ndarray"), pattern)
 }
 
 #' Create Python dictionary

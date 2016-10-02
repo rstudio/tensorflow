@@ -509,6 +509,15 @@ SEXP py_to_r(PyObject* x) {
       }
     }
 
+    // set the numpy array as an attribute for referencing later
+    RObject arrayRObject(rArray);
+    ::Py_IncRef(x);
+    arrayRObject.attr("numpy.ndarray") = py_xptr(x);
+    CharacterVector classes(2);
+    classes(0) = "numpy.ndarray";
+    classes(1) = nd == 2 ? "matrix" : "array";
+    arrayRObject.attr("class") = classes;
+
     // return the R Array
     return rArray;
   }
