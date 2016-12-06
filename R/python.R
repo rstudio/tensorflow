@@ -234,7 +234,8 @@ with.tensorflow.builtin.object <- function(data, expr, as = NULL, ...) {
 iterate <- function(x, f = base::identity) {
   if (!inherits(x, "tensorflow.builtin.iterator"))
     stop("iterate function called with non-iterator argument")
-  invisible(py_iterate(x, f))
+  invisible(result <- py_iterate(x, f))
+  return(result)
 }
 
 #' @export

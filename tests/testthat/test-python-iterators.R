@@ -11,4 +11,9 @@ test_that("Iterators reflect values back", {
 
 test_that("Generators reflect values back", {
   expect_equal(as.integer(iterate(test$makeGenerator(5))) + 1L, seq(5))
+  a <- test$makeGenerator(5)
+  b <- as.integer(iterate(a))
+  expect_equal(b + 1L, seq(5))
 })
+
+
