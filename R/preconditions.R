@@ -116,33 +116,3 @@ ensure_scalar_character <- make_ensure_scalar_impl(
   "a length-one character vector",
   as.character
 )
-
-
-require_file_exists <- function(path, fmt = NULL) {
-  fmt <- fmt %||% "no file at path '%s'"
-  if (!file.exists(path)) stopf(fmt, path)
-  path
-}
-
-require_directory_exists <- function(path, fmt = NULL) {
-  fmt <- fmt %||% "no file at path '%s'"
-  require_file_exists(path)
-  info <- file.info(path)
-  if (!isTRUE(info$isdir)) stopf(fmt, path)
-  path
-}
-
-ensure_directory <- function(path) {
-
-  if (file.exists(path)) {
-    info <- file.info(path)
-    if (isTRUE(info$isdir)) return(path)
-    stopf("path '%s' exists but is not a directory", path)
-  }
-
-  if (!dir.create(path, recursive = TRUE))
-    stopf("failed to create directory at path '%s'", path)
-
-  invisible(path)
-
-}
