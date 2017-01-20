@@ -83,7 +83,6 @@ make_ensure_scalar_impl <- function(checker,
 
 #' @rdname ensure
 #' @name ensure
-#' @export
 ensure_scalar_integer <- make_ensure_scalar_impl(
   is.numeric,
   "a length-one integer vector",
@@ -92,7 +91,6 @@ ensure_scalar_integer <- make_ensure_scalar_impl(
 
 #' @rdname ensure
 #' @name ensure
-#' @export
 ensure_scalar_double <- make_ensure_scalar_impl(
   is.numeric,
   "a length-one numeric vector",
@@ -101,7 +99,6 @@ ensure_scalar_double <- make_ensure_scalar_impl(
 
 #' @rdname ensure
 #' @name ensure
-#' @export
 ensure_scalar_boolean <- make_ensure_scalar_impl(
   is.logical,
   "a length-one logical vector",
@@ -110,7 +107,6 @@ ensure_scalar_boolean <- make_ensure_scalar_impl(
 
 #' @rdname ensure
 #' @name ensure
-#' @export
 ensure_scalar_character <- make_ensure_scalar_impl(
   is.character,
   "a length-one character vector",
