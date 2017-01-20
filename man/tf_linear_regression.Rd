@@ -22,6 +22,9 @@ The intercept term can be omitted by using \code{- 1} in the model fit.}
 
 \item{intercept}{Boolean; should the model be fit with an intercept term?}
 
+\item{tf.options}{Optional tools used for lower-level tuning of the TensorFlow
+model fitting process. See \code{\link{tf_options}} for more information.}
+
 \item{...}{Optional arguments; currently unused.}
 }
 \description{

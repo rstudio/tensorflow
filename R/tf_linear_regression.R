@@ -7,6 +7,7 @@
 #' @template roxlate-tf-features
 #' @template roxlate-tf-intercept
 #' @template roxlate-tf-dots
+#' @template roxlate-tf-options
 #'
 #' @export
 tf_linear_regression <- function(x,
