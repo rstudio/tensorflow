@@ -5,6 +5,7 @@
 ^R/config.R$
 ^design$
 ^docs$
+^man-roxygen/
 ^inst/examples/mnist/MNIST-data$
 ^tests/testthat/MNIST-data$
 README.md
@@ -16,7 +17,6 @@ travis_install.sh
 run_tests.sh
 testenv
 MNIST-data
-
 
 
 
