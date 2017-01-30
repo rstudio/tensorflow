@@ -87,10 +87,14 @@ tf_python_config <- function(python, python_versions) {
     python_libdir_config <- function(var) {
       python_libdir <- config[[var]]
       ext <- switch(Sys.info()[["sysname"]], Darwin = ".dylib", Windows = ".dll", ".so")
-      libpython <- file.path(python_libdir, paste0("libpython" , version, ext))
+      libpython <- file.path(python_libdir, paste0("libpython" , version, c("", "m"), ext))
+      libpython <- libpython[file.exists(libpython)]
+      if (length(libpython) == 0)
+        return(NA)
+      libpython[1]
     }
     libpython <- python_libdir_config("LIBPL")
-    if (!file.exists(libpython))
+    if (is.na(libpython))
       libpython <- python_libdir_config("LIBDIR")
   }
 
