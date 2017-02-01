@@ -64,6 +64,14 @@ NULL
                        system.file("python", package = "tensorflow") ,
                        "')"))
 
+  # attempt to load numpy
+  np <<- tryCatch(import("numpy"), error = function(e) e)
+  if (inherits(np, "error")) {
+    .load_error_message <<- np$message
+    np <<- NULL
+    return()
+  }
+
   # attempt to load tensorflow
   tf <<- tryCatch(import("tensorflow"), error = function(e) e)
   if (inherits(tf, "error")) {
@@ -79,8 +87,11 @@ NULL
 
 .onAttach <- function(libname, pkgname) {
 
-  if (is.null(tf)) {
-    packageStartupMessage("\n", .load_error_message)
+  if (is.null(np) || is.null(tf)) {
+    if (!is.null(.load_error_message))
+      packageStartupMessage("\n", .load_error_message)
+    else
+      packageStartupMessage("\nTensorFlow not loaded.")
     packageStartupMessage("\nIf you have not yet installed TensorFlow, see ",
                           "https://www.tensorflow.org/get_started/\n")
     packageStartupMessage("You should ensure that the version of python where ",

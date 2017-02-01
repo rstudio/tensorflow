@@ -20,3 +20,15 @@
 #' }
 #' @export
 tf <- NULL
+
+#' Main NumPy module
+#'
+#' Interface to main NumPy  module. Provides access to top level classes
+#' and functions as well as sub-modules.
+#'
+#' @format NumPy module
+#'
+#' @export
+np <- NULL
+
+
