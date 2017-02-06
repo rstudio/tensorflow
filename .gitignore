@@ -1,8 +1,10 @@
+**/.DS_Store
+**/config.log
+**/config.status
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-.DS_Store
 src/*.o
 src/*.so
 src/*.dll
