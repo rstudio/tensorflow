@@ -1,4 +1,3 @@
-[![Travis-CI Build Status](https://travis-ci.org/rstudio/tensorflow.svg?branch=master)](https://travis-ci.org/rstudio/tensorflow)
 
 ## TensorFlow for R
 
