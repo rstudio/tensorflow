@@ -68,9 +68,9 @@ NULL
                           "tensorflow is installed is either the default python ",
                           "on the system PATH or is specified explicitly via the ",
                           "TENSORFLOW_PYTHON environment variable.\n")
-    if (!is.null(.globals$py_config)) {
+    if (!is.null(py_config())) {
       packageStartupMessage("Detected Python configuration:\n")
-      packageStartupMessage(str(.globals$py_config))
+      packageStartupMessage(str(py_config()))
     }
   }
 }

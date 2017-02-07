@@ -1,5 +1,6 @@
 
 
+#' @importFrom utils str
 #' @export
 str.tensorflow.python.framework.ops.Tensor <- function(object, ...) {
   if (py_is_null_xptr(object) || is.null(tf))
@@ -36,6 +37,7 @@ str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
 #' @export
 print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framework.ops.Tensor
 
+#' @importFrom utils .DollarNames
 #' @export
 .DollarNames.tensorflow.python.platform.flags._FlagValues <- function(x, pattern = "") {
 
