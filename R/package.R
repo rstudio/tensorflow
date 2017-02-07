@@ -28,6 +28,11 @@ NULL
 
 .onLoad <- function(libname, pkgname) {
 
+  # if TENSORFLOW_PYTHON is defined then forward it to RETICULATE_PYTHON
+  tensorflow_python <- Sys.getenv("TENSORFLOW_PYTHON", unset = NA)
+  if (!is.na(tensorflow_python))
+    Sys.setenv(RETICULATE_PYTHON = tensorflow_python)
+
   # attempt to load tensorflow
   tf <<- tryCatch(import("tensorflow"), error = function(e) e)
   if (inherits(tf, "error")) {
