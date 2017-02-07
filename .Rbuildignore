@@ -1,9 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^autom4te.cache$
-^src/Makevars$
-^R/config.R$
-^design$
 ^docs$
 ^inst/examples/mnist/MNIST-data$
 ^tests/testthat/MNIST-data$
