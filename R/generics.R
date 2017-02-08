@@ -3,7 +3,7 @@
 #' @importFrom utils str
 #' @export
 str.tensorflow.python.framework.ops.Tensor <- function(object, ...) {
-  if (py_is_null_xptr(object) || is.null(tf))
+  if (py_is_null_xptr(object))
     cat("<pointer: 0x0>\n")
   else
     py_xptr_str(object, cat(py_str(object), "\n", sep=""))
@@ -11,7 +11,7 @@ str.tensorflow.python.framework.ops.Tensor <- function(object, ...) {
 
 #' @export
 str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
-  if (py_is_null_xptr(object) || is.null(tf))
+  if (py_is_null_xptr(object))
     cat("<pointer: 0x0>\n")
   else
     py_xptr_str(object,
@@ -22,7 +22,7 @@ str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
 
 #' @export
 "print.tensorflow.python.framework.ops.Tensor" <- function(x, ...) {
-  if (py_is_null_xptr(x) || is.null(tf))
+  if (py_is_null_xptr(x))
     cat("<pointer: 0x0>\n")
   else {
     str(x, ...)

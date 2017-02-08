@@ -22,10 +22,6 @@
 #' @name tensorflow
 NULL
 
-# package level mutable global state
-.globals <- new.env(parent = emptyenv())
-.globals$load_error_message <- NULL
-
 .onLoad <- function(libname, pkgname) {
 
   # if TENSORFLOW_PYTHON is defined then forward it to RETICULATE_PYTHON
@@ -33,44 +29,24 @@ NULL
   if (!is.na(tensorflow_python))
     Sys.setenv(RETICULATE_PYTHON = tensorflow_python)
 
-  # attempt to load tensorflow
-  tf <<- tryCatch(import("tensorflow"), error = function(e) e)
-  if (inherits(tf, "error")) {
-    .globals$load_error_message <- tf$message
-    tf <<- NULL
-    return()
-  }
+  # delay load tensorflow
+  tf <<- import("tensorflow", delay_load = function() {
 
-  # register warning suppression handler
-  register_suppress_warnings_handler(list(
-    suppress = function() {
-      old_verbosity <- tf$logging$get_verbosity()
-      tf$logging$set_verbosity(tf$logging$ERROR)
-      old_verbosity
-    },
-    restore = function(context) {
-      tf$logging$set_verbosity(context)
-    }
-  ))
+    # register warning suppression handler
+    register_suppress_warnings_handler(list(
+      suppress = function() {
+        old_verbosity <- tf$logging$get_verbosity()
+        tf$logging$set_verbosity(tf$logging$ERROR)
+        old_verbosity
+      },
+      restore = function(context) {
+        tf$logging$set_verbosity(context)
+      }
+    ))
 
-  # if we loaded tensorflow then register tf help topics
-  register_tf_help_topics()
+    # if we loaded tensorflow then register tf help topics
+    register_tf_help_topics()
+  })
 }
 
 
-.onAttach <- function(libname, pkgname) {
-
-  if (is.null(tf)) {
-    packageStartupMessage("\n", .globals$load_error_message)
-    packageStartupMessage("\nIf you have not yet installed TensorFlow, see ",
-                          "https://www.tensorflow.org/get_started/\n")
-    packageStartupMessage("You should ensure that the version of python where ",
-                          "tensorflow is installed is either the default python ",
-                          "on the system PATH or is specified explicitly via the ",
-                          "TENSORFLOW_PYTHON environment variable.\n")
-    if (!is.null(py_config())) {
-      packageStartupMessage("Detected Python configuration:\n")
-      packageStartupMessage(str(py_config()))
-    }
-  }
-}

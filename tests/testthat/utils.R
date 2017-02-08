@@ -5,6 +5,7 @@ skip_if_no_python <- function() {
 }
 
 skip_if_no_tensorflow <- function() {
-  if (is.null(tensorflow::tf))
+  have_tensorflow <- tryCatch({ reticulate::import("tensorflow"); TRUE }, error = function(e) FALSE)
+  if (!have_tensorflow)
     skip("TensorFlow not available for testing")
 }
