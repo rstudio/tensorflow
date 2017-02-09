@@ -100,7 +100,7 @@ Sys.setenv(TENSORFLOW_PYTHON="/usr/local/bin/python")
 library(tensorflow)
 ```
 
-The tensorflow package will look in this location first, then look for python on the system `PATH`, then scan additional locations where python is conventionally installed (e.g. `/usr/local/bin`, `/opt/python/bin`, etc.).
+You can also specify Python virtualenvs or Conda envs via the `use_python` functions [documented here](https://github.com/rstudio/reticulate/#locating-python).
 
 ### Verifying Installation
 

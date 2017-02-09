@@ -329,7 +329,7 @@ Images licensed CC BY-SA 4.0; original by W. Carter
 <p>When it is loaded the tensorflow R package scans the system for the version of python where TensorFlow is installed. If automatic detection doesn’t work or if you want to exercise more control over which version(s) of python and TensorFlow are used you can specify an explicit <code>TENSORFLOW_PYTHON</code> environment variable to force probing for TensorFlow within a specific version of python, for example:</p>
 <pre class="r"><code>Sys.setenv(TENSORFLOW_PYTHON=&quot;/usr/local/bin/python&quot;)
 library(tensorflow)</code></pre>
-<p>The tensorflow package will look in this location first, then look for python on the system <code>PATH</code>, then scan additional locations where python is conventionally installed (e.g. <code>/usr/local/bin</code>, <code>/opt/python/bin</code>, etc.).</p>
+<p>You can also specify Python virtualenvs or Conda envs via the <code>use_python</code> functions <a href="https://github.com/rstudio/reticulate/#locating-python">documented here</a>.</p>
 </div>
 <div id="verifying-installation" class="section level3">
 <h3>Verifying Installation</h3>
