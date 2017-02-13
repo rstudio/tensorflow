@@ -3,21 +3,19 @@
 #' @importFrom utils str
 #' @export
 str.tensorflow.python.framework.ops.Tensor <- function(object, ...) {
-  if (py_is_null_xptr(object))
+  if (py_is_null_xptr(object) || !py_available())
     cat("<pointer: 0x0>\n")
   else
-    py_xptr_str(object, cat(py_str(object), "\n", sep=""))
+    cat(py_str(object), "\n", sep="")
 }
 
 #' @export
 str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
-  if (py_is_null_xptr(object))
+  if (py_is_null_xptr(object) || !py_available())
     cat("<pointer: 0x0>\n")
   else
-    py_xptr_str(object,
-                cat("Variable(shape=", py_str(object$get_shape()), ", ",
-                    "dtype=", object$dtype$name, ")\n", sep = "")
-  )
+    cat("Variable(shape=", py_str(object$get_shape()), ", ",
+        "dtype=", object$dtype$name, ")\n", sep = "")
 }
 
 #' @export
