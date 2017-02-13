@@ -37,7 +37,6 @@ LazyData: true
 Depends: R (>= 3.0)
 Imports:
     utils, reticulate
-RoxygenNote: 6.0.0
+RoxygenNote: 6.0.1
 Suggests: testthat
 Remotes: rstudio/reticulate
-
