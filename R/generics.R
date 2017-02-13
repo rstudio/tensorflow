@@ -7,6 +7,7 @@ py_str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
          "dtype=", object$dtype$name, ")\n", sep = "")
 }
 
+#' @importFrom utils str
 #' @export
 "print.tensorflow.python.framework.ops.Tensor" <- function(x, ...) {
   if (py_is_null_xptr(x))
