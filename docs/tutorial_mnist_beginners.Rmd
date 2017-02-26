@@ -2,7 +2,7 @@
 title: "MNIST For ML Beginners"
 ---
 
-*This tutorial is intended for readers who are new to both machine learning and TensorFlow. If you already know what MNIST is, and what softmax (multinomial logistic) regression is, you might prefer this [faster paced tutorial](tutorial_mnist_pros.html). Be sure to [install TensorFlow](https://www.tensorflow.org/get_started/) before starting either tutorial.*
+*This tutorial is intended for readers who are new to both machine learning and TensorFlow. If you already know what MNIST is, and what softmax (multinomial logistic) regression is, you might prefer this [faster paced tutorial](tutorial_mnist_pros.html). Be sure to [install TensorFlow](https://www.tensorflow.org/get_started/get_started) before starting either tutorial.*
 
 When one learns how to program, there's a tradition that the first thing you do is print "Hello World." Just like programming has Hello World, machine learning has MNIST.
 
