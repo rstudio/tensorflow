@@ -1,6 +1,5 @@
 
 
-#' @importFrom reticulate py_str
 #' @export
 py_str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
   paste0("Variable(shape=", py_str(object$get_shape()), ", ",
