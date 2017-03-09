@@ -477,7 +477,7 @@ a &lt;- tf$constant(c(3.0, 3.0))
 x$initializer$run()
 
 # Add an op to subtract &#39;a&#39; from &#39;x&#39;.  Run it and print the result
-sub &lt;- tf$sub(x, a)
+sub &lt;- tf$subtract(x, a)
 print(sub$eval())</code></pre>
 <pre><code>## [1] -2 -1</code></pre>
 <pre class="r"><code># Close the Session when we&#39;re done.
@@ -528,7 +528,7 @@ with(tf$Session() %as% sess, {
 input2 &lt;- tf$constant(2.0)
 input3 &lt;- tf$constant(5.0)
 intermed &lt;- tf$add(input2, input3)
-mul &lt;- tf$mul(input1, intermed)
+mul &lt;- tf$multiply(input1, intermed)
 
 with(tf$Session() %as% sess, {
   result = sess$run(list(mul, intermed))
@@ -547,7 +547,7 @@ with(tf$Session() %as% sess, {
 <p>A feed temporarily replaces the output of an operation with a tensor value. You supply feed data as an argument to a <code>run()</code> call. The feed is only used for the run call to which it is passed. The most common use case involves designating specific operations to be “feed” operations by using tf$placeholder() to create them:</p>
 <pre class="r"><code>input1 &lt;- tf$placeholder(tf$float32)
 input2 &lt;- tf$placeholder(tf$float32)
-output &lt;- tf$mul(input1, input2)
+output &lt;- tf$multiply(input1, input2)
 
 with(tf$Session() %as% sess, {
   print(sess$run(output, feed_dict=dict(input1 = 7.0, input2 = 2.0)))
