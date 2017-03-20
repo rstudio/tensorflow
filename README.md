@@ -19,8 +19,6 @@ Next, install the tensorflow R package from GitHub as follows:
 devtools::install_github("rstudio/tensorflow")
 ```
 
-Note that the tensorflow package depends on other packages which include native C/C++ code so it's installation requires [R Tools](https://cran.r-project.org/bin/windows/Rtools/) on Windows and [Command Line Tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/) on OS X. If the package installation fails because of inability to compile then install the appropriate tools for your platform based on the links above and try again.
-
 #### Locating TensorFlow
 
 When it is loaded the tensorflow R package scans the system for the version of python where TensorFlow is installed. If automatic detection doesn't work or if you want to exercise more control over which version(s) of python and TensorFlow are used you can specify an explicit `TENSORFLOW_PYTHON` environment variable to force probing for TensorFlow within a specific version of python, for example:

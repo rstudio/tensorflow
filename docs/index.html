@@ -323,7 +323,6 @@ Images licensed CC BY-SA 4.0; original by W. Carter
 <p>If you install TensorFlow within a virtualenv environment you’ll need to be sure to use that same environment when loading the tensorflow R package (see below for details on how to do this).</p>
 <p>Next, install the tensorflow R package from GitHub as follows:</p>
 <pre class="r"><code>devtools::install_github(&quot;rstudio/tensorflow&quot;)</code></pre>
-<p>Note that the tensorflow package depends on other packages which include native C/C++ code so it’s installation requires <a href="https://cran.r-project.org/bin/windows/Rtools/">R Tools</a> on Windows and <a href="http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/">Command Line Tools</a> on OS X. If the package installation fails because of inability to compile then install the appropriate tools for your platform based on the links above and try again.</p>
 <div id="locating-tensorflow" class="section level4">
 <h4>Locating TensorFlow</h4>
 <p>When it is loaded the tensorflow R package scans the system for the version of python where TensorFlow is installed. If automatic detection doesn’t work or if you want to exercise more control over which version(s) of python and TensorFlow are used you can specify an explicit <code>TENSORFLOW_PYTHON</code> environment variable to force probing for TensorFlow within a specific version of python, for example:</p>
