@@ -83,10 +83,10 @@ First, install the main TensorFlow distribution from here:
 
 If you install TensorFlow within a virtualenv environment you'll need to be sure to use that same environment when loading the tensorflow R package (see below for details on how to do this).
 
-Next, install the tensorflow R package from GitHub as follows:
+Next, install the tensorflow R package CRAN as follows:
 
 ```r
-devtools::install_github("rstudio/tensorflow")
+install.packages("tensorflow")
 ```
 
 #### Locating TensorFlow
