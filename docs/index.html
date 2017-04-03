@@ -321,8 +321,8 @@ Images licensed CC BY-SA 4.0; original by W. Carter
 <p>First, install the main TensorFlow distribution from here:</p>
 <p><a href="https://www.tensorflow.org/get_started/os_setup.html#download-and-setup" class="uri">https://www.tensorflow.org/get_started/os_setup.html#download-and-setup</a></p>
 <p>If you install TensorFlow within a virtualenv environment you’ll need to be sure to use that same environment when loading the tensorflow R package (see below for details on how to do this).</p>
-<p>Next, install the tensorflow R package CRAN as follows:</p>
-<pre class="r"><code>install.packages(&quot;tensorflow&quot;)</code></pre>
+<p>Next, install the tensorflow R package as follows:</p>
+<pre class="r"><code>devtools::install_github(&quot;rstudio/tensorflow&quot;)</code></pre>
 <div id="locating-tensorflow" class="section level4">
 <h4>Locating TensorFlow</h4>
 <p>When it is loaded the tensorflow R package scans the system for the version of python where TensorFlow is installed. If automatic detection doesn’t work or if you want to exercise more control over which version(s) of python and TensorFlow are used you can specify an explicit <code>TENSORFLOW_PYTHON</code> environment variable to force probing for TensorFlow within a specific version of python, for example:</p>
