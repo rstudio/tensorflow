@@ -112,6 +112,47 @@ test_that("blank indices retain all elements", {
 
 })
 
+test_that("indexing works within functions", {
+  skip_if_no_tensorflow()
+
+  # set up arrays
+  x1_ <- arr(3)
+  x2_ <- arr(3, 3)
+  x3_ <- arr(3, 3, 3)
+
+  # cast to Tensors
+  x1 <- tf$constant(x1_)
+  x2 <- tf$constant(x2_)
+  x3 <- tf$constant(x3_)
+
+  # set up functions
+  sub1 <- function (x, a)
+    x[a - 1]
+  sub2 <- function (x, a, b)
+    x[a - 1, b - 1]
+  sub3 <- function (x, b, c)
+    x[, b - 1, c - 1]  # skip first element
+
+  # extract as arrays
+  y1_ <- x1_[1:3]
+  y2_ <- x2_[, 1:2]
+  y3_a <- x3_[, 1:2, ]
+  y3_b <- x3_[, , 1]
+
+  # extract as Tensors
+  y1 <- sub1(x1, 1:3)
+  y2 <- sub2(x2, 1:3, 1:2)
+  y3a <- sub3(x3, 1:2, 1:3)
+  y3b <- sub3(x3, 1:3, 1)
+
+  # these should be equivalent
+  expect_equal(y1_, grab(y1))
+  expect_equal(y2_, grab(y2))
+  expect_equal(y3_a, grab(y3a))
+  expect_equal(y3_b, grab(y3b))
+
+})
+
 test_that("negative and decreasing indexing errors", {
   skip_if_no_tensorflow()
 
