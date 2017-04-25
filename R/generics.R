@@ -46,6 +46,17 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
   # check for blank spaces in the call
   is.blank <- function (x) is.name(x) && as.character(x) == ''
 
+  # evaluate any calls (in the environment calling `[`) and replace any
+  # skipped indices (blank names) with NAs
+  evaluate_index <- function (x) {
+    if (is.blank(x))
+      NA
+    else if (is.call(x))
+      validate_index(eval(x, envir = parent.frame(n = 3)))
+    else
+      validate_index(x)
+  }
+
   # check the user-specified index is valid
   validate_index <- function (x) {
     if (!(is.numeric(x) && is.finite(x))) {
@@ -86,13 +97,8 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
     j <- list(validate_index(j))
   }
 
-  # evaluate any calls and replace any skipped indices (blank names) with NAs
-  extra_indices <- lapply(extra_indices,
-                          function (x) {
-                            if (is.blank(x)) NA
-                            else if (is.call(x)) validate_index(eval(x))
-                            else validate_index(x)
-                          })
+  # evaluate and fill in blanks
+  extra_indices <- lapply(extra_indices, evaluate_index)
 
   # combine the indices & strip out any names
   indices <- c(i, j, extra_indices)
