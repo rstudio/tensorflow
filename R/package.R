@@ -50,3 +50,17 @@ NULL
 }
 
 
+#' Version of Tensorflow
+#'
+#' @return R [numeric_version()] object
+#'
+#' @export
+tensorflow_version <- function() {
+  tf_version <- strsplit(tf$VERSION, ".", fixed = TRUE)[[1]]
+  package_version(paste(tf_version[[1]], tf_version[[2]], sep = "."))
+}
+
+
+
+
+
