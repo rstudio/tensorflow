@@ -11,6 +11,6 @@ parse_arguments(arguments = commandArgs(trailingOnly = TRUE))
 to the command line arguments received by \R.}
 }
 \description{
-Parse command line arguments of the form `--key=value` and
-`--key value`.
+Parse command line arguments of the form \code{--key=value} and
+\code{--key value}.
 }

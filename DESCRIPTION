@@ -39,5 +39,6 @@ Imports:
     utils, reticulate (>= 0.7.0.9001), yaml
 Remotes:
     rstudio/reticulate
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
 Suggests: testthat
