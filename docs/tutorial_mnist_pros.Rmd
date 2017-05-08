@@ -38,8 +38,8 @@ If you are copying and pasting in the code from this tutorial, start here with t
 
 ```{r, results='hide'}
 library(tensorflow)
-datasets <- tf$contrib$learn$datasets
-mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
+input_dataset <- tf$examples$tutorials$mnist$input_data
+mnist <- input_dataset$read_data_sets("MNIST-data", one_hot = TRUE)
 ```
 
 Here `mnist` is a lightweight class which stores the training, validation, and testing sets as R matrixes  It also provides a function for iterating through data minibatches, which we will use below.
