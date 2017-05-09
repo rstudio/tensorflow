@@ -30,23 +30,35 @@ NULL
     Sys.setenv(RETICULATE_PYTHON = tensorflow_python)
 
   # delay load tensorflow
-  tf <<- import("tensorflow", delay_load = function() {
+  tf <<- import("tensorflow", delay_load = list(
 
-    # register warning suppression handler
-    register_suppress_warnings_handler(list(
-      suppress = function() {
-        old_verbosity <- tf$logging$get_verbosity()
-        tf$logging$set_verbosity(tf$logging$ERROR)
-        old_verbosity
-      },
-      restore = function(context) {
-        tf$logging$set_verbosity(context)
-      }
-    ))
+    on_load = function() {
 
-    # if we loaded tensorflow then register tf help topics
-    register_tf_help_topics()
-  })
+      # register warning suppression handler
+      register_suppress_warnings_handler(list(
+        suppress = function() {
+          old_verbosity <- tf$logging$get_verbosity()
+          tf$logging$set_verbosity(tf$logging$ERROR)
+          old_verbosity
+        },
+        restore = function(context) {
+          tf$logging$set_verbosity(context)
+        }
+      ))
+
+      # if we loaded tensorflow then register tf help topics
+      register_tf_help_topics()
+    }
+    ,
+
+    on_error = function(e) {
+      message <- py_config_error_message(
+        "Unable to load TensorFlow. Is the tensorflow Python package installed?"
+      )
+      stop(message, call. = FALSE)
+    }
+
+  ))
 }
 
 
