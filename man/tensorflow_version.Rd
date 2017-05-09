@@ -12,3 +12,4 @@ R \code{\link[=numeric_version]{numeric_version()}} object
 \description{
 Version of Tensorflow
 }
+\keyword{internal}

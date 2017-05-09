@@ -52,10 +52,7 @@ NULL
     ,
 
     on_error = function(e) {
-      message <- py_config_error_message(
-        "Unable to load TensorFlow. Is the tensorflow Python package installed?"
-      )
-      stop(message, call. = FALSE)
+      stop(tensorflow_config_error_message(), call. = FALSE)
     }
 
   ))
@@ -66,13 +63,21 @@ NULL
 #'
 #' @return R [numeric_version()] object
 #'
+#' @keywords internal
 #' @export
 tensorflow_version <- function() {
   tf_version <- strsplit(tf$VERSION, ".", fixed = TRUE)[[1]]
   package_version(paste(tf_version[[1]], tf_version[[2]], sep = "."))
 }
 
+#' Build error message for TensorFlow configuration errors
 
-
+#' @keywords internal
+#' @export
+tensorflow_config_error_message <- function() {
+  py_config_error_message(
+    "Unable to load TensorFlow. Is the tensorflow Python package installed?"
+  )
+}
 
 
