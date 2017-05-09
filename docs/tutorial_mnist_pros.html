@@ -385,8 +385,8 @@ div.tocify {
 <h3>Load MNIST Data</h3>
 <p>If you are copying and pasting in the code from this tutorial, start here with these two lines of code which will download and read in the data automatically:</p>
 <pre class="r"><code>library(tensorflow)
-datasets &lt;- tf$contrib$learn$datasets
-mnist &lt;- datasets$mnist$read_data_sets(&quot;MNIST-data&quot;, one_hot = TRUE)</code></pre>
+input_dataset &lt;- tf$examples$tutorials$mnist$input_data
+mnist &lt;- input_dataset$read_data_sets(&quot;MNIST-data&quot;, one_hot = TRUE)</code></pre>
 <p>Here <code>mnist</code> is a lightweight class which stores the training, validation, and testing sets as R matrixes It also provides a function for iterating through data minibatches, which we will use below.</p>
 </div>
 <div id="start-interactivesession" class="section level3">
@@ -459,7 +459,7 @@ train_step &lt;- optimizer$minimize(cross_entropy)</code></pre>
 <pre class="r"><code>accuracy &lt;- tf$reduce_mean(tf$cast(correct_prediction, tf$float32))</code></pre>
 <p>Finally, we can evaluate our accuracy on the test data. This should be about 92% correct.</p>
 <pre class="r"><code>accuracy$eval(feed_dict=dict(x = mnist$test$images, y_ = mnist$test$labels))</code></pre>
-<pre><code>## [1] 0.9173</code></pre>
+<pre><code>## [1] 0.9201</code></pre>
 </div>
 </div>
 <div id="multilayer-convnet" class="section level2">
@@ -611,7 +611,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
