@@ -56,11 +56,11 @@ install_tensorflow <- function(gpu = FALSE) {
     virtualenv_root <- "~/.virtualenvs"
     if (!file.exists(virtualenv_root))
       dir.create(virtualenv_root)
-    virtualenv_path <- file.path(virtualenv_root, "tensorflow")
+    virtualenv_path <- file.path(virtualenv_root, "r-tensorflow")
     cat("Creating virtualenv for TensorFlow at ", virtualenv_path, "\n")
     result <- system2(virtualenv, shQuote(c(
       "--system-site-packages",
-      path.expand(file.path(virtualenv_root, "tensorflow"))))
+      path.expand(virtualenv_path)))
     )
     if (result != 0L)
       stop("Error ", result, " occurred creating virtualenv at ", virtualenv_path,
@@ -83,6 +83,15 @@ install_tensorflow <- function(gpu = FALSE) {
 
   # on windows we'll just install into the user's library
   } else {
+
+
+    # confirm python 3.5
+
+    # python -m pip install --upgrade pip
+    # pip install tensorflow
+
+    # http://eddiejackson.net/wp/?p=10276
+    # /passive
 
 
 
