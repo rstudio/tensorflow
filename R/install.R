@@ -8,14 +8,20 @@
 #'   method that will work in the local environment. Change the default to force
 #'   a specific installation method. Note that since this command runs without
 #'   privillege the "system" method is available only on Windows.
-#' @param package_url URL of the TensorFlow package to install (if not
-#'   specified this is determined automatically)
+#' @param version TensorFlow version to install (must be either "latest" or a
+#'   full `major.minor.patch` specificaiton, e.g. "1.1.0").
 #' @param gpu Install the GPU version of TensorFlow
+#' @param package_url URL of the TensorFlow package to install (if not specified
+#'   this is determined automatically). Note that if this parameter is provied
+#'   then the `version` and `gpu` parameters are ignored.
+#'
+#' @importFrom jsonlite fromJSON
 #'
 #' @export
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system"),
-                               package_url = NULL,
+                               version = "latest",
                                gpu = FALSE,
+                               package_url = NULL,
                                conda = "auto") {
 
   # verify os
@@ -23,6 +29,8 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     stop("Unable to install TensorFlow on this platform.",
          "Binary installation is available for Windows, Linux, and Ubuntu")
   }
+
+  # TODO: verify architecture
 
   # resolve and validate method
   method <- match.arg(method)
@@ -52,7 +60,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
         stop("Conda installation failed (no conda binary found)\n", call. = FALSE)
 
       # do install
-      install_tensorflow_conda(conda, package_url, gpu)
+      install_tensorflow_conda(conda, version, gpu, package_url)
 
     } else {
 
@@ -70,7 +78,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
       # if we don't have pip and virtualenv then try for conda if it's allowed
       if ((!have_pip || !have_virtualenv) && have_conda) {
 
-        install_tensorflow_conda(conda, package_url, gpu)
+        install_tensorflow_conda(conda, version, gpu, package_url)
 
 
       # otherwise this is either an "auto" installation w/o working conda
@@ -104,7 +112,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
         }
 
         # do the install
-        install_tensorflow_virtualenv(python, pip, virtualenv, package_url, gpu)
+        install_tensorflow_virtualenv(python, pip, virtualenv, version, gpu, package_url)
 
       }
     }
@@ -125,24 +133,34 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
 
 }
 
-install_tensorflow_conda <- function(conda, package_url, gpu) {
+install_tensorflow_conda <- function(conda, version, gpu, package_url) {
 
   # create conda environment if we need to
   envname <- "r-tensorflow"
   conda_envs <- conda_list(conda = conda)
   conda_env <- subset(conda_envs, conda_envs$name == envname)
   if (nrow(conda_env) == 1) {
-    cat("Installing TensorFlow into ", envname, " conda environment\n")
+    cat("Using", envname, "conda environment for TensorFlow installation\n")
     python <- conda_env$python
   }
   else {
-    cat("Creating ", envname, " conda environment for TensorFlow installation\n")
+    cat("Creating ", envname, " conda environment for TensorFlow installation...")
     python <- conda_create(envname, conda = conda)
+    cat("done\n")
+  }
+
+  # determine tf version
+  if (version == "latest") {
+    cat("Determining latest release of TensorFlow...")
+    releases <- fromJSON("https://api.github.com/repos/tensorflow/tensorflow/releases")
+    latest <- subset(releases, grepl("^v\\d+\\.\\d+\\.\\d+$", releases$tag_name))$tag_name[[1]]
+    version <- sub("v", "", latest)
+    cat("done\n")
   }
 
   # determine python version
   py_version <- python_version(python)
-  version_str <- if (is_osx()) {
+  py_version_str <- if (is_osx()) {
     if (py_version >= "3.0")
       "py3-none"
     else
@@ -161,14 +179,13 @@ install_tensorflow_conda <- function(conda, package_url, gpu) {
 
   # determine package_url
   if (is.null(package_url)) {
-    tf_version <- "1.1.0"
     platform <- ifelse(is_osx(), "mac", "linux")
     package_url <- sprintf(
       "https://storage.googleapis.com/tensorflow/%s/%s/tensorflow-%s-%s-%s.whl",
       platform,
       ifelse(gpu, "gpu", "cpu"),
-      tf_version,
-      version_str,
+      version,
+      py_version_str,
       arch
     )
   }
@@ -182,7 +199,7 @@ install_tensorflow_conda <- function(conda, package_url, gpu) {
 
 }
 
-install_tensorflow_virtualenv <- function(python, pip, virtualenv, package_url, gpu) {
+install_tensorflow_virtualenv <- function(python, pip, virtualenv, version, gpu, package_url) {
 
   # determine pip version to use
   is_python3 <- python_version(python) >= "3.0"
@@ -206,7 +223,9 @@ install_tensorflow_virtualenv <- function(python, pip, virtualenv, package_url, 
   virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
   package <- package_url
   if (is.null(package))
-    package <- sprintf("tensorflow%s", ifelse(gpu, "-gpu", ""))
+    package <- sprintf("tensorflow%s%s",
+                       ifelse(gpu, "-gpu", ""),
+                       ifelse(version == "latest", "", paste0("==", version)))
   pkgs <- c(package, .tf_extra_pkgs)
   cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
                  ifelse(is_osx(), "", "/bin/bash -c \""),
