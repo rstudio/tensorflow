@@ -26,11 +26,15 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
 
   # verify os
   if (!is_windows() && !is_osx() && !is_ubuntu()) {
-    stop("Unable to install TensorFlow on this platform.",
-         "Binary installation is available for Windows, Linux, and Ubuntu")
+    stop("Unable to install TensorFlow on this platform. ",
+         "Binary installation is available for Windows, Linux, and Ubuntu.")
   }
 
-  # TODO: verify architecture
+  # verify 64-bit
+  if (.Machine$sizeof.pointer != 8) {
+    stop("Unable to install TensorFlow on this platform.",
+         "Binary installation is only available for 64-bit platforms.")
+  }
 
   # resolve and validate method
   method <- match.arg(method)
