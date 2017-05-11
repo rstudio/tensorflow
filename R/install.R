@@ -38,7 +38,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
   system_available <- is_windows() && method_available("site")
 
   # resolve and look for conda
-  conda <- conda_binary(conda)
+  conda <- tryCatch(conda_binary(conda), error = function(e) NULL)
   have_conda <- conda_available && !is.null(conda)
 
   # mac and linux
@@ -63,9 +63,9 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
 
       # find other required tools
       pip <- python_unix_binary("pip")
-      have_pip <- nzchar(pip)
+      have_pip <- !is.null(pip)
       virtualenv <- python_unix_binary("virtualenv")
-      have_virtualenv <- virtualenv_available && nzchar(virtualenv)
+      have_virtualenv <- virtualenv_available && !is.null(virtualenv)
 
       # if we don't have pip and virtualenv then try for conda if it's allowed
       if ((!have_pip || !have_virtualenv) && have_conda) {
@@ -88,11 +88,14 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
             install_commands <- paste(install_commands, collapse = "\n")
         } else {
           if (!have_pip)
-            install_commands <- c(install_commands, "python-pip python-dev")
+            install_commands <- c(install_commands, "python-pip")
           if (!have_virtualenv)
             install_commands <- c(install_commands, "python-virtualenv")
-          if (!is.null(install_commands))
-            install_commands <- paste("$ sudo apt-get install", paste(install_commands))
+          if (!is.null(install_commands)) {
+            install_commands <- paste("$ sudo apt-get install",
+                                      paste(install_commands, collapse = " "))
+          }
+
         }
         if (!is.null(install_commands)) {
           stop("Prerequisites for installing TensorFlow not available.\n\n",
@@ -180,11 +183,13 @@ install_tensorflow_virtualenv <- function(python, pip, virtualenv, package_url, 
   package <- package_url
   if (is.null(package))
     package <- sprintf("tensorflow%s", ifelse(gpu, "-gpu", ""))
-  pkgs <- c(tf_pkg, .tf_extra_pkgs)
-  cmd <- sprintf("source %s && %s install --ignore-installed --upgrade %s",
+  pkgs <- c(package, .tf_extra_pkgs)
+  cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
+                 ifelse(is_osx(), "", "/bin/bash -c \""),
                  shQuote(path.expand(virtualenv_bin("activate"))),
                  shQuote(path.expand(virtualenv_bin(pip_version))),
-                 paste(shQuote(pkgs), collapse = " "))
+                 paste(shQuote(pkgs), collapse = " "),
+                 ifelse(is_osx(), "", "\""))
   cat("Installing TensorFlow...\n")
   result <- system(cmd)
   if (result != 0L)
