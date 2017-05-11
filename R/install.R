@@ -5,11 +5,13 @@
 #' @inheritParams reticulate::conda_list
 #'
 #' @param method Installation method. By default, "auto" automatically finds a
-#'   method that will work in the local environment. Change the default to force
-#'   a specific installation method. Note that since this command runs without
-#'   privillege the "system" method is available only on Windows.
+#'   method that will work in the local environment. As per the TensorFlow
+#'   documentation the "virtualenv" method is preferred to "conda" when
+#'   available. Change the default to force a specific installation method. Note
+#'   that since this command runs without privillege the "system" method is
+#'   available only on Windows.
 #' @param version TensorFlow version to install (must be either "latest" or a
-#'   full `major.minor.patch` specificaiton, e.g. "1.1.0").
+#'   full major.minor.patch specification, e.g. "1.1.0").
 #' @param gpu Install the GPU version of TensorFlow
 #' @param package_url URL of the TensorFlow package to install (if not specified
 #'   this is determined automatically). Note that if this parameter is provied
