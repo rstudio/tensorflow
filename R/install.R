@@ -131,26 +131,50 @@ install_tensorflow_conda <- function(conda, package_url, gpu) {
   envname <- "r-tensorflow"
   conda_envs <- conda_list(conda = conda)
   conda_env <- subset(conda_envs, conda_envs$name == envname)
-  if (nrow(conda_env) == 1)
+  if (nrow(conda_env) == 1) {
+    cat("Installing TensorFlow into ", envname, " conda environment\n")
     python <- conda_env$python
-  else
-    python <- conda_create(envname, packages = "numpy", conda = conda)
+  }
+  else {
+    cat("Creating ", envname, " conda environment for TensorFlow installation\n")
+    python <- conda_create(envname, conda = conda)
+  }
+
+  # determine python version
+  py_version <- python_version(python)
+  version_str <- if (is_osx()) {
+    if (py_version >= "3.0")
+      "py3-none"
+    else
+      "py2-none"
+  } else {
+    if (py_version >= "3.0") {
+      ver <- gsub(".", "", as.character(py_version), fixed = TRUE)
+      sprintf("cp%s-cp%sm", ver, ver)
+    } else {
+      "cp27-none"
+    }
+  }
+
+  # determine arch
+  arch <- ifelse(is_osx(), "any", "linux_x86_64")
 
   # determine package_url
-  # TODO: change for linux
   if (is.null(package_url)) {
     tf_version <- "1.1.0"
     platform <- ifelse(is_osx(), "mac", "linux")
     package_url <- sprintf(
-      "https://storage.googleapis.com/tensorflow/%s/%s/tensorflow-%s-%s-none-any.whl",
+      "https://storage.googleapis.com/tensorflow/%s/%s/tensorflow-%s-%s-%s.whl",
       platform,
       ifelse(gpu, "gpu", "cpu"),
       tf_version,
-      ifelse(python_version(python) >= "3.0", "py3", "py2")
+      version_str,
+      arch
     )
   }
 
   # install base tensorflow using pip
+  cat("Installing TensorFlow...\n")
   conda_install(envname, package_url, pip = TRUE, conda = conda)
 
   # install additional packages
