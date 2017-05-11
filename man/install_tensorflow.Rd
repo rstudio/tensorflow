@@ -4,10 +4,19 @@
 \alias{install_tensorflow}
 \title{Install TensorFlow and it's dependencies}
 \usage{
-install_tensorflow(gpu = FALSE)
+install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
+  gpu = FALSE, conda = "auto")
 }
 \arguments{
+\item{method}{Installation method. By default, "auto" automatically finds a
+method that will work in the local environment. Change the default to force
+a specific installation method. Note that since this command runs without
+privillege the "system" method is available only on Windows.}
+
 \item{gpu}{Install the GPU version of TensorFlow}
+
+\item{conda}{Path to conda executable (or "auto" to find conda using the PATH
+and other conventional install locations).}
 }
 \description{
 Install TensorFlow and it's dependencies
