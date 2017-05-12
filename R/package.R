@@ -81,7 +81,8 @@ tf_config_error_message <- function() {
     if (length(config$python_versions) > 0) {
       message <- paste0(message,
                         "\n\nPython environments searched for 'tensorflow' package:\n")
-      python_versions <- paste0(" ", config$python_versions, collapse = "\n")
+      python_versions <- paste0(" ", normalizePath(config$python_versions, mustWork = FALSE),
+                                collapse = "\n")
       message <- paste0(message, python_versions, sep = "\n")
     }
   }

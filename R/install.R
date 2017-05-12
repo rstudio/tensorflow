@@ -122,7 +122,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
         }
 
         # do the install
-        install_tensorflow_virtualenv(python, pip, virtualenv, version, gpu, package_url)
+        install_tensorflow_virtualenv(python, virtualenv, version, gpu, package_url)
 
       }
     }
@@ -157,38 +157,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
         }
     }
 
-
-    if (identical(method, "system")) {
-
-      # if we don't have it then error
-      if (!have_system) {
-        stop("Installing TensorFlow requires a 64-bit version of Python 3.5\n\n",
-             "Please install 64-bit Python 3.5 from this location to continue:\n\n",
-             " - https://www.python.org/downloads/release/python-353/\n\n",
-             "Note that you must install exactly Python 3.5 (as opposed to 3.6 or higher).\n\n",
-             call. = FALSE)
-      }
-
-
-
-
-
-      #
-      # do system installation
-      #
-      # (see stashes for some code)
-
-
-      # confirm python 3.5
-
-      # python -m pip install --upgrade pip
-      # pip install tensorflow
-
-      # http://eddiejackson.net/wp/?p=10276
-      # /passive
-
-
-    } else if (identical(method, "conda")) {
+    if (identical(method, "conda")) {
 
       # validate that we have conda
       if (!have_conda) {
@@ -201,12 +170,30 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
       # do the install
       install_tensorflow_conda(conda, version, gpu, package_url)
 
+    } else if (identical(method, "system")) {
+
+      # if we don't have it then error
+      if (!have_system) {
+        stop("Installing TensorFlow requires a 64-bit version of Python 3.5\n\n",
+             "Please install 64-bit Python 3.5 from this location to continue:\n\n",
+             " - https://www.python.org/downloads/release/python-353/\n\n",
+             "Note that you must install exactly Python 3.5 (as opposed to 3.6 or higher).\n\n",
+             call. = FALSE)
+      }
+
+      # do system installation
+      python <- python_system_version$executable_path
+      pip <- file.path(python_system_version$install_path, "Scripts", "pip.exe")
+      install_tensorflow_windows_system(python, pip, version, gpu, package_url)
+
     } else {
       stop("Invalid/unexpected installation method '", method, "'",
            call. = FALSE)
     }
   }
 
+  cat("\nInstallation of TensorFlow complete.\n\n")
+  invisible(NULL)
 }
 
 install_tensorflow_conda <- function(conda, version, gpu, package_url) {
@@ -271,11 +258,11 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url) {
   conda_install(envname, package_url, pip = TRUE, conda = conda)
 
   # install additional packages
-  conda_install(envname, .tf_extra_pkgs, conda = conda)
+  conda_install(envname, tf_extra_pkgs(), conda = conda)
 
 }
 
-install_tensorflow_virtualenv <- function(python, pip, virtualenv, version, gpu, package_url) {
+install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, package_url) {
 
   # determine pip version to use
   is_python3 <- python_version(python) >= "3.0"
@@ -297,12 +284,7 @@ install_tensorflow_virtualenv <- function(python, pip, virtualenv, version, gpu,
 
   # install tensorflow and related dependencies
   virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
-  package <- package_url
-  if (is.null(package))
-    package <- sprintf("tensorflow%s%s",
-                       ifelse(gpu, "-gpu", ""),
-                       ifelse(version == "latest", "", paste0("==", version)))
-  pkgs <- c(package, .tf_extra_pkgs)
+  pkgs <- tf_pkgs(version, gpu, package_url)
   cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
                  ifelse(is_osx(), "", "/bin/bash -c \""),
                  shQuote(path.expand(virtualenv_bin("activate"))),
@@ -315,6 +297,24 @@ install_tensorflow_virtualenv <- function(python, pip, virtualenv, version, gpu,
     stop("Error ", result, " occurred installing TensorFlow", call. = FALSE)
 }
 
+
+install_tensorflow_windows_system <- function(python, pip, version, gpu, package_url) {
+
+  # ensure pip is up to date
+  cat("Preparing for installation (updating pip if necessary)\n")
+  result <- system2(python, c("-m", "pip", "install", "--upgrade", "pip"))
+  if (result != 0L)
+    stop("Error ", result, " occurred updating pip", call. = FALSE)
+
+  # install tensorflow and dependencies (don't install scipy b/c it requires
+  # native code compilation)
+  cat("Installing TensorFlow...\n")
+  pkgs <- tf_pkgs(version, gpu, package_url, scipy = FALSE)
+  result <- system2(pip, c("install", "--upgrade --ignore-installed",
+                           paste(shQuote(pkgs), collapse = " ")))
+  if (result != 0L)
+    stop("Error ", result, " occurred installing tensorflow package", call. = FALSE)
+}
 
 
 python_unix_binary <- function(bin) {
@@ -347,7 +347,23 @@ python_version <- function(python) {
 }
 
 
+# form list of tf pkgs
+tf_pkgs <- function(version, gpu, package_url, scipy = TRUE) {
+  package <- package_url
+  if (is.null(package))
+    package <- sprintf("tensorflow%s%s",
+                       ifelse(gpu, "-gpu", ""),
+                       ifelse(version == "latest", "", paste0("==", version)))
+  c(package, tf_extra_pkgs(scipy = scipy))
+}
+
 # additional dependencies to install (required by some features of keras)
-.tf_extra_pkgs <- c("scipy", "h5py", "pyyaml",  "requests",  "Pillow")
+tf_extra_pkgs <- function(scipy = TRUE) {
+  pkgs <- c("h5py", "pyyaml",  "requests",  "Pillow")
+  if (scipy)
+    c(pkgs, "scipy")
+  else
+    pkgs
+}
 
 
