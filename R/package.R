@@ -52,7 +52,7 @@ NULL
     ,
 
     on_error = function(e) {
-      stop(tensorflow_config_error_message(), call. = FALSE)
+      stop(tf_config_error_message(), call. = FALSE)
     }
 
   ))
