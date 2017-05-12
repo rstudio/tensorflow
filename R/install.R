@@ -5,9 +5,9 @@
 #' @inheritParams reticulate::conda_list
 #'
 #' @param method Installation method. By default, "auto" automatically finds a
-#'   method that will work in the local environment. As per the TensorFlow
-#'   documentation the "virtualenv" method is preferred to "conda" when
-#'   available. Change the default to force a specific installation method. Note
+#'   method that will work in the local environment. Change the default to force
+#'   a specific installation method. Note that the "virtualenv" method is not
+#'   available on Windows (as this isn't supported by TensorFlow). Note also
 #'   that since this command runs without privillege the "system" method is
 #'   available only on Windows.
 #' @param version TensorFlow version to install (must be either "latest" or a
@@ -44,6 +44,10 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     stop("Installing TensorFlow into the system library is only supported on Windows",
          call. = FALSE)
   }
+  if (identical(method, "virtualenv") && is_windows()) {
+    stop("Installing TensorFlow into a virtualenv is not supported on Windows",
+         call. = FALSE)
+  }
 
   # flags indicating what methods are available
   method_available <- function(name) method %in% c("auto", name)
@@ -61,7 +65,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     # check for explicit conda method
     if (identical(method, "conda")) {
 
-      # ensure we have conda
+      # validate that we have conda
       if (!have_conda)
         stop("Conda installation failed (no conda binary found)\n", call. = FALSE)
 
@@ -126,15 +130,40 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
   # windows installation
   } else {
 
+    # resolve auto
+    if (identical(method, "auto"))
+      method <- ifelse(have_conda, "conda", "system")
 
-    # confirm python 3.5
+    if (identical(method, "system")) {
 
-    # python -m pip install --upgrade pip
-    # pip install tensorflow
+      #
+      # do system installation
+      #
+      # (see stashes for some code)
 
-    # http://eddiejackson.net/wp/?p=10276
-    # /passive
 
+      # confirm python 3.5
+
+      # python -m pip install --upgrade pip
+      # pip install tensorflow
+
+      # http://eddiejackson.net/wp/?p=10276
+      # /passive
+
+
+    } else if (identical(method, "conda")) {
+
+      # validate that we have conda
+      if (!have_conda)
+        stop("Conda installation failed (no conda binary found)\n", call. = FALSE)
+
+      # do the install
+      install_tensorflow_conda(conda, version, gpu, package_url)
+
+    } else {
+      stop("Invalid/unexpected installation method '", method, "'",
+           call. = FALSE)
+    }
   }
 
 }
@@ -150,9 +179,9 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url) {
     python <- conda_env$python
   }
   else {
-    cat("Creating ", envname, " conda environment for TensorFlow installation...")
-    python <- conda_create(envname, conda = conda)
-    cat("done\n")
+    cat("Creating", envname, "conda environment for TensorFlow installation...\n")
+    packages <- ifelse(is_windows(), "python=3.5", "python")
+    python <- conda_create(envname, packages = packages, conda = conda)
   }
 
   # determine tf version
@@ -181,11 +210,11 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url) {
   }
 
   # determine arch
-  arch <- ifelse(is_osx(), "any", "linux_x86_64")
+  arch <- ifelse(is_windows(), "win_amd64", ifelse(is_osx(), "any", "linux_x86_64"))
 
   # determine package_url
   if (is.null(package_url)) {
-    platform <- ifelse(is_osx(), "mac", "linux")
+    platform <- ifelse(is_windows(), "windows", ifelse(is_osx(), "mac", "linux"))
     package_url <- sprintf(
       "https://storage.googleapis.com/tensorflow/%s/%s/tensorflow-%s-%s-%s.whl",
       platform,
