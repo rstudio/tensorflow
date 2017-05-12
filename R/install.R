@@ -20,7 +20,7 @@
 #' @importFrom jsonlite fromJSON
 #'
 #' @export
-tensorflow_install <- function(method = c("auto", "virtualenv", "conda", "system"),
+install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system"),
                                version = "latest",
                                gpu = FALSE,
                                package_url = NULL,
