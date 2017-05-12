@@ -59,21 +59,62 @@ NULL
 }
 
 
-#' Version of Tensorflow
+#' TensorFlow configuration information
 #'
-#' @return R [numeric_version()] object
+#' @return List with information on the current configuration of TensorFlow.
+#'   You can determine whether TensorFlow was found using the `available`
+#'   member (other members vary depending on whether `available` is `TRUE`
+#'   or `FALSE`)
 #'
 #' @keywords internal
 #' @export
-tf_version <- function() {
-  tfv <- strsplit(tf$VERSION, ".", fixed = TRUE)[[1]]
-  package_version(paste(tfv[[1]], tfv[[2]], sep = "."))
+tf_config <- function() {
+
+  # first check if we found tensorflow
+  have_tensorflow <- py_module_available("tensorflow")
+
+  # get py config
+  config <- py_config()
+
+  # found it!
+  if (have_tensorflow) {
+
+    # get version
+    tfv <- strsplit(tf$VERSION, ".", fixed = TRUE)[[1]]
+    version <- package_version(paste(tfv[[1]], tfv[[2]], sep = "."))
+
+    structure(class = "tensorflow_config", list(
+      available = TRUE,
+      version = version,
+      version_str = tf$VERSION,
+      location = config$required_module_path,
+      python = config$python,
+      python_version = config$version
+    ))
+
+  # didn't find it
+  } else {
+    structure(class = "tensorflow_config", list(
+      available = FALSE,
+      python_verisons = config$python_versions,
+      error_message = tf_config_error_message()
+    ))
+  }
 }
 
-#' Build error message for TensorFlow configuration errors
-
-#' @keywords internal
 #' @export
+print.tensorflow_config <- function(x, ...) {
+  if (x$available) {
+    aliased <- function(path) sub(Sys.getenv("HOME"), "~", path)
+    cat("TensorFlow v", x$version_str, " (", aliased(x$location), ")\n", sep = "")
+    cat("Python v", x$python_version, " (", aliased(x$python), ")\n", sep = "")
+  } else {
+    cat(x$error_message, "\n")
+  }
+}
+
+
+# Build error message for TensorFlow configuration errors
 tf_config_error_message <- function() {
   message <- "Installation of TensorFlow not found."
   config <- py_config()

@@ -24,7 +24,4 @@ reticulate::use_virtualenv
 #' @export
 reticulate::use_condaenv
 
-#' @export
-reticulate::py_config
-
 

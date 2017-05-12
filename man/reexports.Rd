@@ -18,8 +18,6 @@
 \alias{use_virtualenv}
 \alias{reexports}
 \alias{use_condaenv}
-\alias{reexports}
-\alias{py_config}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -27,6 +25,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{dict}}, \code{\link[reticulate]{tuple}}, \code{\link[reticulate]{iterate}}, \code{\link[reticulate]{\%as\%}}, \code{\link[reticulate]{use_python}}, \code{\link[reticulate]{use_virtualenv}}, \code{\link[reticulate]{use_condaenv}}, \code{\link[reticulate]{py_config}}}
+  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{dict}}, \code{\link[reticulate]{tuple}}, \code{\link[reticulate]{iterate}}, \code{\link[reticulate]{\%as\%}}, \code{\link[reticulate]{use_python}}, \code{\link[reticulate]{use_virtualenv}}, \code{\link[reticulate]{use_condaenv}}}
 }}
 
