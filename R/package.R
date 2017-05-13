@@ -127,6 +127,8 @@ tf_config_error_message <- function() {
       message <- paste0(message, python_versions, sep = "\n")
     }
   }
+  message <- paste0(message,
+                    "\nYou can install TensorFlow using the install_tensorflow() function.\n")
   message
 }
 
