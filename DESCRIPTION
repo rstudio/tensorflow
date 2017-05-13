@@ -36,7 +36,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.0)
 Imports:
-    utils, reticulate (>= 0.7.0.9015), yaml, jsonlite
+    utils, reticulate (>= 0.7.0.9016), yaml, jsonlite
 Remotes:
     rstudio/reticulate
 Roxygen: list(markdown = TRUE)
