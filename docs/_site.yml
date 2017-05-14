@@ -5,6 +5,9 @@ navbar:
   left:
     - text: "Get Started"
       menu: 
+        - text: "Installation"
+          href: "installation.html"
+        - text: "---"
         - text: "Introduction"
           href: "index.html"
         - text: "Basic Usage"

@@ -185,6 +185,10 @@ $(document).ready(function () {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="installation.html">Installation</a>
+    </li>
+    <li class="divider"></li>
+    <li>
       <a href="index.html">Introduction</a>
     </li>
     <li>
@@ -313,35 +317,18 @@ Images licensed CC BY-SA 4.0; original by W. Carter
 </p>
 <p>If you’re already sure you want to learn and install TensorFlow you can skip these and charge ahead. Don’t worry, you’ll still get to see MNIST – we’ll also use MNIST as an example in our technical tutorial where we elaborate on TensorFlow features.</p>
 </div>
-<div id="download-and-setup" class="section level2">
-<h2>Download and Setup</h2>
-</div>
 <div id="installation" class="section level2">
 <h2>Installation</h2>
-<p>First, install the main TensorFlow distribution from here:</p>
-<p><a href="https://www.tensorflow.org/get_started/os_setup.html#download-and-setup" class="uri">https://www.tensorflow.org/get_started/os_setup.html#download-and-setup</a></p>
-<p>If you install TensorFlow within a virtualenv environment you’ll need to be sure to use that same environment when loading the tensorflow R package (see below for details on how to do this).</p>
-<p>Next, install the tensorflow R package as follows:</p>
+<p>To get started, install the tensorflow R package from GitHub as follows:</p>
 <pre class="r"><code>devtools::install_github(&quot;rstudio/tensorflow&quot;)</code></pre>
-<div id="locating-tensorflow" class="section level4">
-<h4>Locating TensorFlow</h4>
-<p>When it is loaded the tensorflow R package scans the system for the version of python where TensorFlow is installed. If automatic detection doesn’t work or if you want to exercise more control over which version(s) of python and TensorFlow are used you can specify an explicit <code>TENSORFLOW_PYTHON</code> environment variable to force probing for TensorFlow within a specific version of python, for example:</p>
-<pre class="r"><code>Sys.setenv(TENSORFLOW_PYTHON=&quot;/usr/local/bin/python&quot;)
-library(tensorflow)</code></pre>
-<p>You can also specify Python virtualenvs or Conda envs via the <code>use_python</code> functions <a href="https://github.com/rstudio/reticulate/#locating-python">documented here</a>.</p>
-</div>
-<div id="verifying-installation" class="section level3">
-<h3>Verifying Installation</h3>
-<p>You can verify that your installation is working correctly by running this script:</p>
+<p>Then, use the <code>install_tensorflow()</code> function to install TensorFlow:</p>
 <pre class="r"><code>library(tensorflow)
-sess = tf$Session()
+install_tensorflow()</code></pre>
+<p>You can confirm that the installation succeeded with:</p>
+<pre class="r"><code>sess = tf$Session()
 hello &lt;- tf$constant(&#39;Hello, TensorFlow!&#39;)
 sess$run(hello)</code></pre>
-</div>
-<div id="rstudio-ide" class="section level3">
-<h3>RStudio IDE</h3>
-<p>The tensorflow package provides code completion and inline help for the TensorFlow API when running within the RStudio IDE. In order to take advantage of these features you should also install the <a href="https://www.rstudio.com/products/rstudio/download/preview/">latest release</a> of RStudio (v 1.0 or higher).</p>
-</div>
+<p>This will provide you with a default installation of TensorFlow suitable for getting started with the tensorflow R package. See the <a href="installation.html">article on installation</a> to learn about more advanced options.</p>
 </div>
 <div id="recommended-next-steps" class="section level2">
 <h2>Recommended Next Steps</h2>
