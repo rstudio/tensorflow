@@ -314,6 +314,8 @@ install_tensorflow_windows_system <- function(python, pip, version, gpu, package
                            paste(shQuote(pkgs), collapse = " ")))
   if (result != 0L)
     stop("Error ", result, " occurred installing tensorflow package", call. = FALSE)
+
+  cat("\nInstallation of TensorFlow complete.\n\n")
 }
 
 
