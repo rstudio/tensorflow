@@ -272,7 +272,12 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, pack
   virtualenv_root <- "~/.virtualenvs"
   if (!file.exists(virtualenv_root))
     dir.create(virtualenv_root)
+
+  # remove existing if necessary
   virtualenv_path <- file.path(virtualenv_root, "r-tensorflow")
+  if (file.exists(virtualenv_path))
+    unlink(virtualenv_path, recursive = TRUE)
+
   cat("Creating virtualenv for TensorFlow at ", virtualenv_path, "\n")
   result <- system2(virtualenv, shQuote(c(
     "--system-site-packages",
