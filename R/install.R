@@ -264,7 +264,7 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url) {
 
 install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, package_url) {
 
-  # determine pip version to use
+  # determine python version to use
   is_python3 <- python_version(python) >= "3.0"
   pip_version <- ifelse(is_python3, "pip3", "pip")
 
@@ -276,6 +276,7 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, pack
   cat("Creating virtualenv for TensorFlow at ", virtualenv_path, "\n")
   result <- system2(virtualenv, shQuote(c(
     "--system-site-packages",
+    "--python", python,
     path.expand(virtualenv_path)))
   )
   if (result != 0L)
