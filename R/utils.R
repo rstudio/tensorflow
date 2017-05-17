@@ -20,9 +20,6 @@ is_ubuntu <- function() {
   } else {
     FALSE
   }
-
-  uname <- suppressWarnings(system2("uname", "--all", stdout = TRUE, stderr = TRUE))
-  grepl("ubuntu", uname[[1]], ignore.case = TRUE)
 }
 
 
