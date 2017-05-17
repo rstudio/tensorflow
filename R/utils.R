@@ -13,6 +13,14 @@ is_osx <- function() {
 }
 
 is_ubuntu <- function() {
+  # check /etc/lsb-release
+  if (is_unix() && file.exists("/etc/lsb-release")) {
+    lsbRelease <- readLines("/etc/lsb-release")
+    any(grepl("Ubuntu", lsbRelease))
+  } else {
+    FALSE
+  }
+
   uname <- suppressWarnings(system2("uname", "--all", stdout = TRUE, stderr = TRUE))
   grepl("ubuntu", uname[[1]], ignore.case = TRUE)
 }
