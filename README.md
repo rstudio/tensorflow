@@ -43,11 +43,11 @@ sess$run(hello)
 
 ## Documentation
 
-See the package website for additional details on using the TensorFlow API from R: <https://rstudio.github.io/tensorflow>
+See the package website for additional details on using the TensorFlow API from R: <https://tensorflow.rstudio.com>
 
 See the TensorFlow API reference for details on all of the modules, classes, and functions within the API: <https://www.tensorflow.org/api_docs/python/index.html>
 
-The tensorflow package provides code completion and inline help for the TensorFlow API when running within the RStudio IDE. In order to take advantage of these features you should also install the current [Preview Release](https://www.rstudio.com/products/rstudio/download/preview/) of RStudio.
+The tensorflow package provides code completion and inline help for the TensorFlow API when running within the RStudio IDE. In order to take advantage of these features you should also install the [Current Release](https://www.rstudio.com/products/rstudio/download/) of RStudio.
 
 
 
