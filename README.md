@@ -7,47 +7,36 @@ The [TensorFlow API](https://www.tensorflow.org/api_docs/python/index.html) is c
 
 ## Installation
 
-First, install the main TensorFlow distribution from here:
-
-<https://www.tensorflow.org/get_started/os_setup.html#download-and-setup>
-
-If you install TensorFlow within a virtualenv environment you'll need to be sure to use that same environment when loading the tensorflow R package (see below for details on how to do this).
-
-Next, install the tensorflow R package from GitHub as follows:
+To get started, install the tensorflow R package from GitHub as follows:
 
 ```r
 devtools::install_github("rstudio/tensorflow")
 ```
 
-#### Locating TensorFlow
-
-When it is loaded the tensorflow R package scans the system for the version of python where TensorFlow is installed. If automatic detection doesn't work or if you want to exercise more control over which version(s) of python and TensorFlow are used you can specify an explicit `TENSORFLOW_PYTHON` environment variable to force probing for TensorFlow within a specific version of python, for example:
+Then, use the `install_tensorflow()` function to install TensorFlow:
 
 ```r
-Sys.setenv(TENSORFLOW_PYTHON="/usr/local/bin/python")
 library(tensorflow)
+install_tensorflow()
 ```
 
-You can also specify Python virtualenvs or Conda envs via the `use_python` functions [documented here](https://github.com/rstudio/reticulate/#locating-python).
-
-## Verifying Installation
-
-You can verify that your installation is working correctly by running this script:
+You can confirm that the installation succeeded with:
 
 ```r
-library(tensorflow)
 sess = tf$Session()
 hello <- tf$constant('Hello, TensorFlow!')
 sess$run(hello)
 ```
 
+This will provide you with a default installation of TensorFlow suitable for getting started with the tensorflow R package. See the [article on installation](https://tensorflow.rstudio.com/installation.html) to learn about more advanced options.
+
 ## Documentation
 
-See the package website for additional details on using the TensorFlow API from R: <https://rstudio.github.io/tensorflow>
+See the package website for additional details on using the TensorFlow API from R: <https://tensorflow.rstudio.com>
 
 See the TensorFlow API reference for details on all of the modules, classes, and functions within the API: <https://www.tensorflow.org/api_docs/python/index.html>
 
-The tensorflow package provides code completion and inline help for the TensorFlow API when running within the RStudio IDE. In order to take advantage of these features you should also install the current [Preview Release](https://www.rstudio.com/products/rstudio/download/preview/) of RStudio.
+The tensorflow package provides code completion and inline help for the TensorFlow API when running within the RStudio IDE. In order to take advantage of these features you should also install the [Current Release](https://www.rstudio.com/products/rstudio/download/) of RStudio.
 
 
 
