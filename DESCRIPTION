@@ -36,6 +36,8 @@ LazyData: true
 Depends: R (>= 3.0)
 Imports:
     utils, reticulate (>= 0.8), yaml, jsonlite
+Remotes:
+    rstudio/reticulate
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1
 Suggests: testthat
