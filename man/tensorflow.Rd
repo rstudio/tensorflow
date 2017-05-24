@@ -20,5 +20,5 @@ executing TensorFlow graphs. The tensorflow package provides access to the
 complete TensorFlow API from within R.
 
 For additional documentation on the tensorflow package see
-\href{https://rstudio.github.io/tensorflow}{https://rstudio.github.io/tensorflow}
+\href{https://tensorflow.rstudio.com}{https://tensorflow.rstudio.com}
 }
