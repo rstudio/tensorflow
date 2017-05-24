@@ -27,9 +27,9 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
                                conda = "auto") {
 
   # verify os
-  if (!is_windows() && !is_osx() && !is_ubuntu()) {
+  if (!is_windows() && !is_osx() && !is_linux()) {
     stop("Unable to install TensorFlow on this platform. ",
-         "Binary installation is available for Windows, Linux, and Ubuntu.")
+         "Binary installation is available for Windows, OS X, and Linux")
   }
 
   # verify 64-bit
@@ -104,7 +104,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
             install_commands <- c(install_commands, "$ sudo pip install --upgrade virtualenv")
           if (!is.null(install_commands))
             install_commands <- paste(install_commands, collapse = "\n")
-        } else {
+        } else if (is_ubuntu()) {
           if (!have_pip)
             install_commands <- c(install_commands, "python-pip")
           if (!have_virtualenv)
@@ -113,11 +113,27 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
             install_commands <- paste("$ sudo apt-get install",
                                       paste(install_commands, collapse = " "))
           }
-
+        } else {
+          if (!have_pip)
+            install_commands <- c(install_commands, "pip")
+          if (!have_virtualenv)
+            install_commands <- c(install_commands, "virtualenv")
+          if (!is.null(install_commands)) {
+            install_commands <- paste("Please install the following Python packages before proceeding:",
+                                      paste(install_commands, collapse = " "))
+          }
         }
         if (!is.null(install_commands)) {
+
+          # if these are terminal commands then add special preface
+          if (grepl("^\\$ ", install_commands)) {
+            install_commands <- paste0(
+              "Execute the following at a terminal to install the prerequisites:\n\n",
+              install_commands
+            )
+          }
+
           stop("Prerequisites for installing TensorFlow not available.\n\n",
-               "Execute the following at a terminal to install the prerequisites:\n\n",
                install_commands, "\n\n", call. = FALSE)
         }
 
