@@ -120,7 +120,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
             install_commands <- c(install_commands, "virtualenv")
           if (!is.null(install_commands)) {
             install_commands <- paste("Please install the following Python packages before proceeding:",
-                                      paste(install_commands, collapse = " "))
+                                      paste(install_commands, collapse = ", "))
           }
         }
         if (!is.null(install_commands)) {
