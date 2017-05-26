@@ -260,9 +260,10 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url) {
   if (is.null(package_url)) {
     platform <- ifelse(is_windows(), "windows", ifelse(is_osx(), "mac", "linux"))
     package_url <- sprintf(
-      "https://storage.googleapis.com/tensorflow/%s/%s/tensorflow-%s-%s-%s.whl",
+      "https://storage.googleapis.com/tensorflow/%s/%s/tensorflow%s-%s-%s-%s.whl",
       platform,
       ifelse(gpu, "gpu", "cpu"),
+      ifelse(gpu, "_gpu", ""),
       version,
       py_version_str,
       arch
