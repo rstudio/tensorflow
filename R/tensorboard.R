@@ -115,6 +115,6 @@ tensorboard <- function(log_dir = ".", host = "127.0.0.1", port = "auto") {
     .globals$tensorboards[[log_dir]] <- list(process = p, port = port)
 
     # browse the url
-    browseURL(paste0("http://", host,":", port))
+    utils::browseURL(paste0("http://", host,":", port))
   }
 }
