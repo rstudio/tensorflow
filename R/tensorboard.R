@@ -12,6 +12,11 @@
 #' @param host Host for serving TensorBoard
 #' @param port Port for serving TensorBoard. If "auto" is specified (the
 #'   default) then an unused port will be chosen automatically.
+#' @param launch_browser `TRUE` to open a web browser for TensorBoard
+#'   after launching.
+#'
+#' @return URL for browsing TensorBoard (invisibly) or `NULL` if TensorBoard
+#'   could not be started.
 #'
 #' @details When TensorBoard is passed a logdir at startup, it recursively walks
 #'   the directory tree rooted at logdir looking for subdirectories that contain
@@ -22,7 +27,8 @@
 #' <https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tensorboard/>
 #'
 #' @export
-tensorboard <- function(log_dir = ".", host = "127.0.0.1", port = "auto") {
+tensorboard <- function(log_dir = ".", host = "127.0.0.1", port = "auto",
+                        launch_browser = interactive()) {
 
   # ensure that tensorflow initializes (so we get tensorboard on our path)
   ensure_loaded()
@@ -41,7 +47,7 @@ tensorboard <- function(log_dir = ".", host = "127.0.0.1", port = "auto") {
     if (p$is_alive()) {
       p$kill()
       p$wait(1000L)
-      if (is.null(port))
+      if (identical(port, "auto"))
         port <- tb$port
     }
   }
@@ -74,13 +80,15 @@ tensorboard <- function(log_dir = ".", host = "127.0.0.1", port = "auto") {
     # see if we have stdout
     if (identical(res[["output"]], "ready")) {
 
-      # forward output
+      # capture output
       out <- p$read_output_lines()
-      write(out, stdout())
 
       # see if we have started
       if (any(grepl("http://", out, fixed = TRUE))) {
+        write(paste0("Started TensorBoard at http://", host,":", port, "\n"), stdout())
         started <- TRUE
+      } else {
+        write(out, stdout())
       }
     }
 
@@ -93,7 +101,7 @@ tensorboard <- function(log_dir = ".", host = "127.0.0.1", port = "auto") {
       # if it's 'already in use' and there is no explicit port then call the function back
       # to try another random port
       if (!explicit_port && any(grepl(paste0("^.*", port, ".*already in use.*$"), err))) {
-        tensorboard(log_dir = log_dir, host = host, port = "auto")
+        return (tensorboard(log_dir = log_dir, host = host, port = "auto"))
       } else {
         write(err, stderr())
       }
@@ -115,6 +123,13 @@ tensorboard <- function(log_dir = ".", host = "127.0.0.1", port = "auto") {
     .globals$tensorboards[[log_dir]] <- list(process = p, port = port)
 
     # browse the url
-    utils::browseURL(paste0("http://", host,":", port))
+    url <- paste0("http://", host,":", port)
+    if (launch_browser)
+      utils::browseURL(url)
+
+    # return the url invisibly
+    invisible(url)
+  } else {
+    invisible(NULL)
   }
 }

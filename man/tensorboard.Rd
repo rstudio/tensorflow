@@ -4,7 +4,8 @@
 \alias{tensorboard}
 \title{TensorBoard Visualization Tool}
 \usage{
-tensorboard(log_dir = ".", host = "127.0.0.1", port = "auto")
+tensorboard(log_dir = ".", host = "127.0.0.1", port = "auto",
+  launch_browser = interactive())
 }
 \arguments{
 \item{log_dir}{Root directory for training logs.}
@@ -13,6 +14,13 @@ tensorboard(log_dir = ".", host = "127.0.0.1", port = "auto")
 
 \item{port}{Port for serving TensorBoard. If "auto" is specified (the
 default) then an unused port will be chosen automatically.}
+
+\item{launch_browser}{\code{TRUE} to open a web browser for TensorBoard
+after launching.}
+}
+\value{
+URL for browsing TensorBoard (invisibly) or \code{NULL} if TensorBoard
+could not be started.
 }
 \description{
 TensorBoard is a tool inspecting and understanding your TensorFlow runs and
