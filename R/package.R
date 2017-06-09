@@ -22,6 +22,11 @@
 #' @name tensorflow
 NULL
 
+# globals
+.globals <- new.env(parent = emptyenv())
+.globals$tensorboards <- new.env(parent = emptyenv())
+
+
 .onLoad <- function(libname, pkgname) {
 
   # if TENSORFLOW_PYTHON is defined then forward it to RETICULATE_PYTHON
@@ -57,6 +62,7 @@ NULL
 
   ))
 }
+
 
 
 #' TensorFlow configuration information
