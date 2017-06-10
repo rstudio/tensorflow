@@ -4,11 +4,15 @@
 \alias{tensorboard}
 \title{TensorBoard Visualization Tool}
 \usage{
-tensorboard(log_dir = ".", host = "127.0.0.1", port = "auto",
-  launch_browser = interactive())
+tensorboard(log_dir = ".", action = c("start", "stop"),
+  host = "127.0.0.1", port = "auto", launch_browser = interactive())
 }
 \arguments{
 \item{log_dir}{Root directory for training logs.}
+
+\item{action}{Specify whether to start or stop TensorBoard for the
+given \code{log_dir} (TensorBoard will be stopped automatically when
+the R session from which it is launchedd is terminated).}
 
 \item{host}{Host for serving TensorBoard}
 
@@ -19,8 +23,7 @@ default) then an unused port will be chosen automatically.}
 after launching.}
 }
 \value{
-URL for browsing TensorBoard (invisibly) or \code{NULL} if TensorBoard
-could not be started.
+URL for browsing TensorBoard (invisibly).
 }
 \description{
 TensorBoard is a tool inspecting and understanding your TensorFlow runs and
@@ -31,6 +34,9 @@ When TensorBoard is passed a logdir at startup, it recursively walks
 the directory tree rooted at logdir looking for subdirectories that contain
 tfevents data. Every time it encounters such a subdirectory, it loads it as
 a new run, and the frontend will organize the data accordingly.
+
+The TensorBoard process will be automatically destroyed when the R
+session in which it is launched exits. You can pass \code{action = "stop"`` to manually terminate a TensorBoard process for a given}log_dir`.
 }
 \seealso{
 \url{https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tensorboard/}
