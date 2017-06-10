@@ -161,3 +161,9 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port) {
 }
 
 
+#' @rdname tensorboard
+#' @export
+unique_log_dir <- function(log_dir = "logs") {
+  file.path(root_dir, strftime(Sys.time(), format = "%Y_%m_%d_%H_%M_%S"))
+}
+
