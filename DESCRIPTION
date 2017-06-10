@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to TensorFlow
-Version: 0.8.2
+Version: 0.8.3
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cre"),
      comment = "R interface", email = "jj@rstudio.com"),
@@ -35,7 +35,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.0)
 Imports:
-    utils, reticulate (>= 0.8.0.9002), yaml, jsonlite
+    utils, reticulate (>= 0.8.0.9002), yaml, jsonlite, processx
 Remotes:
     rstudio/reticulate
 Roxygen: list(markdown = TRUE)
