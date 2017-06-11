@@ -15,6 +15,7 @@
 #'   default) then an unused port will be chosen automatically.
 #' @param launch_browser `TRUE` to open a web browser for TensorBoard
 #'   after launching.
+#' @param reload_interval How often the backend should load more data.
 #'
 #' @return URL for browsing TensorBoard (invisibly).
 #'
@@ -33,7 +34,9 @@
 #' @export
 tensorboard <- function(log_dir = ".", action = c("start", "stop"),
                         host = "127.0.0.1", port = "auto",
-                        launch_browser = interactive()) {
+                        launch_browser = interactive(),
+                        reload_interval = 5
+                        ) {
 
   # ensure that tensorflow initializes (so we get tensorboard on our path)
   ensure_loaded()
@@ -82,13 +85,13 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
       }
 
       # attempt to launch
-      p <- launch_tensorboard(log_dir, host, port, FALSE)
+      p <- launch_tensorboard(log_dir, host, port, FALSE, reload_interval)
       if (p$is_alive())
         break
     }
 
   } else {
-    p <- launch_tensorboard(log_dir, host, port, TRUE)
+    p <- launch_tensorboard(log_dir, host, port, TRUE, reload_interval)
   }
 
   if (p$is_alive()) {
@@ -114,13 +117,14 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
   }
 }
 
-launch_tensorboard <- function(log_dir, host, port, explicit_port) {
+launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interval) {
 
   # start the process
   p <- processx::process$new("tensorboard",
                              c("--logdir", log_dir,
                                "--host", host,
-                               "--port", as.character(port)),
+                               "--port", as.character(port),
+                               "--reload_interval", as.integer(reload_interval)),
                              stdout = "|", stderr = "|")
 
   # poll for output until we've succesfully started up or the process dies
