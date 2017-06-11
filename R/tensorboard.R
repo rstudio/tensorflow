@@ -16,6 +16,8 @@
 #' @param launch_browser `TRUE` to open a web browser for TensorBoard
 #'   after launching.
 #' @param reload_interval How often the backend should load more data.
+#' @param purge_orphaned_data Whether to purge data that may have been orphaned due to TensorBoard restarts.
+#' Disabling purge_orphaned_data can be used to debug data disappearance.
 #'
 #' @return URL for browsing TensorBoard (invisibly).
 #'
@@ -35,7 +37,8 @@
 tensorboard <- function(log_dir = ".", action = c("start", "stop"),
                         host = "127.0.0.1", port = "auto",
                         launch_browser = interactive(),
-                        reload_interval = 5
+                        reload_interval = 5,
+                        purge_orphaned_data = TRUE
                         ) {
 
   # ensure that tensorflow initializes (so we get tensorboard on our path)
@@ -85,13 +88,13 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
       }
 
       # attempt to launch
-      p <- launch_tensorboard(log_dir, host, port, FALSE, reload_interval)
+      p <- launch_tensorboard(log_dir, host, port, FALSE, reload_interval, purge_orphaned_data)
       if (p$is_alive())
         break
     }
 
   } else {
-    p <- launch_tensorboard(log_dir, host, port, TRUE, reload_interval)
+    p <- launch_tensorboard(log_dir, host, port, TRUE, reload_interval, purge_orphaned_data)
   }
 
   if (p$is_alive()) {
@@ -117,14 +120,15 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
   }
 }
 
-launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interval) {
+launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interval, purge_orphaned_data) {
 
   # start the process
   p <- processx::process$new("tensorboard",
                              c("--logdir", log_dir,
                                "--host", host,
                                "--port", as.character(port),
-                               "--reload_interval", as.integer(reload_interval)),
+                               "--reload_interval", as.integer(reload_interval),
+                               "--purge_orphaned_data", purge_orphaned_data),
                              stdout = "|", stderr = "|")
 
   # poll for output until we've succesfully started up or the process dies
