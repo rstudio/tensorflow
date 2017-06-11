@@ -4,7 +4,7 @@ Title: R Interface to TensorFlow
 Version: 0.8.4
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cre"), email = "jj@rstudio.com"),
-  person(family = "RStudio", role = "cph"),
+  person(family = "RStudio", role = c("cph", "fnd")),
   person("Yuan", "Tang", role = c("aut", "cph"), email = "terrytangyuan@gmail.com"),
   person("Dirk", "Eddelbuettel", role = c("ctb", "cph"),
          email = "edd@debian.org"),

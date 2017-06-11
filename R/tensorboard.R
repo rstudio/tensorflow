@@ -1,6 +1,3 @@
-
-
-
 #' TensorBoard Visualization Tool
 #'
 #' TensorBoard is a tool inspecting and understanding your TensorFlow runs and
@@ -9,7 +6,7 @@
 #' @param log_dir Root directory for training logs.
 #' @param action Specify whether to start or stop TensorBoard for the
 #'   given `log_dir` (TensorBoard will be stopped automatically when
-#'   the R session from which it is launchedd is terminated).
+#'   the R session from which it is launched is terminated).
 #' @param host Host for serving TensorBoard
 #' @param port Port for serving TensorBoard. If "auto" is specified (the
 #'   default) then an unused port will be chosen automatically.

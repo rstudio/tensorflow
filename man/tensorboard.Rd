@@ -16,7 +16,7 @@ unique_log_dir(log_dir = "logs")
 
 \item{action}{Specify whether to start or stop TensorBoard for the
 given \code{log_dir} (TensorBoard will be stopped automatically when
-the R session from which it is launchedd is terminated).}
+the R session from which it is launched is terminated).}
 
 \item{host}{Host for serving TensorBoard}
 
