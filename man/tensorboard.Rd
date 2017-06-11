@@ -6,7 +6,8 @@
 \title{TensorBoard Visualization Tool}
 \usage{
 tensorboard(log_dir = ".", action = c("start", "stop"),
-  host = "127.0.0.1", port = "auto", launch_browser = interactive())
+  host = "127.0.0.1", port = "auto", launch_browser = interactive(),
+  reload_interval = 5, purge_orphaned_data = TRUE)
 
 unique_log_dir(log_dir = "logs")
 }
@@ -15,7 +16,7 @@ unique_log_dir(log_dir = "logs")
 
 \item{action}{Specify whether to start or stop TensorBoard for the
 given \code{log_dir} (TensorBoard will be stopped automatically when
-the R session from which it is launchedd is terminated).}
+the R session from which it is launched is terminated).}
 
 \item{host}{Host for serving TensorBoard}
 
@@ -24,6 +25,11 @@ default) then an unused port will be chosen automatically.}
 
 \item{launch_browser}{\code{TRUE} to open a web browser for TensorBoard
 after launching.}
+
+\item{reload_interval}{How often the backend should load more data.}
+
+\item{purge_orphaned_data}{Whether to purge data that may have been orphaned due to TensorBoard restarts.
+Disabling purge_orphaned_data can be used to debug data disappearance.}
 }
 \value{
 URL for browsing TensorBoard (invisibly).
