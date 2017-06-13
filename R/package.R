@@ -108,6 +108,18 @@ tf_config <- function() {
   }
 }
 
+
+#' @rdname tf_config
+#' @keywords internal
+#' @export
+tf_version <- function() {
+  config <- tf_config()
+  if (config$available)
+    config$version
+  else
+    NULL
+}
+
 #' @export
 print.tensorflow_config <- function(x, ...) {
   if (x$available) {

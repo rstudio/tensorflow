@@ -2,9 +2,12 @@
 % Please edit documentation in R/package.R
 \name{tf_config}
 \alias{tf_config}
+\alias{tf_version}
 \title{TensorFlow configuration information}
 \usage{
 tf_config()
+
+tf_version()
 }
 \value{
 List with information on the current configuration of TensorFlow.
