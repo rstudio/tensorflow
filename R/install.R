@@ -149,7 +149,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     # determine whether we have system python
     python_versions <- py_versions_windows()
     python_versions <- python_versions[python_versions$type == "PythonCore",]
-    python_versions <- python_versions[python_versions$version == "3.5",]
+    python_versions <- python_versions[python_versions$version %in% c("3.5","3.6"),]
     python_versions <- python_versions[python_versions$arch == "x64",]
     have_system <- nrow(python_versions) > 0
     if (have_system)
@@ -159,12 +159,10 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     if (identical(method, "auto")) {
 
         if (!have_system && !have_conda) {
-          stop("Installing TensorFlow requires a 64-bit version of Python 3.5\n\n",
-               "Please install 64-bit Python 3.5 to continue, supported versions include:\n\n",
+          stop("Installing TensorFlow requires a 64-bit version of Python 3.5 or 3.6\n\n",
+               "Please install 64-bit Python 3.5 or 3.6 to continue, supported versions include:\n\n",
                " - Anaconda Python (Recommended): https://www.continuum.io/downloads#windows\n",
-               " - Python Software Foundation   : https://www.python.org/downloads/release/python-353/\n\n",
-               "Note that if you install from Python Software Foundation you must install exactly\n",
-               "Python 3.5 (as opposed to 3.6 or higher).\n\n",
+               " - Python Software Foundation   : https://www.python.org/downloads/\n\n",
                call. = FALSE)
         } else if (have_conda) {
           method <- "conda"
@@ -190,10 +188,9 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
 
       # if we don't have it then error
       if (!have_system) {
-        stop("Installing TensorFlow requires a 64-bit version of Python 3.5\n\n",
-             "Please install 64-bit Python 3.5 from this location to continue:\n\n",
-             " - https://www.python.org/downloads/release/python-353/\n\n",
-             "Note that you must install exactly Python 3.5 (as opposed to 3.6 or higher).\n\n",
+        stop("Installing TensorFlow requires a 64-bit version of Python 3.5 or 3.6\n\n",
+             "Please install 64-bit Python 3.5 or 3.6 this location to continue:\n\n",
+             " - https://www.python.org/downloads/\n\n",
              call. = FALSE)
       }
 
@@ -224,7 +221,7 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url) {
   }
   else {
     cat("Creating", envname, "conda environment for TensorFlow installation...\n")
-    packages <- ifelse(is_windows(), "python=3.5", "python")
+    packages <- ifelse(is_windows(), "python=3.6", "python")
     python <- conda_create(envname, packages = packages, conda = conda)
   }
 
