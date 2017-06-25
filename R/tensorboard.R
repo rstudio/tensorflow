@@ -27,9 +27,6 @@
 #'   session in which it is launched exits. You can pass `action = "stop"``
 #'   to manually terminate a TensorBoard process for a given `log_dir`.
 #'
-#' @seealso
-#' <https://github.com/tensorflow/tensorflow/blob/master/tensorflow/tensorboard/>
-#'
 #' @export
 tensorboard <- function(log_dir = ".", action = c("start", "stop"),
                         host = "127.0.0.1", port = "auto",
