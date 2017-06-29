@@ -283,9 +283,9 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, pack
   pip_version <- ifelse(is_python3, "pip3", "pip")
 
   # create virtualenv
-  virtualenv_root <- "~/.virtualenvs"
+  virtualenv_root <- Sys.getenv("WORKON_HOME", unset = "~/.virtualenvs")
   if (!file.exists(virtualenv_root))
-    dir.create(virtualenv_root)
+    dir.create(virtualenv_root, recursive = TRUE)
 
   # remove existing if necessary
   virtualenv_path <- file.path(virtualenv_root, "r-tensorflow")
