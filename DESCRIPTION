@@ -1,6 +1,6 @@
 Package: tensorflow
 Type: Package
-Title: R Interface to TensorFlow
+Title: R Interface to 'TensorFlow'
 Version: 0.9
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cre"), email = "jj@rstudio.com"),
