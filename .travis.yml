@@ -12,11 +12,7 @@ addons:
       - python-numpy
       - python-virtualenv
 
-r_packages:
-  - devtools
-
-install:
-  - R -e 'devtools::install_deps(dep = TRUE)'
+before_script:
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow()'
 
