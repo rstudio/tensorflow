@@ -10,7 +10,7 @@
 #' gradient computation will be cleared after the expression is evaluated.
 #' 
 #' @examples 
-#' \dontrun {
+#' \dontrun{
 #' 
 #' with_imperative({
 #'   a <- tf$constant(list(list(7), list(6)))

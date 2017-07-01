@@ -19,9 +19,13 @@ gradient computation will be cleared after the expression is evaluated.}
 The results of the computation are available right after the execution of a line of code.
 }
 \examples{
+\dontrun{
+
 with_imperative({
   a <- tf$constant(list(list(7), list(6)))
   b <- tf$constant(list(list(6, 7)))
   tf$matmul(a, b)
 })
+
+}
 }
