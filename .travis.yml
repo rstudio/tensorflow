@@ -10,9 +10,6 @@ env:
 
 cache:
   packages: true
-  directories:
-    - $HOME/.cache/pip
-    - $HOME/.virtualenvs/r-tensorflow
 
 before_cache:
   - rm -f $HOME/.cache/pip/log/debug.log
