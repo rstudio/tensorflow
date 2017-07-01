@@ -12,8 +12,11 @@ addons:
       - python-numpy
       - python-virtualenv
 
+r_packages:
+  - devtools
+
 install:
-  - ./travis-tool.sh install_deps
+  - R -e 'devtools::install_deps(dep = TRUE)'
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow()'
 
