@@ -10,11 +10,15 @@
 #' gradient computation will be cleared after the expression is evaluated.
 #' 
 #' @examples 
+#' \dontrun {
+#' 
 #' with_imperative({
 #'   a <- tf$constant(list(list(7), list(6)))
 #'   b <- tf$constant(list(list(6, 7)))
 #'   tf$matmul(a, b)
 #' })
+#' 
+#' }
 #' @export
 with_imperative <- function(expr, new_step = FALSE) {
   server <- tf$python$training$training$Server$create_local_server()
