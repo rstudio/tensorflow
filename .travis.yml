@@ -1,6 +1,4 @@
-
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
 language: r
 
 dist: trusty
@@ -9,7 +7,6 @@ sudo: false
 env:
   global:
     - TENSORFLOW_TEST_EXAMPLES="1"
-
 cache:
   packages: true
   directories:
