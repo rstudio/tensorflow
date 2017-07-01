@@ -13,7 +13,7 @@ addons:
       - python-virtualenv
 
 install:
-  - R -e 'devtools::install_deps(dep = TRUE)'
+  - ./travis-tool.sh install_deps
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow()'
 
