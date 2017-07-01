@@ -287,9 +287,12 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, pack
   if (!file.exists(virtualenv_root))
     dir.create(virtualenv_root, recursive = TRUE)
 
+  # helper to construct paths to virtualenv binaries
+  virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
+
   # create virtualenv if necessary
   virtualenv_path <- file.path(virtualenv_root, "r-tensorflow")
-  if (!file.exists(virtualenv_path)) {
+  if (!file.exists(virtualenv_path) || !file.exists(virtualenv_bin("activate"))) {
     cat("Creating virtualenv for TensorFlow at ", virtualenv_path, "\n")
     result <- system2(virtualenv, shQuote(c(
       "--system-site-packages",
@@ -305,7 +308,6 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, pack
 
   # function to call pip within virtual env
   pip_install <- function(pkgs, message) {
-    virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
     cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
                    ifelse(is_osx(), "", "/bin/bash -c \""),
                    shQuote(path.expand(virtualenv_bin("activate"))),
