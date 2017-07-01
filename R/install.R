@@ -303,19 +303,30 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, pack
     cat("Using existing virtualenv at ", virtualenv_path, "\n")
   }
 
+  # function to call pip within virtual env
+  pip_install <- function(pkgs, message) {
+    virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
+    cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
+                   ifelse(is_osx(), "", "/bin/bash -c \""),
+                   shQuote(path.expand(virtualenv_bin("activate"))),
+                   shQuote(path.expand(virtualenv_bin(pip_version))),
+                   paste(shQuote(pkgs), collapse = " "),
+                   ifelse(is_osx(), "", "\""))
+    cat(message, "...\n")
+    result <- system(cmd)
+    if (result != 0L)
+      stop("Error ", result, " occurred installing TensorFlow", call. = FALSE)
+  }
+
+  # upgrade pip so it can find tensorflow
+  pip_install(pip_version, "Upgrading pip")
+
+  # upgrade setuptools so it can use wheels
+  pip_install("setuptools", "Upgrading setuptools")
+
   # install tensorflow and related dependencies
-  virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
   pkgs <- tf_pkgs(version, gpu, package_url)
-  cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
-                 ifelse(is_osx(), "", "/bin/bash -c \""),
-                 shQuote(path.expand(virtualenv_bin("activate"))),
-                 shQuote(path.expand(virtualenv_bin(pip_version))),
-                 paste(shQuote(pkgs), collapse = " "),
-                 ifelse(is_osx(), "", "\""))
-  cat("Installing TensorFlow...\n")
-  result <- system(cmd)
-  if (result != 0L)
-    stop("Error ", result, " occurred installing TensorFlow", call. = FALSE)
+  pip_install(pkgs, "Installing TensorFlow")
 }
 
 
