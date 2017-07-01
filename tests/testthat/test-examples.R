@@ -15,7 +15,7 @@ run_example <- function(example) {
   gc()
 }
 
-examples <- if (TRUE) {
+examples <- if (nzchar(Sys.getenv("TENSORFLOW_TEST_EXAMPLES"))) {
   c("hello.R",
     "introduction.R",
     "mnist/mnist_softmax.R",
