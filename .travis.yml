@@ -2,12 +2,6 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
-sudo: false
-
-env:
-  global:
-    - TENSORFLOW_PYTHON="/home/travis/.virtualenvs/r-tensorflow/bin/python"
-    - TENSORFLOW_TEST_EXAMPLES="1"
 
 cache:
   packages: true
