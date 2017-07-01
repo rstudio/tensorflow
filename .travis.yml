@@ -12,6 +12,9 @@ env:
 
 cache:
   packages: true
+  directories:
+    - $HOME/.cache/pip
+    - $HOME/.virtualenvs/r-tensorflow
 
 before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis pip setuptools wheel virtualenv
