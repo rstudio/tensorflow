@@ -14,13 +14,6 @@ cache:
 before_cache:
   - rm -f $HOME/.cache/pip/log/debug.log
 
-addons:
-  apt:
-    packages:
-      - python2.7
-      - python-numpy
-      - python-virtualenv
-
 before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis pip setuptools wheel virtualenv
   - R CMD INSTALL .
