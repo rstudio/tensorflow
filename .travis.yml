@@ -6,6 +6,7 @@ sudo: false
 
 env:
   global:
+    - TENSORFLOW_PYTHON="/home/travis/.virtualenvs/r-tensorflow/bin/python"
     - TENSORFLOW_TEST_EXAMPLES="1"
 
 cache:
