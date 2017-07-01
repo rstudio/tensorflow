@@ -28,3 +28,7 @@ before_script:
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow()'
 
+after_script:
+  - R -e 'devtools::test()'
+
+
