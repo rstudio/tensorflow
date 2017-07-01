@@ -6,6 +6,10 @@ language: r
 dist: trusty
 sudo: false
 
+env:
+  global:
+    - TENSORFLOW_TEST_EXAMPLES="1"
+
 cache:
   packages: true
 
@@ -13,5 +17,4 @@ before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis pip setuptools wheel virtualenv
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow()'
-
 
