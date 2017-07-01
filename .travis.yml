@@ -4,6 +4,10 @@
 language: r
 sudo: false
 
+env:
+  global:
+    - TENSORFLOW_TEST_EXAMPLES="1"
+
 cache:
   packages: true
   directories:
