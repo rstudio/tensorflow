@@ -11,9 +11,6 @@ env:
 cache:
   packages: true
 
-before_cache:
-  - rm -f $HOME/.cache/pip/log/debug.log
-
 addons:
   apt:
     packages:
