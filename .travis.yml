@@ -1,3 +1,4 @@
+
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
 language: r
@@ -12,6 +13,11 @@ cache:
 
 before_cache:
   - rm -f $HOME/.cache/pip/log/debug.log
+
+addons:
+  apt:
+    packages:
+      - python-virtualenv
 
 before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis pip setuptools wheel virtualenv
