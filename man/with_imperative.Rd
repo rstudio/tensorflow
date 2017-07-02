@@ -22,7 +22,12 @@ scope to R objects.}
 \item{env}{A specific environment to convert the Tensor objects to.}
 }
 \description{
-The results of the computation are available right after the execution of a line of code.
+The results of the computation are available right after the execution of a line of code and
+can be converted to base R objects automatically.
+}
+\details{
+Note that this function is currently only experimental, meaning that the interface is subject
+to change or remove at later releases.
 }
 \examples{
 \dontrun{
