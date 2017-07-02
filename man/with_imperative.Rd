@@ -4,7 +4,8 @@
 \alias{with_imperative}
 \title{Context manager for imperative style TensorFlow}
 \usage{
-with_imperative(expr, new_step = FALSE)
+with_imperative(expr, new_step = FALSE, convert = TRUE,
+  env = parent.env(environment()))
 }
 \arguments{
 \item{expr}{A block of code expession}
@@ -14,6 +15,11 @@ A graph is constructed and kept around in the background, both for just executin
 the standard TensorFlow runtime, and also for allowing automatic differentiation via \code{tf$gradients}.
 If this is set to \code{TRUE}, the graph as well as the cached tensors that have been kept around for
 gradient computation will be cleared after the expression is evaluated.}
+
+\item{convert}{A boolean indicating whether to convert the Tensor objects inside the context
+scope to R objects.}
+
+\item{env}{A specific environment to convert the Tensor objects to.}
 }
 \description{
 The results of the computation are available right after the execution of a line of code.
