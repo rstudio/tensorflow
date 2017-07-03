@@ -35,7 +35,7 @@ test_that("Imperative style TensorFlow works", {
     expect_equal(res, matrix(unlist(list_d), nrow = 2, byrow = TRUE))
   }
   
-  # convert returned list of tensors to R objects
+  # convert returned list of R objects and tensors to R objects
   for(new_step in c(TRUE, FALSE)) {
     res <- tf_imperative({
       a_const <- tf$constant(list_a)

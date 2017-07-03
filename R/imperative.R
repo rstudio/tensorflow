@@ -1,7 +1,9 @@
 #' Context manager for imperative style TensorFlow
 #' 
-#' The results of the computation are available right after the execution of a line of code and
-#' can be converted to base R objects automatically.
+#' The results of the computation are available right after the execution of a line of code.
+#' If the return value is Tensor, it can be converted to base R object automatically if `convert = TRUE` 
+#' is specified. Users can also call `tensor$eval()` to convert any Tensor objects inside the `expr`
+#' scope to base R objects.
 #' 
 #' Note that this function is currently only experimental, meaning that the interface is subject
 #' to change or remove at later releases.
@@ -17,11 +19,23 @@
 #' @examples 
 #' \dontrun{
 #' 
-#' with_imperative({
+#' tf_imperative({
 #'   a <- tf$constant(list(list(7), list(6)))
 #'   b <- tf$constant(list(list(6, 7)))
-#'   tf$matmul(a, b)
+#'   list(
+#'    tf$matmul(a, b),
+#'    a * 4
+#'   )
 #' })
+#' 
+#' # This is equivalent to the following:
+#' 
+#' tf <- tf$contrib$imperative
+#' a <- tf$constant(list(list(7), list(6)))
+#' b <- tf$constant(list(list(6, 7)))
+#' res1 <- tf$matmul(a, b)
+#' res2 <- a * 4
+#' list(res1$eval(), res2$eval())
 #' 
 #' }
 #' @export
