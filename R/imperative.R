@@ -12,9 +12,7 @@
 #' the standard TensorFlow runtime, and also for allowing automatic differentiation via `tf$gradients`.
 #' If this is set to `TRUE`, the graph as well as the cached tensors that have been kept around for
 #' gradient computation will be cleared after the expression is evaluated.
-#' @param convert A boolean indicating whether to convert the Tensor objects inside the context
-#' scope to R objects.
-#' @param env A specific environment to convert the Tensor objects to.
+#' @param convert A boolean indicating whether to convert the returned Tensor object to base R object.
 #' 
 #' @examples 
 #' \dontrun{
@@ -27,34 +25,38 @@
 #' 
 #' }
 #' @export
-with_imperative <- function(
+tf_imperative <- function(
   expr,
   new_step = FALSE,
-  convert = TRUE,
-  env = parent.env(environment())
+  convert = TRUE
 ) {
   server <- tf$python$training$training$Server$create_local_server()
   target <- server$target
   with(tf$contrib$imperative$imperative_mode$ImperativeMode(target), as = imperative_mode, {
     if (new_step) {
       with(imperative_mode$new_step(), as = new_step, {
-        invisible(expr)
-        if (convert) invisible(implicit_eval_tensor(env = env))
+        res <- force(expr)
+        convert_tensors(res, convert)
       })
     } else {
-      invisible(expr)
-      if (convert) invisible(implicit_eval_tensor(env = env))
+      res <- force(expr)
+      convert_tensors(res, convert)
     }
   })
 }
 
-# convert all Tensor objects to R objects in an environment
-implicit_eval_tensor <- function(env) {
-  var_names <- ls(envir = env)
-  lapply(var_names, function(var_name) {
-    var <- get(var_name, envir = env)
-    if (inherits(var, "tensorflow.python.framework.ops.Tensor")) {
-      assign(var_name, var$eval(), envir = env)
-    }
-  })
+convert_tensors <- function(res, convert) {
+  convert_tensor <- function(res, convert) {
+    if (convert && inherits(res, "tensorflow.python.framework.ops.Tensor"))
+      invisible(res$eval())
+    else
+      invisible(res)
+  }
+  if (is.list(res)) {
+    lapply(res, function(item) {
+      convert_tensor(item, convert)
+    })
+  } else {
+    convert_tensor(res, convert)
+  }
 }

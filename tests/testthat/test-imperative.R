@@ -9,34 +9,50 @@ test_that("Imperative style TensorFlow works", {
   
   # convert == FALSE
   for(new_step in c(TRUE, FALSE)) {
-    with_imperative({
+    res <- tf_imperative({
       a_const <- tf$constant(list_a)
       b_const <- tf$constant(list_b)
       c_const <- a_const * 4
       d_const <- tf$matmul(a_const, b_const)
       expect_equal(c_const, tf$constant(list_c))
       expect_equal(d_const, tf$constant(list_d))
-    }, new_step = new_step, convert = FALSE, env = environment())
-    expect_false(inherits(a_const, "matrix"))
-    expect_false(inherits(b_const, "matrix"))
-    expect_false(inherits(c_const, "matrix"))
-    expect_false(inherits(d_const, "matrix"))
+      d_const
+    }, new_step = new_step, convert = FALSE)
+    expect_true(inherits(res, "tensorflow.python.framework.ops.Tensor"))
   }
 
   # convert == TRUE
   for(new_step in c(TRUE, FALSE)) {
-    with_imperative({
+    res <- tf_imperative({
       a_const <- tf$constant(list_a)
       b_const <- tf$constant(list_b)
       c_const <- a_const * 4
       d_const <- tf$matmul(a_const, b_const)
       expect_equal(c_const, tf$constant(list_c))
       expect_equal(d_const, tf$constant(list_d))
-    }, new_step = new_step, convert = TRUE, env = environment())
-    expect_equal(a_const, matrix(unlist(list_a), nrow = 2))
-    expect_equal(b_const, matrix(unlist(list_b), nrow = 1))
-    expect_equal(c_const, matrix(unlist(list_c), nrow = 2))
-    expect_equal(d_const, matrix(unlist(list_d), nrow = 2, byrow = TRUE))
+      d_const
+    }, new_step = new_step, convert = TRUE)
+    expect_equal(res, matrix(unlist(list_d), nrow = 2, byrow = TRUE))
+  }
+  
+  # convert returned list of tensors to R objects
+  for(new_step in c(TRUE, FALSE)) {
+    res <- tf_imperative({
+      a_const <- tf$constant(list_a)
+      b_const <- tf$constant(list_b)
+      c_const <- a_const * 4
+      d_const <- tf$matmul(a_const, b_const)
+      expect_equal(c_const, tf$constant(list_c))
+      expect_equal(d_const, tf$constant(list_d))
+      list(d1 = d_const, d2 = d_const, d3 = 1)
+    }, new_step = new_step, convert = TRUE)
+    expect_equal(
+      res,
+      list(
+        d1 = matrix(unlist(list_d), nrow = 2, byrow = TRUE),
+        d2 = matrix(unlist(list_d), nrow = 2, byrow = TRUE), 
+        d3 = 1)
+      )
   }
   
 })
