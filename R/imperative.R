@@ -1,4 +1,4 @@
-#' Context manager for imperative style TensorFlow
+#' Imperative style TensorFlow
 #' 
 #' The results of the computation are available right after the execution of a line of code.
 #' If the return value is Tensor, it can be converted to base R object automatically if `convert = TRUE` 
@@ -49,18 +49,16 @@ tf_imperative <- function(
   with(tf$contrib$imperative$imperative_mode$ImperativeMode(target), as = imperative_mode, {
     if (new_step) {
       with(imperative_mode$new_step(), as = new_step, {
-        res <- force(expr)
-        convert_tensors(res, convert)
+        maybe_convert_tensors(force(expr), convert)
       })
     } else {
-      res <- force(expr)
-      convert_tensors(res, convert)
+      maybe_convert_tensors(force(expr), convert)
     }
   })
 }
 
-convert_tensors <- function(res, convert) {
-  convert_tensor <- function(res, convert) {
+maybe_convert_tensors <- function(res, convert) {
+  maybe_convert_tensor <- function(res, convert) {
     if (convert && inherits(res, "tensorflow.python.framework.ops.Tensor"))
       invisible(res$eval())
     else
@@ -68,9 +66,9 @@ convert_tensors <- function(res, convert) {
   }
   if (is.list(res)) {
     lapply(res, function(item) {
-      convert_tensor(item, convert)
+      maybe_convert_tensor(item, convert)
     })
   } else {
-    convert_tensor(res, convert)
+    maybe_convert_tensor(res, convert)
   }
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/imperative.R
 \name{tf_imperative}
 \alias{tf_imperative}
-\title{Context manager for imperative style TensorFlow}
+\title{Imperative style TensorFlow}
 \usage{
 tf_imperative(expr, new_step = FALSE, convert = TRUE)
 }
