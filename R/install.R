@@ -357,7 +357,7 @@ install_tensorflow_windows_system <- function(python, pip, version, gpu, package
 
 
 python_unix_binary <- function(bin) {
-  locations <- file.path(c("/usr/local/bin", "/usr/bin"), bin)
+  locations <- file.path(c("/usr/bin", "/usr/local/bin"), bin)
   locations <- locations[file.exists(locations)]
   if (length(locations) > 0)
     locations[[1]]
