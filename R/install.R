@@ -361,13 +361,8 @@ python_unix_binary <- function(bin) {
   locations <- locations[file.exists(locations)]
   if (length(locations) > 0)
     locations[[1]]
-  else {
-    location <- Sys.which(bin)
-    if (nzchar(location))
-      location
-    else
-      NULL
-  }
+  else
+    NULL
 }
 
 python_version <- function(python) {
