@@ -38,22 +38,22 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 }
 
 #' @export
-dim.tensorflow.python.framework.ops.Tensor <- function(x) {
+"dim.tensorflow.python.framework.ops.Tensor" <- function(x) {
   x$get_shape()$as_list()
 }
 
 #' @export
-length.tensorflow.python.framework.ops.Tensor <- function(x) {
+"length.tensorflow.python.framework.ops.Tensor" <- function(x) {
   Reduce(`*`, dim(x))
 }
 
 #' @export
-nrow.tensorflow.python.framework.ops.Tensor <- function(x) {
+"nrow.tensorflow.python.framework.ops.Tensor" <- function(x) {
   dim(x)[[1]]
 }
 
 #' @export
-ncol.tensorflow.python.framework.ops.Tensor <- function(x) {
+"ncol.tensorflow.python.framework.ops.Tensor" <- function(x) {
   dim(x)[[2]]
 }
 
