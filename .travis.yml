@@ -3,6 +3,7 @@ language: r
 
 dist: trusty
 sudo: false
+warnings_are_errors: false
 
 env:
   global:

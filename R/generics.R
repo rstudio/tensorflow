@@ -37,6 +37,16 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
   names(flags)
 }
 
+#' @export
+"dim.tensorflow.python.framework.ops.Tensor" <- function(x) {
+  x$get_shape()$as_list()
+}
+
+#' @export
+"length.tensorflow.python.framework.ops.Tensor" <- function(x) {
+  Reduce(`*`, dim(x))
+}
+
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/InternalMethods.html
 
 
@@ -111,7 +121,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 
   # combine the indices & strip out any names
   indices <- c(i, j, extra_indices)
-  names(indices) = NULL
+  names(indices) <- NULL
 
   # error if wrong number of indices
   if (length(indices) !=  n_indices) {
