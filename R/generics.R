@@ -39,12 +39,18 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 
 #' @export
 "dim.tensorflow.python.framework.ops.Tensor" <- function(x) {
-  x$get_shape()$as_list()
+  if (py_is_null_xptr(x))
+    NULL
+  else
+    x$get_shape()$as_list()
 }
 
 #' @export
 "length.tensorflow.python.framework.ops.Tensor" <- function(x) {
-  Reduce(`*`, dim(x))
+  if (py_is_null_xptr(x))
+    length(NULL)
+  else
+    Reduce(`*`, dim(x))
 }
 
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/InternalMethods.html
