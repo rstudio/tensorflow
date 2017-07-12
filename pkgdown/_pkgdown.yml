@@ -1,0 +1,23 @@
+
+
+reference:
+  - title: "Installation"
+    contents:
+      - install_tensorflow
+      - tf_version
+      - tf_config
+
+  - title: "Configuration"
+    contents:
+      - parse_flags
+      - parse_arguments
+
+  - title: "TensorFlow API"
+    contents:
+      - tf
+      - tf_imperative
+      - shape
+
+  - title: "TensorBoard"
+    contents:
+      - tensorboard
