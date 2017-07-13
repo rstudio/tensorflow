@@ -191,7 +191,6 @@ unique_dir <- function(parent_dir, prefix = NULL, format = "%Y-%m-%dT%H-%M-%OS3Z
   }
 }
 
-unique_dir("logs")
 
 
 
