@@ -2,14 +2,11 @@
 % Please edit documentation in R/tensorboard.R
 \name{tensorboard}
 \alias{tensorboard}
-\alias{unique_log_dir}
 \title{TensorBoard Visualization Tool}
 \usage{
 tensorboard(log_dir = ".", action = c("start", "stop"),
   host = "127.0.0.1", port = "auto", launch_browser = interactive(),
   reload_interval = 5, purge_orphaned_data = TRUE)
-
-unique_log_dir(log_dir = "logs")
 }
 \arguments{
 \item{log_dir}{Root directory for training logs.}
