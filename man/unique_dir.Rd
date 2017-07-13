@@ -4,7 +4,7 @@
 \alias{unique_dir}
 \title{Create a timestamp based unique directory name}
 \usage{
-unique_dir(parent_dir, prefix = NULL, format = "\%Y_\%m_\%d_\%H_\%M_\%S")
+unique_dir(parent_dir, prefix = NULL, format = "\%Y-\%m-\%dT\%H-\%M-\%OS3Z")
 }
 \arguments{
 \item{parent_dir}{Parent directory}
@@ -15,12 +15,12 @@ unique_dir(parent_dir, prefix = NULL, format = "\%Y_\%m_\%d_\%H_\%M_\%S")
 Unique directory name
 }
 \description{
-Directory name is a timestamp compatible with filesystem naming
-restrictions (e.g. "2017_07_13_06_41_27").
+Directory name is a timestamp compatible with filesystem naming restrictions
+(e.g. "2017-07-13T16-18-51.569Z").
 }
 \note{
-The name of the directory is based on the current time (in seconds
+The name of the directory is based on the current time (in milliseconds
 resolution). If the generated directory name already exists then the
 function will wait long enough to return a directory with a distinct
-seconds timestamp.
+timestamp.
 }

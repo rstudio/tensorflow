@@ -166,30 +166,32 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
 
 #' Create a timestamp based unique directory name
 #'
-#' Directory name is a timestamp compatible with filesystem naming
-#' restrictions (e.g. "2017_07_13_06_41_27").
+#' Directory name is a timestamp compatible with filesystem naming restrictions
+#' (e.g. "2017-07-13T16-18-51.569Z").
 #'
 #' @param parent_dir Parent directory
 #' @param prefix Character value to prepend to directory name
 #'
 #' @return Unique directory name
 #'
-#' @note The name of the directory is based on the current time (in seconds
+#' @note The name of the directory is based on the current time (in milliseconds
 #'   resolution). If the generated directory name already exists then the
 #'   function will wait long enough to return a directory with a distinct
-#'   seconds timestamp.
+#'   timestamp.
 #'
 #' @export
-unique_dir <- function(parent_dir, prefix = NULL, format = "%Y_%m_%d_%H_%M_%S") {
+unique_dir <- function(parent_dir, prefix = NULL, format = "%Y-%m-%dT%H-%M-%OS3Z") {
   while(TRUE) {
     dir <- file.path(parent_dir,
-                     paste0(prefix, strftime(Sys.time(), format = format)))
+                     paste0(prefix, strftime(Sys.time(), format = format, tz = "gmt")))
     if (!file.exists(dir))
       return(dir)
     else
-      Sys.sleep(0.5)
+      Sys.sleep(0.1)
   }
 }
+
+unique_dir("logs")
 
 
 
