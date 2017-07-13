@@ -24,7 +24,7 @@
 #'   a new run, and the frontend will organize the data accordingly.
 #'
 #'   The TensorBoard process will be automatically destroyed when the R
-#'   session in which it is launched exits. You can pass `action = "stop"``
+#'   session in which it is launched exits. You can pass `action = "stop"`
 #'   to manually terminate a TensorBoard process for a given `log_dir`.
 #'
 #' @export

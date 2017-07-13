@@ -42,5 +42,6 @@ tfevents data. Every time it encounters such a subdirectory, it loads it as
 a new run, and the frontend will organize the data accordingly.
 
 The TensorBoard process will be automatically destroyed when the R
-session in which it is launched exits. You can pass \code{action = "stop"`` to manually terminate a TensorBoard process for a given}log_dir`.
+session in which it is launched exits. You can pass \code{action = "stop"}
+to manually terminate a TensorBoard process for a given \code{log_dir}.
 }
