@@ -1,6 +1,3 @@
-if (!requireNamespace("yaml", quietly = TRUE))
-  return()
-
 # generate a dummy configuration
 config <- list(
   default = list(

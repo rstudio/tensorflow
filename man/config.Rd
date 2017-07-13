@@ -27,9 +27,6 @@ The \code{tensorflow.config.hook} \R option can be set if custom transformations
 of the generated configuration file is desired.
 }
 \examples{
-if (!requireNamespace("yaml", quietly = TRUE))
-  return()
-
 # generate a dummy configuration
 config <- list(
   default = list(
@@ -44,6 +41,7 @@ config <- list(
 yaml <- yaml::as.yaml(config)
 file <- file.path(tempdir(), "config.yml")
 writeLines(yaml, con = file)
+on.exit(unlink(file))
 
 # invoke 'tensorflow::config()' with the generated
 # config file, and override a value with command line

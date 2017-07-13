@@ -25,12 +25,7 @@ config <- function(config = Sys.getenv("R_CONFIG_ACTIVE", unset = "default"),
   config <- config::get(config = config, file = file)
 
   # merge parsed command line arguments
-  config <- config::merge(config, tensorflow::parse_arguments(arguments))
-
-  # apply a post-config hook
-  hook <- getOption("tensorflow.config.hook")
-  if (is.function(hook))
-    config <- hook(config)
+  config <- config::merge(config, parse_arguments(arguments))
 
   # return generated config
   config
