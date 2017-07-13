@@ -27,28 +27,23 @@ The \code{tensorflow.config.hook} \R option can be set if custom transformations
 of the generated configuration file is desired.
 }
 \examples{
-# generate a dummy configuration
-config <- list(
-  default = list(
-    number   = 42,
-    string   = "hello",
-    list     = list(42, "hello", list()),
-    override = "old"
-  )
-)
+# examine an example configuration file provided by tensorflow
+file <- system.file("examples/config/config.yml", package = "tensorflow")
+file.edit(file)
 
-# write configuration to file
-yaml <- yaml::as.yaml(config)
-file <- file.path(tempdir(), "config.yml")
-writeLines(yaml, con = file)
-on.exit(unlink(file))
+# read the default configuration
+tensorflow::config("default", file = file)
 
-# invoke 'tensorflow::config()' with the generated
-# config file, and override a value with command line
-# arguments
-tensorflow::config(
-  config = "default",
-  file = file,
-  arguments = "--override=new"
-)
+# read the alternate configuration: note that
+# the default configuration is inherited, but
+# we override the 'string' configuration here
+tensorflow::config("alternate", file = file)
+
+# override configuration values using command
+# line arguments (normally, these would be
+# passed in through the command line invocation
+# used to start the process)
+tensorflow::config("alternate",
+                   file = file,
+                   arguments = c("--foo=1"))
 }
