@@ -41,8 +41,13 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 "dim.tensorflow.python.framework.ops.Tensor" <- function(x) {
   if (py_is_null_xptr(x))
     NULL
-  else
-    x$get_shape()$as_list()
+  else {
+    shape <- x$get_shape()
+    if (!is.null(shape$ndims))
+      shape$as_list()
+    else
+      NULL
+  }
 }
 
 #' @export
