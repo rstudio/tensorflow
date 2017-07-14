@@ -1,13 +1,16 @@
 #' Parse Command Line Arguments
 #'
 #' Parse command line arguments of the form `--key=value` and
-#' `--key value`.
+#' `--key value`. The values are assumed to be valid `yaml` and
+#' will be converted using [yaml.load()].
 #'
-#' @param arguments A vector of command line arguments. Defaults
-#'   to the command line arguments received by \R.
+#' @param arguments A vector of command line arguments. When
+#'   `NULL` (the default), the command line arguments received
+#'   by the current \R process are used.
 #'
 #' @export
-parse_arguments <- function(arguments = commandArgs(trailingOnly = TRUE)) {
+parse_arguments <- function(arguments = NULL) {
+  arguments <- arguments %||% commandArgs(TRUE)
 
   # initialize some state
   values <- list()

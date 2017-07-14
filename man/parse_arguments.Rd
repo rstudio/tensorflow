@@ -4,13 +4,15 @@
 \alias{parse_arguments}
 \title{Parse Command Line Arguments}
 \usage{
-parse_arguments(arguments = commandArgs(trailingOnly = TRUE))
+parse_arguments(arguments = NULL)
 }
 \arguments{
-\item{arguments}{A vector of command line arguments. Defaults
-to the command line arguments received by \R.}
+\item{arguments}{A vector of command line arguments. When
+\code{NULL} (the default), the command line arguments received
+by the current \R process are used.}
 }
 \description{
 Parse command line arguments of the form \code{--key=value} and
-\code{--key value}.
+\code{--key value}. The values are assumed to be valid \code{yaml} and
+will be converted using \code{\link[=yaml.load]{yaml.load()}}.
 }

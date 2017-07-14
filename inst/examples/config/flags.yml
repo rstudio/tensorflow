@@ -1,0 +1,10 @@
+# The default configuration for a project.
+default:
+  number   : 42
+  string   : default
+  list     : [42, hello]
+
+# An alternate configuration. Note that the 'default' configuration
+# above will be inherited when activating this configuration.
+alternate:
+  string   : alternate
