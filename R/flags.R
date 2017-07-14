@@ -22,43 +22,39 @@ parse_flags <-
            file = "flags.yml",
            arguments = commandArgs(TRUE))
 {
+  flags <- list()
+
+  # warn if the user has supplied a 'file' argument but no such file exists
+  if (!missing(file) && !file.exists(file))
+    warning(sprintf("configuration file '%s' does not exist", file))
+
+  # read configuration file if it does exist
+  if (file.exists(file))
+    flags <- config::get(config = config, file = file)
+
   # backwards compatibility -- if the user is using the
   # TensorFlow FLAGS system for handling their
   # configuration, then explicitly read the configuration
-  # from that. we wrap in a try block just in case future
-  # versions of TensorFlow deprecate or remove this API
-  try(silent = TRUE, {
-
-    # read parser actions that have been registered
-    actions <- tf$app$flags$`_global_parser`$`_actions`
-
-    # by default, TensorFlow provides the '--help' action to
-    # the argument parser. if anything else is seen there,
-    # then assume the user has opted in to using TensorFlow's
-    # FLAGS
-    if (length(actions) > 1)
-      return(parse_tensorflow_flags())
-  })
-
-  # read configuration file
-  flags <- config::get(config = config, file = file)
-
-  # merge parsed command line arguments
-  flags <- config::merge(flags, parse_arguments(arguments))
+  # from that; otherwise run our own parser
+  actions <- tf$app$flags$`_global_parser`$`_actions`
+  if (length(actions) > 1) {
+    flags <- config::merge(flags, parse_tensorflow_flags(arguments))
+  } else {
+    flags <- config::merge(flags, parse_arguments(arguments))
+  }
 
   # return generated config
   flags
 }
 
-parse_tensorflow_flags <- function(arguments = commandArgs(TRUE)) {
-
-  # get R command line arguments
-  args <- commandArgs(trailingOnly = TRUE)
+parse_tensorflow_flags <- function(args = commandArgs(TRUE)) {
 
   # parse known arguments using the global parser
   parser <- tf$app$flags$`_global_parser`
-  result <- tryCatch(parser$parse_known_args(list(args)),
-                     error = function(e) NULL)
+  result <- tryCatch(
+    parser$parse_known_args(as.list(args)),
+    error = function(e) NULL
+  )
 
   # check for error (means user invoked --help)
   if (is.null(result)) {
@@ -68,13 +64,7 @@ parse_tensorflow_flags <- function(arguments = commandArgs(TRUE)) {
       quit(save = "no")
   }
 
-  # set flags from result
-  FLAGS <- tf$app$flags$FLAGS
-  result <- result[[1]]$`__dict__`
-  for (name in names(result))
-    FLAGS$`__setattr__`(name, result[[name]])
-
-  # return the FLAGS
-  invisible(FLAGS)
+  # return parsed flags as named R list
+  result[[1]]$`__dict__`
 }
 
