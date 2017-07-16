@@ -4,12 +4,10 @@
 \alias{run_dir}
 \title{Run Directory}
 \usage{
-run_dir(parent_dir = "runs", reuse = TRUE)
+run_dir(parent_dir = "runs")
 }
 \arguments{
 \item{parent_dir}{Parent to create run directory within.}
-
-\item{reuse}{\code{TRUE} to re-use the same run directory within an R session.}
 }
 \value{
 Timestamped run directory.

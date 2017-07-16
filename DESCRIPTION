@@ -42,5 +42,5 @@ Imports:
 Remotes:
     rstudio/reticulate
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.0.1.9000
 Suggests: testthat
+RoxygenNote: 6.0.1

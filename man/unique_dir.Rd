@@ -25,5 +25,5 @@ function will wait long enough to return a directory with a distinct
 timestamp.
 }
 \seealso{
-\link{run_dir}
+\code{\link[=run_dir]{run_dir()}}
 }

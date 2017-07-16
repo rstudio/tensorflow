@@ -14,7 +14,7 @@
 #'   function will wait long enough to return a directory with a distinct
 #'   timestamp.
 #'
-#' @seealso [run_dir]
+#' @seealso [run_dir()]
 #'
 #' @export
 unique_dir <- function(parent_dir, prefix = NULL, format = "%Y-%m-%dT%H-%M-%OS3Z") {
@@ -35,23 +35,16 @@ unique_dir <- function(parent_dir, prefix = NULL, format = "%Y-%m-%dT%H-%M-%OS3Z
 #' variable is availale it will be returned as the run directory.
 #'
 #' @param parent_dir Parent to create run directory within.
-#' @param reuse `TRUE` to re-use the same run directory within an R session.
 #'
 #' @return Timestamped run directory.
 #'
 #' @export
-run_dir <- function(parent_dir = "runs", reuse = TRUE) {
-  if (reuse && !is.null(.globals$run_dir))
-    .globals$run_dir
-  else {
-    dir <- Sys.getenv("RUNDIR", unset = NA)
-    if (is.na(dir))
-      dir <- unique_dir(parent_dir)
-    if (!utils::file_test("-d", dir))
-      dir.create(dir, recursive = TRUE)
-    if (reuse)
-      .globals$run_dir <- dir
-    dir
-  }
+run_dir <- function(parent_dir = "runs") {
+  dir <- Sys.getenv("RUNDIR", unset = NA)
+  if (is.na(dir))
+    dir <- unique_dir(parent_dir)
+  if (!utils::file_test("-d", dir))
+    dir.create(dir, recursive = TRUE)
+  dir
 }
 
