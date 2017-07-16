@@ -3,14 +3,11 @@
 \name{run_dir}
 \alias{run_dir}
 \alias{latest_run}
-\alias{list_runs}
 \title{Run Directory}
 \usage{
 run_dir(runs_dir = "runs")
 
 latest_run(runs_dir = "runs")
-
-list_runs(runs_dir = "runs", latest_n = NULL)
 }
 \arguments{
 \item{runs_dir}{Parent directory for runs}
@@ -18,10 +15,9 @@ list_runs(runs_dir = "runs", latest_n = NULL)
 \item{latest_n}{List only the latest n runs}
 }
 \value{
-\code{run_dir()} retruns a timestamped run directory. The
-\code{list_runs()} function returns a character vector with the
-paths of existing run directories (\code{latest_run()} is a convenience
-function for getting the path to the most recent run directory).
+\code{run_dir()} retruns a timestamped run directory. \code{latest_run()} is a
+convenience function for getting the path to the most recent run
+directory.
 }
 \description{
 Timestamped directory for storing training/logging data in a separate

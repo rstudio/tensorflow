@@ -10,10 +10,9 @@
 #' @param runs_dir Parent directory for runs
 #' @param latest_n List only the latest n runs
 #'
-#' @return `run_dir()` retruns a timestamped run directory. The
-#'  `list_runs()` function returns a character vector with the
-#'  paths of existing run directories (`latest_run()` is a convenience
-#'  function for getting the path to the most recent run directory).
+#' @return `run_dir()` retruns a timestamped run directory. `latest_run()` is a
+#'   convenience function for getting the path to the most recent run
+#'   directory.
 #'
 #' @export
 run_dir <- function(runs_dir = "runs") {
@@ -32,8 +31,6 @@ latest_run <- function(runs_dir = "runs") {
 }
 
 
-#' @rdname run_dir
-#' @export
 list_runs <- function(runs_dir = "runs", latest_n = NULL) {
   if (file.exists(runs_dir)) {
     runs <- list.files(runs_dir,
