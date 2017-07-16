@@ -25,6 +25,7 @@ NULL
 # globals
 .globals <- new.env(parent = emptyenv())
 .globals$tensorboards <- new.env(parent = emptyenv())
+.globals$run_dir <- NULL
 
 
 .onLoad <- function(libname, pkgname) {

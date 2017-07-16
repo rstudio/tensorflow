@@ -38,6 +38,10 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
   # ensure that tensorflow initializes (so we get tensorboard on our path)
   ensure_loaded()
 
+  # create log_dir if necessary
+  if (!utils::file_test("-d", log_dir))
+    dir.create(log_dir, recursive = TRUE)
+
   # verify we can find tensorboard
   if (!nzchar(Sys.which("tensorboard")))
     stop("Unable to find tensorboard on PATH")
@@ -163,33 +167,6 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
 }
 
 
-
-#' Create a timestamp based unique directory name
-#'
-#' Directory name is a timestamp compatible with filesystem naming restrictions
-#' (e.g. "2017-07-13T16-18-51.569Z").
-#'
-#' @param parent_dir Parent directory
-#' @param prefix Character value to prepend to directory name
-#'
-#' @return Unique directory name
-#'
-#' @note The name of the directory is based on the current time (in milliseconds
-#'   resolution). If the generated directory name already exists then the
-#'   function will wait long enough to return a directory with a distinct
-#'   timestamp.
-#'
-#' @export
-unique_dir <- function(parent_dir, prefix = NULL, format = "%Y-%m-%dT%H-%M-%OS3Z") {
-  while(TRUE) {
-    dir <- file.path(parent_dir,
-                     paste0(prefix, strftime(Sys.time(), format = format, tz = "gmt")))
-    if (!file.exists(dir))
-      return(dir)
-    else
-      Sys.sleep(0.1)
-  }
-}
 
 
 
