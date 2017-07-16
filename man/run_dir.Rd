@@ -3,16 +3,19 @@
 \name{run_dir}
 \alias{run_dir}
 \alias{latest_run}
+\alias{clean_runs}
 \title{Run Directory}
 \usage{
 run_dir(runs_dir = "runs")
 
 latest_run(runs_dir = "runs")
+
+clean_runs(runs_dir = "runs", keep = NULL)
 }
 \arguments{
 \item{runs_dir}{Parent directory for runs}
 
-\item{latest_n}{List only the latest n runs}
+\item{keep}{Number of most recent runs to keep when cleaning runs.}
 }
 \value{
 \code{run_dir()} retruns a timestamped run directory. \code{latest_run()} is a

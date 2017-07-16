@@ -8,7 +8,7 @@
 #' variable is availale it will be returned as the run directory.
 #'
 #' @param runs_dir Parent directory for runs
-#' @param latest_n List only the latest n runs
+#' @param keep Number of most recent runs to keep when cleaning runs.
 #'
 #' @return `run_dir()` retruns a timestamped run directory. `latest_run()` is a
 #'   convenience function for getting the path to the most recent run
@@ -28,6 +28,26 @@ run_dir <- function(runs_dir = "runs") {
 #' @export
 latest_run <- function(runs_dir = "runs") {
   list_runs(runs_dir, latest_n = 1)
+}
+
+#' @rdname run_dir
+#' @export
+clean_runs <- function(runs_dir = "runs", keep = NULL) {
+  remove_runs <- list_runs(runs_dir)
+  if (!is.null(keep)) {
+    if (!is.numeric(keep))
+      stop("keep must be a numeric value")
+    if (keep >= length(remove_runs))
+      invisible(0)
+    else
+      unlink(remove_runs[keep+1:length(remove_runs)], recursive = TRUE)
+  } else {
+    unlink(remove_runs, recursive = TRUE)
+  }
+
+
+
+
 }
 
 
