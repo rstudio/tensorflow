@@ -1,4 +1,4 @@
-
+"%||%" <- function(x, y) if (is.null(x)) y else x
 
 is_windows <- function() {
   identical(.Platform$OS.type, "windows")
@@ -29,5 +29,4 @@ is_ubuntu <- function() {
 ensure_loaded <- function() {
   invisible(tf$`__version__`)
 }
-
 
