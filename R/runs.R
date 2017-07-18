@@ -20,7 +20,8 @@ run_dir <- function(runs_dir = "runs") {
   if (is.na(dir))
     dir <- unique_dir(runs_dir, format = "%Y-%m-%dT%H-%M-%SZ")
   if (!utils::file_test("-d", dir))
-    dir.create(dir, recursive = TRUE)
+    if (!dir.create(dir, recursive = TRUE))
+      stop("Unable to create run directory")
   dir
 }
 
