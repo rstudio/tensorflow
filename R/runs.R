@@ -54,7 +54,7 @@ use_run_dir <- function(run_dir = NULL, runs_dir = "runs", quiet = FALSE) {
 
   # show message
   if (!quiet)
-    message("Using run directory at: ", dir)
+    message("Using run directory at: ", run_dir)
 
   # return invisibly
   invisible(run_dir)
@@ -127,6 +127,11 @@ write_run_data <- function(name, write_fn) {
     write_fn(run_dir)
   else
     .globals$run_dir$pending_writes[[name]] <- write_fn
+}
+
+
+have_run_dir <- function() {
+  !is.null(run_dir())
 }
 
 
