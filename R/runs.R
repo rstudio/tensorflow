@@ -10,8 +10,8 @@
 #' various artifacts of training (e.g. model checkpoints, tensorflow logs,
 #' etc.).
 #'
-#' The `run_dir()` function returns the run directory for the current
-#' R session (`NULL` if none yet established).
+#' The `run_dir()` function returns the current run directory (`NULL`
+#' if none yet established).
 #'
 #' If you utilize the automatic creation of run directories within the
 #' "runs" directory then you can use the `latest_run()` function
@@ -33,18 +33,6 @@
 #' @export
 use_run_dir <- function(run_dir = NULL, runs_dir = "runs", quiet = FALSE) {
 
-  # helper to show run_dir message
-  run_dir_message <- function(dir) {
-    if (!quiet)
-      message("Using run directory at: ", dir)
-  }
-
-  # if run_dir is NULL then re-use any existing run_dir we have
-  if (is.null(run_dir) && !is.null(.globals$run_dir$path)) {
-    run_dir_message(.globals$run_dir$path)
-    return(invisible(.globals$run_dir$path))
-  }
-
   # generate unique directory name if required
   if (is.null(run_dir))
     run_dir <- unique_dir(runs_dir, format = "%Y-%m-%dT%H-%M-%SZ")
@@ -62,7 +50,8 @@ use_run_dir <- function(run_dir = NULL, runs_dir = "runs", quiet = FALSE) {
     .globals$run_dir$pending_writes[[name]](run_dir)
 
   # show message
-  run_dir_message(run_dir)
+  if (!quiet)
+    message("Using run directory at: ", dir)
 
   # return invisibly
   invisible(run_dir)
