@@ -54,7 +54,7 @@ use_run_dir <- function(run_dir = NULL, runs_dir = "runs", quiet = FALSE) {
 
   # show message
   if (!quiet)
-    message("Using run directory at: ", run_dir)
+    message(paste("Using run directory at:", run_dir))
 
   # return invisibly
   invisible(run_dir)
