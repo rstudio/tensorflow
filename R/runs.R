@@ -45,13 +45,14 @@ use_run_dir <- function(run_dir = NULL, runs_dir = "runs", quiet = FALSE) {
     return(invisible(.globals$run_dir$path))
   }
 
-  # auto-create if necessary
-  if (is.null(run_dir)) {
+  # generate unique directory name if required
+  if (is.null(run_dir))
     run_dir <- unique_dir(runs_dir, format = "%Y-%m-%dT%H-%M-%SZ")
-    if (!utils::file_test("-d", run_dir))
-      if (!dir.create(run_dir, recursive = TRUE))
-        stop("Unable to create run directory at ", run_dir)
-  }
+
+  # create the directory if necessary
+  if (!utils::file_test("-d", run_dir))
+    if (!dir.create(run_dir, recursive = TRUE))
+      stop("Unable to create run directory at ", run_dir)
 
   # this is new definition for the run_dir, save it
   .globals$run_dir$path <- run_dir
