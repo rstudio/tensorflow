@@ -1,35 +1,102 @@
 
 
-
 #' Run Directory
 #'
 #' Timestamped directory for storing training/logging data in a separate
-#' location for each training run. Note that if the `RUNDIR` environment
-#' variable is availale it will be returned as the run directory.
+#' location for each training run.
 #'
+#' The `use_run_dir()` function establishes a unique run directory (by
+#' default in a sub-directory named "runs") and stores it's value for saving
+#' various artifacts of training (e.g. model checkpoints, tensorflow logs,
+#' etc.).
+#'
+#' The `run_dir()` function returns the run directory for the current
+#' R session (`NULL` if none yet established).
+#'
+#' If you utilize the automatic creation of run directories within the
+#' "runs" directory then you can use the `latest_run()` function
+#' to get the path to the most recently created run directory and the
+#' `clean_runs()` function to remove previously created run directories.
+#'
+#' @note You can also establish a run directory by defining the
+#'  `TENSORFLOW_RUN_DIR` environment variable (this is technically
+#'  equivalent to calling `use_run_dir()` within an R script).
+#'
+#' @param run_dir Path to run directory (`NULL` to automatically create
+#'   a timestamped directory within the `runs_dir`)
 #' @param runs_dir Parent directory for runs
+#' @param quiet `FALSE` to prevent printing the path to the run dir
 #' @param keep Number of most recent runs to keep when cleaning runs.
 #'
-#' @return `run_dir()` retruns a timestamped run directory. `latest_run()` is a
-#'   convenience function for getting the path to the most recent run
-#'   directory.
+#' @name run_dir
 #'
 #' @export
-run_dir <- function(runs_dir = "runs") {
-  dir <- Sys.getenv("RUNDIR", unset = NA)
-  if (is.na(dir))
-    dir <- unique_dir(runs_dir, format = "%Y-%m-%dT%H-%M-%SZ")
-  if (!utils::file_test("-d", dir))
-    if (!dir.create(dir, recursive = TRUE))
-      stop("Unable to create run directory")
-  dir
+use_run_dir <- function(run_dir = NULL, runs_dir = "runs", quiet = FALSE) {
+
+  # helper to show run_dir message
+  run_dir_message <- function(dir) {
+    if (!quiet)
+      message("Using run directory at: ", dir)
+  }
+
+  # if run_dir is NULL then re-use any existing run_dir we have
+  if (is.null(run_dir) && !is.null(.globals$run_dir$path)) {
+    run_dir_message(.globals$run_dir$path)
+    return(invisible(.globals$run_dir$path))
+  }
+
+  # auto-create if necessary
+  if (is.null(run_dir)) {
+    run_dir <- unique_dir(runs_dir, format = "%Y-%m-%dT%H-%M-%SZ")
+    if (!utils::file_test("-d", run_dir))
+      if (!dir.create(run_dir, recursive = TRUE))
+        stop("Unable to create run directory at ", run_dir)
+  }
+
+  # this is new definition for the run_dir, save it
+  .globals$run_dir$path <- run_dir
+
+  # execute any pending writes
+  for (name in ls(.globals$run_dir$pending_writes))
+    .globals$run_dir$pending_writes[[name]](run_dir)
+
+  # show message
+  run_dir_message(run_dir)
+
+  # return invisibly
+  invisible(run_dir)
 }
+
+#' @rdname run_dir
+#' @export
+run_dir <- function() {
+
+  # do we already have a run_dir?
+  if (!is.null(.globals$run_dir$path)) {
+
+    .globals$run_dir$path
+
+  # is there an environment variable that could establish a run_dir?
+  } else if (!is.na(Sys.getenv("TENSORFLOW_RUN_DIR", unset = NA))) {
+
+    # set the environment variable as our current run directory
+    use_run_dir(Sys.getenv("TENSORFLOW_RUN_DIR"))
+
+  # no run_dir currently established
+  } else {
+
+    NULL
+
+  }
+}
+
 
 #' @rdname run_dir
 #' @export
 latest_run <- function(runs_dir = "runs") {
   list_runs(runs_dir, latest_n = 1)
 }
+
 
 #' @rdname run_dir
 #' @export
@@ -45,10 +112,19 @@ clean_runs <- function(runs_dir = "runs", keep = NULL) {
   } else {
     unlink(remove_runs, recursive = TRUE)
   }
+}
 
 
-
-
+# helper function to write run data. writes to any active run_dir
+# we have. if no run_dir is active then queue it as a pending write
+# in case a run_directory becomes active. write_fn should take a
+# single run_dir argument
+write_run_data <- function(name, write_fn) {
+  run_dir <- run_dir()
+  if (!is.null(run_dir))
+    write_fn(run_dir)
+  else
+    .globals$run_dir$pending_writes[[name]] <- write_fn
 }
 
 
@@ -85,6 +161,7 @@ unique_dir <- function(parent_dir, prefix = NULL, format = "%Y-%m-%dT%H-%M-%SZ")
       Sys.sleep(0.1)
   }
 }
+
 
 
 

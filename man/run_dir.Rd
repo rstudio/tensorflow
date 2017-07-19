@@ -2,28 +2,50 @@
 % Please edit documentation in R/runs.R
 \name{run_dir}
 \alias{run_dir}
+\alias{use_run_dir}
+\alias{run_dir}
 \alias{latest_run}
 \alias{clean_runs}
 \title{Run Directory}
 \usage{
-run_dir(runs_dir = "runs")
+use_run_dir(run_dir = NULL, runs_dir = "runs", quiet = FALSE)
+
+run_dir()
 
 latest_run(runs_dir = "runs")
 
 clean_runs(runs_dir = "runs", keep = NULL)
 }
 \arguments{
+\item{run_dir}{Path to run directory (\code{NULL} to automatically create
+a timestamped directory within the \code{runs_dir})}
+
 \item{runs_dir}{Parent directory for runs}
+
+\item{quiet}{\code{FALSE} to prevent printing the path to the run dir}
 
 \item{keep}{Number of most recent runs to keep when cleaning runs.}
 }
-\value{
-\code{run_dir()} retruns a timestamped run directory. \code{latest_run()} is a
-convenience function for getting the path to the most recent run
-directory.
-}
 \description{
 Timestamped directory for storing training/logging data in a separate
-location for each training run. Note that if the \code{RUNDIR} environment
-variable is availale it will be returned as the run directory.
+location for each training run.
+}
+\details{
+The \code{use_run_dir()} function establishes a unique run directory (by
+default in a sub-directory named "runs") and stores it's value for saving
+various artifacts of training (e.g. model checkpoints, tensorflow logs,
+etc.).
+
+The \code{run_dir()} function returns the run directory for the current
+R session (\code{NULL} if none yet established).
+
+If you utilize the automatic creation of run directories within the
+"runs" directory then you can use the \code{latest_run()} function
+to get the path to the most recently created run directory and the
+\code{clean_runs()} function to remove previously created run directories.
+}
+\note{
+You can also establish a run directory by defining the
+\code{TENSORFLOW_RUN_DIR} environment variable (this is technically
+equivalent to calling \code{use_run_dir()} within an R script).
 }
