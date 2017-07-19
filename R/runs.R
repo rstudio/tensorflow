@@ -33,9 +33,12 @@
 #' @export
 use_run_dir <- function(run_dir = NULL, runs_dir = "runs", quiet = FALSE) {
 
-  # generate unique directory name if required
-  if (is.null(run_dir))
-    run_dir <- unique_dir(runs_dir, format = "%Y-%m-%dT%H-%M-%SZ")
+  # if no run_dir is specified by the caller then figure out the right value
+  if (is.null(run_dir)) {
+    run_dir <- environment_run_dir() # check e.g. TENSORFLOW_RUN_DIR
+    if (is.null(run_dir))
+      run_dir <- unique_dir(runs_dir, format = "%Y-%m-%dT%H-%M-%SZ")
+  }
 
   # create the directory if necessary
   if (!utils::file_test("-d", run_dir))
@@ -67,10 +70,10 @@ run_dir <- function() {
     .globals$run_dir$path
 
   # is there an environment variable that could establish a run_dir?
-  } else if (!is.na(Sys.getenv("TENSORFLOW_RUN_DIR", unset = NA))) {
+  } else if (!is.null(environment_run_dir())) {
 
     # set the environment variable as our current run directory
-    use_run_dir(Sys.getenv("TENSORFLOW_RUN_DIR"))
+    use_run_dir(environment_run_dir())
 
   # no run_dir currently established
   } else {
@@ -104,6 +107,15 @@ clean_runs <- function(runs_dir = "runs", keep = NULL) {
   }
 }
 
+
+# check for a run_dir provided by the environment
+environment_run_dir <- function() {
+  run_dir <- Sys.getenv("TENSORFLOW_RUN_DIR", unset = NA)
+  if (!is.na(run_dir))
+    run_dir
+  else
+    NULL
+}
 
 # helper function to write run data. writes to any active run_dir
 # we have. if no run_dir is active then queue it as a pending write
