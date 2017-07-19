@@ -3,18 +3,23 @@
 #' TensorBoard is a tool inspecting and understanding your TensorFlow runs and
 #' graphs.
 #'
-#' @param log_dir Root directory for training logs.
-#' @param action Specify whether to start or stop TensorBoard for the
-#'   given `log_dir` (TensorBoard will be stopped automatically when
-#'   the R session from which it is launched is terminated).
+#' @param log_dir Directories to scan for training logs. If this is a named
+#'   character vector then the specified names will be used as aliases within
+#'   TensorBoard. The default is `NULL`, which will result in the active
+#'   [run_dir()] (if available) and otherwise will use the current working
+#'   directory.
+#' @param action Specify whether to start or stop TensorBoard for the given
+#'   `log_dir` (TensorBoard will be stopped automatically when the R session
+#'   from which it is launched is terminated).
 #' @param host Host for serving TensorBoard
 #' @param port Port for serving TensorBoard. If "auto" is specified (the
 #'   default) then an unused port will be chosen automatically.
-#' @param launch_browser `TRUE` to open a web browser for TensorBoard
-#'   after launching.
+#' @param launch_browser `TRUE` to open a web browser for TensorBoard after
+#'   launching.
 #' @param reload_interval How often the backend should load more data.
-#' @param purge_orphaned_data Whether to purge data that may have been orphaned due to TensorBoard restarts.
-#' Disabling purge_orphaned_data can be used to debug data disappearance.
+#' @param purge_orphaned_data Whether to purge data that may have been orphaned
+#'   due to TensorBoard restarts. Disabling purge_orphaned_data can be used to
+#'   debug data disappearance.
 #'
 #' @return URL for browsing TensorBoard (invisibly).
 #'
@@ -23,12 +28,12 @@
 #'   tfevents data. Every time it encounters such a subdirectory, it loads it as
 #'   a new run, and the frontend will organize the data accordingly.
 #'
-#'   The TensorBoard process will be automatically destroyed when the R
-#'   session in which it is launched exits. You can pass `action = "stop"`
-#'   to manually terminate a TensorBoard process for a given `log_dir`.
+#'   The TensorBoard process will be automatically destroyed when the R session
+#'   in which it is launched exits. You can pass `action = "stop"` to manually
+#'   terminate TensorBoard.
 #'
 #' @export
-tensorboard <- function(log_dir = ".", action = c("start", "stop"),
+tensorboard <- function(log_dir = NULL, action = c("start", "stop"),
                         host = "127.0.0.1", port = "auto",
                         launch_browser = interactive(),
                         reload_interval = 5,
@@ -38,31 +43,35 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
   # ensure that tensorflow initializes (so we get tensorboard on our path)
   ensure_loaded()
 
-  # create log_dir if necessary
-  if (!utils::file_test("-d", log_dir))
-    dir.create(log_dir, recursive = TRUE)
-
   # verify we can find tensorboard
   if (!nzchar(Sys.which("tensorboard")))
     stop("Unable to find tensorboard on PATH")
 
-  # expand log dir
-  log_dir <- normalizePath(log_dir, mustWork = FALSE)
-  if (!utils::file_test("-d", log_dir))
-    stop("Specified log_dir not found at ", log_dir)
+  # determine the default log_dir if necessary
+  if (is.null(log_dir)) {
+    if (have_run_dir())
+      log_dir <- run_dir()
+    else
+      log_dir <- "."
+  }
 
-  # if we already have a tensorboard for this directory then kill it
-  # and re-use it's port
-  if (exists(log_dir, envir = .globals$tensorboards)) {
-    tb <- get(log_dir, envir = .globals$tensorboards)
-    remove(list = log_dir, envir = .globals$tensorboards)
-    p <- tb$process
+  # create log_dir(s) if necessary
+  log_dir <- lapply(log_dir, function(dir) {
+    if (!utils::file_test("-d", dir))
+      dir.create(dir, recursive = TRUE)
+    dir
+  })
+
+  # if we already have a tensorboard for this session then kill it and re-use it's port
+  if (!is.null(.globals$tensorboard)) {
+    p <- .globals$tensorboard$process
     if (p$is_alive()) {
       p$kill()
       p$wait(1000L)
     }
     if (identical(port, "auto"))
-      port <- tb$port
+      port <- .globals$tensorboard$port
+    .globals$tensorboard <- NULL
   }
 
   # exit if this was action = "stop"
@@ -101,8 +110,8 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
     close(p$get_output_connection())
     close(p$get_error_connection())
 
-    # add to global list of tensorboards
-    .globals$tensorboards[[log_dir]] <- list(process = p, port = port)
+    # save as global tensorboard
+    .globals$tensorboard <- list(process = p, port = port)
 
     # browse the url if requested
     url <- paste0("http://", host, ":", port)
@@ -119,6 +128,12 @@ tensorboard <- function(log_dir = ".", action = c("start", "stop"),
 }
 
 launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interval, purge_orphaned_data) {
+
+  # build log_dir argument
+  names <- names(log_dir)
+  if (!is.null(names))
+    log_dir <- paste0(names, ":", log_dir)
+  log_dir <- paste(log_dir, collapse = ",")
 
   # start the process
   p <- processx::process$new("tensorboard",

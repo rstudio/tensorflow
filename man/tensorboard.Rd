@@ -4,29 +4,34 @@
 \alias{tensorboard}
 \title{TensorBoard Visualization Tool}
 \usage{
-tensorboard(log_dir = ".", action = c("start", "stop"),
+tensorboard(log_dir = NULL, action = c("start", "stop"),
   host = "127.0.0.1", port = "auto", launch_browser = interactive(),
   reload_interval = 5, purge_orphaned_data = TRUE)
 }
 \arguments{
-\item{log_dir}{Root directory for training logs.}
+\item{log_dir}{Directories to scan for training logs. If this is a named
+character vector then the specified names will be used as aliases within
+TensorBoard. The default is \code{NULL}, which will result in the active
+\code{\link[=run_dir]{run_dir()}} (if available) and otherwise will use the current working
+directory.}
 
-\item{action}{Specify whether to start or stop TensorBoard for the
-given \code{log_dir} (TensorBoard will be stopped automatically when
-the R session from which it is launched is terminated).}
+\item{action}{Specify whether to start or stop TensorBoard for the given
+\code{log_dir} (TensorBoard will be stopped automatically when the R session
+from which it is launched is terminated).}
 
 \item{host}{Host for serving TensorBoard}
 
 \item{port}{Port for serving TensorBoard. If "auto" is specified (the
 default) then an unused port will be chosen automatically.}
 
-\item{launch_browser}{\code{TRUE} to open a web browser for TensorBoard
-after launching.}
+\item{launch_browser}{\code{TRUE} to open a web browser for TensorBoard after
+launching.}
 
 \item{reload_interval}{How often the backend should load more data.}
 
-\item{purge_orphaned_data}{Whether to purge data that may have been orphaned due to TensorBoard restarts.
-Disabling purge_orphaned_data can be used to debug data disappearance.}
+\item{purge_orphaned_data}{Whether to purge data that may have been orphaned
+due to TensorBoard restarts. Disabling purge_orphaned_data can be used to
+debug data disappearance.}
 }
 \value{
 URL for browsing TensorBoard (invisibly).
@@ -41,7 +46,7 @@ the directory tree rooted at logdir looking for subdirectories that contain
 tfevents data. Every time it encounters such a subdirectory, it loads it as
 a new run, and the frontend will organize the data accordingly.
 
-The TensorBoard process will be automatically destroyed when the R
-session in which it is launched exits. You can pass \code{action = "stop"}
-to manually terminate a TensorBoard process for a given \code{log_dir}.
+The TensorBoard process will be automatically destroyed when the R session
+in which it is launched exits. You can pass \code{action = "stop"} to manually
+terminate TensorBoard.
 }

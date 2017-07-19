@@ -36,8 +36,8 @@ default in a sub-directory named "runs") and stores it's value for saving
 various artifacts of training (e.g. model checkpoints, tensorflow logs,
 etc.).
 
-The \code{run_dir()} function returns the run directory for the current
-R session (\code{NULL} if none yet established).
+The \code{run_dir()} function returns the current run directory (\code{NULL}
+if none yet established).
 
 If you utilize the automatic creation of run directories within the
 "runs" directory then you can use the \code{latest_run()} function
