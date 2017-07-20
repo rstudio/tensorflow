@@ -41,7 +41,7 @@ Imports:
     utils,
     yaml
 Remotes:
-    rstudio/reticulate
+    rstudio/reticulate,
     rstudio/tfruns
 Roxygen: list(markdown = TRUE)
 Suggests: testthat
