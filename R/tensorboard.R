@@ -49,18 +49,18 @@ tensorboard <- function(log_dir = NULL, action = c("start", "stop"),
 
   # determine the default log_dir if necessary
   if (is.null(log_dir)) {
-    if (have_run_dir())
+    if (!is.null(run_dir()))
       log_dir <- run_dir()
     else
       log_dir <- "."
   }
 
   # create log_dir(s) if necessary
-  log_dir <- lapply(log_dir, function(dir) {
+  log_dir <- as.character(lapply(log_dir, function(dir) {
     if (!utils::file_test("-d", dir))
       dir.create(dir, recursive = TRUE)
     dir
-  })
+  }))
 
   # if we already have a tensorboard for this session then kill it and re-use it's port
   if (!is.null(.globals$tensorboard)) {
