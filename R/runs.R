@@ -5,28 +5,28 @@
 #' Timestamped directory for storing training/logging data in a separate
 #' location for each training run.
 #'
-#' The `use_run_dir()` function establishes a unique run directory (by
-#' default in a sub-directory named "runs") and stores it's value for saving
-#' various artifacts of training (e.g. model checkpoints, tensorflow logs,
-#' etc.).
+#' The `use_run_dir()` function establishes a unique run directory (by default
+#' in a sub-directory named "runs") and stores it's value for saving various
+#' artifacts of training (e.g. model checkpoints, tensorflow logs, etc.).
 #'
-#' The `run_dir()` function returns the current run directory (`NULL`
-#' if none yet established).
+#' The `run_dir()` function returns the current run directory (`NULL` if none
+#' yet established).
 #'
-#' If you utilize the automatic creation of run directories within the
-#' "runs" directory then you can use the `latest_run()` function
-#' to get the path to the most recently created run directory and the
+#' If you utilize the automatic creation of run directories within the "runs"
+#' directory then you can use the `latest_run()` and `latest_runs()` functions
+#' to get the path(s) to the most recently created run directories and the
 #' `clean_runs()` function to remove previously created run directories.
 #'
 #' @note You can also establish a run directory by defining the
-#'  `TENSORFLOW_RUN_DIR` environment variable (this is technically
-#'  equivalent to calling `use_run_dir()` within an R script).
+#'   `TENSORFLOW_RUN_DIR` environment variable (this is technically equivalent
+#'   to calling `use_run_dir()` within an R script).
 #'
-#' @param run_dir Path to run directory (`NULL` to automatically create
-#'   a timestamped directory within the `runs_dir`)
+#' @param run_dir Path to run directory (`NULL` to automatically create a
+#'   timestamped directory within the `runs_dir`)
 #' @param runs_dir Parent directory for runs
 #' @param quiet `FALSE` to prevent printing the path to the run dir
 #' @param keep Number of most recent runs to keep when cleaning runs.
+#' @param n Number of recent runs
 #'
 #' @name run_dir
 #'
@@ -89,6 +89,14 @@ run_dir <- function() {
 latest_run <- function(runs_dir = "runs") {
   list_runs(runs_dir, latest_n = 1)
 }
+
+
+#' @rdname run_dir
+#' @export
+latest_runs <- function(runs_dir = "runs", n) {
+  list_runs(runs_dir, latest_n = n)
+}
+
 
 
 #' @rdname run_dir
