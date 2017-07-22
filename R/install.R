@@ -406,3 +406,96 @@ tf_extra_pkgs <- function(scipy = TRUE) {
 }
 
 
+#' Install additional Python packages alongside TensorFlow
+#'
+#' This function requires that TensorFlow is already installed
+#'
+#' @param packages Python packages to install
+#' @param conda Path to conda executable (or "auto" to find conda using the PATH
+#'   and other conventional install locations). Only used when TensorFlow is
+#'   installed within a conda environment.
+#'
+#' @export
+install_tensorflow_extras <- function(packages, conda = "auto") {
+
+  # see if we have tensorflow, if we don't then raise an error
+  if (!py_module_available("tensorflow")) {
+    stop("You must install TensorFlow using the install_tensorflow() function ",
+         "and then restart R before calling install_tensorflow_extras()",
+         call. = FALSE)
+  }
+
+  # force tensorflow to load
+  ensure_loaded()
+
+  # determine which type of tensorflow installation we have
+  config <- py_config()
+  if (is_windows()) {
+    if (config$anaconda)
+      type <- "conda"
+    else
+      type <- "system"
+  } else {
+    if (nzchar(config$virtualenv_activate))
+      type <- "virtualenv"
+    else
+      type <- "conda"
+  }
+
+  # perform the installation
+  if (identical(type, "conda"))
+    conda_install("r-tensorflow", packages, pip = TRUE, conda = conda)
+  else if (identical(type, "virtualenv"))
+    virtualenv_install("r-tensorflow", packages)
+  else if (identical(type, "system"))
+    windows_system_install(config$python, packages)
+}
+
+
+
+virtualenv_install <- function(envname, packages) {
+
+  # TODO: refactor to share code between this and install_tensorflow_virtualenv
+  # (we added this code late in the v1.0 cycle so didn't want to do the
+  # refactor then)
+
+  # determine path to virtualenv
+  virtualenv_root <- Sys.getenv("WORKON_HOME", unset = "~/.virtualenvs")
+  virtualenv_path <- file.path(virtualenv_root, envname)
+
+  # helper to construct paths to virtualenv binaries
+  virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
+
+  # determine pip version to use
+  python <- virtualenv_bin("python")
+  is_python3 <- python_version(python) >= "3.0"
+  pip_version <- ifelse(is_python3, "pip3", "pip")
+
+  # build and execute install command
+  cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
+                 ifelse(is_osx(), "", "/bin/bash -c \""),
+                 shQuote(path.expand(virtualenv_bin("activate"))),
+                 shQuote(path.expand(virtualenv_bin(pip_version))),
+                 paste(shQuote(packages), collapse = " "),
+                 ifelse(is_osx(), "", "\""))
+  result <- system(cmd)
+  if (result != 0L)
+    stop("Error ", result, " occurred installing packages", call. = FALSE)
+}
+
+
+windows_system_install <- function(python, packages) {
+
+  # TODO: refactor to share code with install_tensorflow_windows_system
+
+  # determine pip location from python binary location
+  pip <- file.path(dirname(python), "Scripts", "pip.exe")
+
+  # execute the installation
+  result <- system2(pip, c("install", "--upgrade --ignore-installed",
+                           paste(shQuote(packages), collapse = " ")))
+  if (result != 0L)
+    stop("Error ", result, " occurred installing tensorflow package", call. = FALSE)
+}
+
+
