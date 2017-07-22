@@ -442,6 +442,8 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
       type <- "conda"
   }
 
+  # NOTE: conda_install is not working correctly in initial tests
+
   # perform the installation
   if (identical(type, "conda"))
     conda_install("r-tensorflow", packages, pip = TRUE, conda = conda)
