@@ -9,14 +9,16 @@
 #'
 #' @examples
 #' \dontrun{
+#' library(tensorflow)
+#'
 #' hello <- tf$constant('Hello, TensorFlow!')
-#' b <- tf$Variable(tf$zeros(shape(1L)))
+#' zeros <- tf$Variable(tf$zeros(shape(1L)))
 #'
 #' sess <- tf$Session()
 #' sess$run(tf$global_variables_initializer())
 #'
-#' learn <- tf$contrib$learn
-#' slim <- tf$contrib$slim
+#' sess$run(hello)
+#' sess$run(zeros)
 #' }
 #' @export
 tf <- NULL
