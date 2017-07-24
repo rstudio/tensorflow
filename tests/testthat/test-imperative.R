@@ -2,6 +2,8 @@ context("Imperative")
 
 test_that("Imperative style TensorFlow works", {
 
+  skip_if_no_tensorflow()
+
   list_a <- list(list(7), list(6))
   list_b <- list(list(6, 7))
   list_c <- list(list(28), list(24))
