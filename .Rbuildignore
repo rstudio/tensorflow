@@ -2,7 +2,7 @@
 ^\.Rproj\.user$
 ^docs$
 ^pkgdown$
-^examples/
+^examples$
 ^inst/examples/mnist/MNIST-data$
 ^tests/testthat/MNIST-data$
 README.md
