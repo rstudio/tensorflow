@@ -28,6 +28,7 @@ a \code{flags.yml} configuration file, alongside other arguments
 set through the command line.
 }
 \examples{
+\dontrun{
 # examine an example configuration file provided by tensorflow
 file <- system.file("examples/config/flags.yml", package = "tensorflow")
 cat(readLines(file), sep = "\\n")
@@ -52,4 +53,6 @@ FLAGS <- tensorflow::parse_flags(
   arguments = c("--foo=1")
 )
 str(FLAGS)
+
+}
 }
