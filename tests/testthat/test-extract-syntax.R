@@ -251,6 +251,9 @@ test_that("undefined extensions extract", {
 })
 
 test_that("dim(), length(), nrow(), and ncol() work on tensors", {
+
+  skip_if_no_tensorflow()
+
   a_matrix <- matrix(rnorm(100), ncol = 2)
   a_tensor <- tf$constant(a_matrix)
   expect_equal(dim(a_matrix), dim(a_tensor))
