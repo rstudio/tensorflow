@@ -406,3 +406,115 @@ tf_extra_pkgs <- function(scipy = TRUE) {
 }
 
 
+#' Install additional Python packages alongside TensorFlow
+#'
+#' @param packages Python packages to install
+#' @param conda Path to conda executable (or "auto" to find conda using the PATH
+#'   and other conventional install locations). Only used when TensorFlow is
+#'   installed within a conda environment.
+#'
+#' @details
+#'
+#' This function requires a version of TensorFlow previously installed
+#' via the [install_tensorflow()] function.
+#'
+#' For virtualenv and conda installations, the specified packages will be
+#' installed into the "r-tensorflow" environment. For system installations
+#' on Windows the specified packages will be installed into the system
+#' package library.
+#'
+#' @export
+install_tensorflow_extras <- function(packages, conda = "auto") {
+
+  # ensure we call this in a fresh session on windows (avoid DLL
+  # in use errors)
+  if (is_windows() && py_available()) {
+    stop("You should call install_tensorflow_extras() only in a fresh ",
+         "R session that has not yet initialized TensorFlow (this is ",
+         "to avoid DLL in use errors during installation)")
+  }
+
+  # determine which type of tensorflow installation we have
+  config <- py_discover_config("tensorflow")
+  if (is_windows()) {
+    if (config$anaconda)
+      type <- "conda"
+    else
+      type <- "system"
+  } else {
+    if (nzchar(config$virtualenv_activate))
+      type <- "virtualenv"
+    else
+      type <- "conda"
+  }
+
+  # if this is a virtualenv or conda based installation then confirm we are within
+  # an "r-tensorflow" environment (i.e. installed via install_tensorflow())
+  if (type %in% c("virtualenv", "conda")) {
+    python_binary <- ifelse(is_windows(), "r-tensorflow\\python.exe", "r-tensorflow/bin/python")
+    if (!endsWith(config$python, python_binary)) {
+      stop("You must be using a version of TensorFlow installed with the ",
+           "install_tensorflow() function in order\n",
+           "to install packages with the install_tensorflow_extras() function. ",
+           "The version of TensorFlow\ncurrently in use is installed at ",
+           aliased(tf_config()$location))
+    }
+  }
+
+  # perform the installation
+  if (identical(type, "conda"))
+    conda_install("r-tensorflow", packages, pip = TRUE, conda = conda)
+  else if (identical(type, "virtualenv"))
+    virtualenv_install("r-tensorflow", packages)
+  else if (identical(type, "system"))
+    windows_system_install(config$python, packages)
+}
+
+
+
+virtualenv_install <- function(envname, packages) {
+
+  # TODO: refactor to share code between this and install_tensorflow_virtualenv
+  # (we added this code late in the v1.0 cycle so didn't want to do the
+  # refactor then)
+
+  # determine path to virtualenv
+  virtualenv_root <- Sys.getenv("WORKON_HOME", unset = "~/.virtualenvs")
+  virtualenv_path <- file.path(virtualenv_root, envname)
+
+  # helper to construct paths to virtualenv binaries
+  virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
+
+  # determine pip version to use
+  python <- virtualenv_bin("python")
+  is_python3 <- python_version(python) >= "3.0"
+  pip_version <- ifelse(is_python3, "pip3", "pip")
+
+  # build and execute install command
+  cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
+                 ifelse(is_osx(), "", "/bin/bash -c \""),
+                 shQuote(path.expand(virtualenv_bin("activate"))),
+                 shQuote(path.expand(virtualenv_bin(pip_version))),
+                 paste(shQuote(packages), collapse = " "),
+                 ifelse(is_osx(), "", "\""))
+  result <- system(cmd)
+  if (result != 0L)
+    stop("Error ", result, " occurred installing packages", call. = FALSE)
+}
+
+
+windows_system_install <- function(python, packages) {
+
+  # TODO: refactor to share code with install_tensorflow_windows_system
+
+  # determine pip location from python binary location
+  pip <- file.path(dirname(python), "Scripts", "pip.exe")
+
+  # execute the installation
+  result <- system2(pip, c("install", "--upgrade --ignore-installed",
+                           paste(shQuote(packages), collapse = " ")))
+  if (result != 0L)
+    stop("Error ", result, " occurred installing tensorflow package", call. = FALSE)
+}
+
+
