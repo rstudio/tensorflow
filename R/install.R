@@ -408,12 +408,20 @@ tf_extra_pkgs <- function(scipy = TRUE) {
 
 #' Install additional Python packages alongside TensorFlow
 #'
-#' This function requires that TensorFlow is already installed
-#'
 #' @param packages Python packages to install
 #' @param conda Path to conda executable (or "auto" to find conda using the PATH
 #'   and other conventional install locations). Only used when TensorFlow is
 #'   installed within a conda environment.
+#'
+#' @details
+#'
+#' This function requires a version of TensorFlow previously installed
+#' via the [install_tensorflow()] function.
+#'
+#' For virtualenv and conda installations, the specified packages will be
+#' installed into the "r-tensorflow" environment. For system installations
+#' on Windows the specified packages will be installed into the system
+#' package library.
 #'
 #' @export
 install_tensorflow_extras <- function(packages, conda = "auto") {
@@ -424,9 +432,6 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
          "and then restart R before calling install_tensorflow_extras()",
          call. = FALSE)
   }
-
-  # force tensorflow to load
-  ensure_loaded()
 
   # determine which type of tensorflow installation we have
   config <- py_config()
@@ -442,7 +447,18 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
       type <- "conda"
   }
 
-  # NOTE: conda_install is not working correctly in initial tests
+  # if this is a virtualenv or conda based installation then confirm we are within
+  # an "r-tensorflow" environment (i.e. installed via install_tensorflow())
+  if (type %in% c("virtualenv", "conda")) {
+    python_binary <- ifelse(is_windows(), "r-tensorflow\\python.exe", "r-tensorflow/bin/python")
+    if (!endsWith(config$python, python_binary)) {
+      stop("You must be using a version of TensorFlow installed with the ",
+           "install_tensorflow() function in order\n",
+           "to install packages with the install_tensorflow_extras() function. ",
+           "The version of TensorFlow\ncurrently in use is installed at ",
+           aliased(tf_config()$location))
+    }
+  }
 
   # perform the installation
   if (identical(type, "conda"))

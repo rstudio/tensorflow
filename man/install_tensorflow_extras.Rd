@@ -14,5 +14,14 @@ and other conventional install locations). Only used when TensorFlow is
 installed within a conda environment.}
 }
 \description{
-This function requires that TensorFlow is already installed
+Install additional Python packages alongside TensorFlow
+}
+\details{
+This function requires a version of TensorFlow previously installed
+via the \code{\link[=install_tensorflow]{install_tensorflow()}} function.
+
+For virtualenv and conda installations, the specified packages will be
+installed into the "r-tensorflow" environment. For system installations
+on Windows the specified packages will be installed into the system
+package library.
 }
