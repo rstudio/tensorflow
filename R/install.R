@@ -434,8 +434,18 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
          "to avoid DLL in use errors during installation)")
   }
 
-  # determine which type of tensorflow installation we have
+  # examime config (this does not yet initialize python, important to avoid
+  # DLL in use errors on Windows)
   config <- py_discover_config("tensorflow")
+
+  # if we don't have tensorflow then automatically install it and then
+  # rediscover the config
+  if (is.null(config$required_module_path)) {
+    install_tensorflow(conda = conda)
+    config <- py_discover_config("tensorflow")
+  }
+
+  # determine which type of tensorflow installation we have
   if (is_windows()) {
     if (config$anaconda)
       type <- "conda"
