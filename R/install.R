@@ -426,15 +426,16 @@ tf_extra_pkgs <- function(scipy = TRUE) {
 #' @export
 install_tensorflow_extras <- function(packages, conda = "auto") {
 
-  # see if we have tensorflow, if we don't then raise an error
-  if (!py_module_available("tensorflow")) {
-    stop("You must install TensorFlow using the install_tensorflow() function ",
-         "and then restart R before calling install_tensorflow_extras()",
-         call. = FALSE)
+  # ensure we call this in a fresh session on windows (avoid DLL
+  # in use errors)
+  if (is_windows() && py_available()) {
+    stop("You should call install_tensorflow_extras() only in a fresh ",
+         "R session that has not yet initialized TensorFlow (this is ",
+         "to avoid DLL in use errors during installation)")
   }
 
   # determine which type of tensorflow installation we have
-  config <- py_config()
+  config <- py_discover_config("tensorflow")
   if (is_windows()) {
     if (config$anaconda)
       type <- "conda"
