@@ -30,3 +30,6 @@ ensure_loaded <- function() {
   invisible(tf$`__version__`)
 }
 
+aliased <- function(path) {
+  sub(Sys.getenv("HOME"), "~", path)
+}
