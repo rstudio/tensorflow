@@ -3,17 +3,16 @@
 
 [![Travis-CI Build Status](https://travis-ci.org/rstudio/tensorflow.svg?branch=master)](https://travis-ci.org/rstudio/tensorflow) [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/tensorflow)](https://cran.r-project.org/package=tensorflow) 
 
-
 [TensorFlow™](https://www.tensorflow.org) is an open source software library for numerical computation using data flow graphs. Nodes in the graph represent mathematical operations, while the graph edges represent the multidimensional data arrays (tensors) communicated between them. The flexible architecture allows you to deploy computation to one or more CPUs or GPUs in a desktop, server, or mobile device with a single API. 
 
 The [TensorFlow API](https://www.tensorflow.org/api_docs/python/index.html) is composed of a set of Python modules that enable constructing and executing TensorFlow graphs. The tensorflow package provides access to the complete TensorFlow API from within R. 
 
 ## Installation
 
-To get started, install the tensorflow R package from GitHub as follows:
+To get started, install the tensorflow R package from CRAN as follows:
 
 ```r
-devtools::install_github("rstudio/tensorflow")
+install.packages("tensorflow")
 ```
 
 Then, use the `install_tensorflow()` function to install TensorFlow:
