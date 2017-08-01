@@ -462,7 +462,7 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
   # an "r-tensorflow" environment (i.e. installed via install_tensorflow())
   if (type %in% c("virtualenv", "conda")) {
     python_binary <- ifelse(is_windows(), "r-tensorflow\\python.exe", "r-tensorflow/bin/python")
-    if (!endsWith(config$python, python_binary)) {
+    if (!grepl(paste0(python_binary, "$"), config$python)) {
       stop("You must be using a version of TensorFlow installed with the ",
            "install_tensorflow() function in order\n",
            "to install packages with the install_tensorflow_extras() function. ",
