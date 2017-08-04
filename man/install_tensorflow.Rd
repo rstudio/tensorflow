@@ -5,8 +5,8 @@
 \title{Install TensorFlow and it's dependencies}
 \usage{
 install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
-  version = "latest", gpu = FALSE, package_url = NULL,
-  extra_packages = NULL, conda = "auto")
+  conda = "auto", version = "latest", gpu = FALSE, package_url = NULL,
+  extra_packages = NULL)
 }
 \arguments{
 \item{method}{Installation method. By default, "auto" automatically finds a
@@ -15,6 +15,9 @@ a specific installation method. Note that the "virtualenv" method is not
 available on Windows (as this isn't supported by TensorFlow). Note also
 that since this command runs without privillege the "system" method is
 available only on Windows.}
+
+\item{conda}{Path to conda executable (or "auto" to find conda using the PATH
+and other conventional install locations).}
 
 \item{version}{TensorFlow version to install (must be either "latest" or a
 full major.minor.patch specification, e.g. "1.1.0").}
@@ -27,9 +30,6 @@ then the \code{version} and \code{gpu} parameters are ignored.}
 
 \item{extra_packages}{Additional Python packages to install along with
 TensorFlow.}
-
-\item{conda}{Path to conda executable (or "auto" to find conda using the PATH
-and other conventional install locations).}
 }
 \description{
 Install TensorFlow and it's dependencies

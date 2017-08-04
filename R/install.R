@@ -23,11 +23,11 @@
 #'
 #' @export
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system"),
+                               conda = "auto",
                                version = "latest",
                                gpu = FALSE,
                                package_url = NULL,
-                               extra_packages = NULL,
-                               conda = "auto") {
+                               extra_packages = NULL) {
 
   # verify os
   if (!is_windows() && !is_osx() && !is_linux()) {
