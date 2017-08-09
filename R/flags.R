@@ -70,12 +70,6 @@ parse_flags <-
     flags <- config::merge(flags, parse_arguments(arguments))
   }
 
-  # write to run directory
-  write_run_data("flags", function(run_dir) {
-    flags_yml <- file.path(run_dir, "flags.yml")
-    write(yaml::as.yaml(flags), flags_yml)
-  })
-
   # return generated config
   flags
 }

@@ -18,7 +18,7 @@
 #'
 #' @import reticulate
 #'
-#' @importFrom tfruns run_dir write_run_data
+#' @importFrom tfruns run_dir
 #'
 #' @docType package
 #' @name tensorflow
