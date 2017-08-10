@@ -37,7 +37,7 @@ Imports:
     jsonlite,
     processx,
     reticulate (>= 1.0.0.9001),
-    tfruns (>= 0.9.0.9005),
+    tfruns (>= 0.9.0.9006),
     utils,
     yaml
 Remotes:

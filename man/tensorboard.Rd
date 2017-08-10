@@ -4,20 +4,18 @@
 \alias{tensorboard}
 \title{TensorBoard Visualization Tool}
 \usage{
-tensorboard(log_dir = NULL, action = c("start", "stop"),
-  host = "127.0.0.1", port = "auto", launch_browser = interactive(),
-  reload_interval = 5, purge_orphaned_data = TRUE)
+tensorboard(log_dir, action = c("start", "stop"), host = "127.0.0.1",
+  port = "auto", launch_browser = interactive(), reload_interval = 5,
+  purge_orphaned_data = TRUE)
 }
 \arguments{
 \item{log_dir}{Directories to scan for training logs. If this is a named
 character vector then the specified names will be used as aliases within
-TensorBoard. The default is \code{NULL}, which will result in the active
-\code{\link[=run_dir]{run_dir()}} (if available) and otherwise will use the current working
-directory.}
+TensorBoard.}
 
-\item{action}{Specify whether to start or stop TensorBoard for the given
-\code{log_dir} (TensorBoard will be stopped automatically when the R session
-from which it is launched is terminated).}
+\item{action}{Specify whether to start or stop TensorBoard (TensorBoard will
+be stopped automatically when the R session from which it is launched is
+terminated).}
 
 \item{host}{Host for serving TensorBoard}
 

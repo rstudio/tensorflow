@@ -18,8 +18,6 @@
 #'
 #' @import reticulate
 #'
-#' @importFrom tfruns run_dir
-#'
 #' @docType package
 #' @name tensorflow
 NULL

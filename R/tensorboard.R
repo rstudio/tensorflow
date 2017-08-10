@@ -5,12 +5,10 @@
 #'
 #' @param log_dir Directories to scan for training logs. If this is a named
 #'   character vector then the specified names will be used as aliases within
-#'   TensorBoard. The default is `NULL`, which will result in the active
-#'   [run_dir()] (if available) and otherwise will use the current working
-#'   directory.
-#' @param action Specify whether to start or stop TensorBoard for the given
-#'   `log_dir` (TensorBoard will be stopped automatically when the R session
-#'   from which it is launched is terminated).
+#'   TensorBoard.
+#' @param action Specify whether to start or stop TensorBoard (TensorBoard will
+#'   be stopped automatically when the R session from which it is launched is
+#'   terminated).
 #' @param host Host for serving TensorBoard
 #' @param port Port for serving TensorBoard. If "auto" is specified (the
 #'   default) then an unused port will be chosen automatically.
@@ -33,7 +31,7 @@
 #'   terminate TensorBoard.
 #'
 #' @export
-tensorboard <- function(log_dir = NULL, action = c("start", "stop"),
+tensorboard <- function(log_dir, action = c("start", "stop"),
                         host = "127.0.0.1", port = "auto",
                         launch_browser = interactive(),
                         reload_interval = 5,
@@ -47,12 +45,13 @@ tensorboard <- function(log_dir = NULL, action = c("start", "stop"),
   if (!nzchar(Sys.which("tensorboard")))
     stop("Unable to find tensorboard on PATH")
 
-  # determine the default log_dir if necessary
-  if (is.null(log_dir)) {
-    if (!is.null(run_dir()))
-      log_dir <- run_dir()
+  # if log_dir is missing try to find a "latest run"
+  if (missing(log_dir)) {
+    latest <- tfruns::latest_run()
+    if (length(latest) > 0)
+      log_dir <- latest
     else
-      log_dir <- "."
+      stop("A log_dir must be specified for tensorboard")
   }
 
   # create log_dir(s) if necessary
@@ -131,7 +130,7 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
 
   # check for names and provide defaults if length > 1
   names <- names(log_dir)
-  if (is.null(names) && (length(log_dir) > 1))
+  if (is.null(names))
     names <- basename(log_dir)
 
   # concatenate names if we have them
