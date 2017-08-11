@@ -5,8 +5,7 @@
 \title{Install TensorFlow and it's dependencies}
 \usage{
 install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
-  conda = "auto", version = "latest", gpu = FALSE, package_url = NULL,
-  extra_packages = NULL)
+  conda = "auto", version = "default", extra_packages = NULL)
 }
 \arguments{
 \item{method}{Installation method. By default, "auto" automatically finds a
@@ -19,14 +18,15 @@ available only on Windows.}
 \item{conda}{Path to conda executable (or "auto" to find conda using the PATH
 and other conventional install locations).}
 
-\item{version}{TensorFlow version to install (must be either "latest" or a
-full major.minor.patch specification, e.g. "1.1.0").}
+\item{version}{TensorFlow version to install. Specify "default" to install
+the CPU version of the latest release. Specify "gpu" to install the GPU
+version of the latest release.
 
-\item{gpu}{Install the GPU version of TensorFlow}
+You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
+appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").
 
-\item{package_url}{URL of the TensorFlow package to install (if not specified
-this is determined automatically). Note that if this parameter is provied
-then the \code{version} and \code{gpu} parameters are ignored.}
+Alternatively, you can provide the full URL to an installer binary (e.g.
+for a nightly binary).}
 
 \item{extra_packages}{Additional Python packages to install along with
 TensorFlow.}

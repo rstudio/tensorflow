@@ -10,12 +10,17 @@
 #'   available on Windows (as this isn't supported by TensorFlow). Note also
 #'   that since this command runs without privillege the "system" method is
 #'   available only on Windows.
-#' @param version TensorFlow version to install (must be either "latest" or a
-#'   full major.minor.patch specification, e.g. "1.1.0").
-#' @param gpu Install the GPU version of TensorFlow
-#' @param package_url URL of the TensorFlow package to install (if not specified
-#'   this is determined automatically). Note that if this parameter is provied
-#'   then the `version` and `gpu` parameters are ignored.
+#'
+#' @param version TensorFlow version to install. Specify "default" to install
+#'   the CPU version of the latest release. Specify "gpu" to install the GPU
+#'   version of the latest release.
+#'
+#'   You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
+#'   appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").
+#'
+#'   Alternatively, you can provide the full URL to an installer binary (e.g.
+#'   for a nightly binary).
+#'
 #' @param extra_packages Additional Python packages to install along with
 #'   TensorFlow.
 #'
@@ -24,9 +29,7 @@
 #' @export
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system"),
                                conda = "auto",
-                               version = "latest",
-                               gpu = FALSE,
-                               package_url = NULL,
+                               version = "default",
                                extra_packages = NULL) {
 
   # verify os
@@ -51,6 +54,12 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     stop("Installing TensorFlow into a virtualenv is not supported on Windows",
          call. = FALSE)
   }
+
+  # unroll version
+  ver <- parse_tensorflow_version(version)
+  version <- ver$version
+  gpu <- ver$gpu
+  package_url <- ver$package_url
 
   # flags indicating what methods are available
   method_available <- function(name) method %in% c("auto", name)
@@ -361,6 +370,48 @@ install_tensorflow_windows_system <- function(python, pip, version, gpu, package
   cat("\nInstallation of TensorFlow complete.\n\n")
 }
 
+
+parse_tensorflow_version <- function(version) {
+
+  # defaults
+  ver <- list(
+    version = "latest",
+    gpu = FALSE,
+    package_url = NULL
+  )
+
+  # full url provided
+  if (identical(version, "default")) {
+
+    # default, no changes required
+
+  # gpu version
+  } else if (identical(version, "gpu")) {
+
+    ver$gpu <- TRUE
+
+  # gpu qualifier provided
+  } else if (grepl("-gpu$", version)) {
+
+    split <- strsplit(version, "-")[[1]]
+    ver$version <- split[[1]]
+    ver$gpu <-TRUE
+
+  # full path to installer binary
+  } else if (grepl("^http", version)) {
+
+    ver$package_url <- version
+
+  # another version
+  } else {
+
+    ver$version <- version
+
+  }
+
+  # return
+  ver
+}
 
 python_unix_binary <- function(bin) {
   locations <- file.path(c("/usr/bin", "/usr/local/bin"), bin)
