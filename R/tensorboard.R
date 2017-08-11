@@ -12,8 +12,11 @@
 #' @param host Host for serving TensorBoard
 #' @param port Port for serving TensorBoard. If "auto" is specified (the
 #'   default) then an unused port will be chosen automatically.
-#' @param launch_browser `TRUE` to open a web browser for TensorBoard after
-#'   launching.
+#' @param launch_browser Open a web browser for TensorBoard after launching.
+#'   Defaults to `TRUE` in interactive sessions. When running under RStudio uses
+#'   an RStudio window by default (pass a function e.g. [utils::browseURL()] to
+#'   open in an external browser). Use the `tensorflow.tensorboard.browser`
+#'   option to establish a global default behavior.
 #' @param reload_interval How often the backend should load more data.
 #' @param purge_orphaned_data Whether to purge data that may have been orphaned
 #'   due to TensorBoard restarts. Disabling purge_orphaned_data can be used to
@@ -33,7 +36,8 @@
 #' @export
 tensorboard <- function(log_dir, action = c("start", "stop"),
                         host = "127.0.0.1", port = "auto",
-                        launch_browser = interactive(),
+                        launch_browser = getOption("tensorflow.tensorboard.browser",
+                                                   interactive()),
                         reload_interval = 5,
                         purge_orphaned_data = TRUE
                         ) {
@@ -53,6 +57,9 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
     else
       stop("A log_dir must be specified for tensorboard")
   }
+
+  # expand log dir path
+  log_dir <- path.expand(log_dir)
 
   # create log_dir(s) if necessary
   log_dir <- as.character(lapply(log_dir, function(dir) {
@@ -115,8 +122,15 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
     # browse the url if requested
     url <- paste0("http://", host, ":", port)
     cat("Started TensorBoard at", url, "\n")
-    if (launch_browser)
-      utils::browseURL(url)
+    if (isTRUE(launch_browser)) {
+      page_viewer <- getOption("page_viewer")
+      if (!is.null(page_viewer))
+        page_viewer(url, title = "TensorBoard - RStudio")
+      else
+        getOption("browser")(url)
+    } else if (is.function(launch_browser)) {
+      launch_browser(url)
+    }
 
     # return the url invisibly
     invisible(url)

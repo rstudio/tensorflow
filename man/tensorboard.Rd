@@ -5,8 +5,9 @@
 \title{TensorBoard Visualization Tool}
 \usage{
 tensorboard(log_dir, action = c("start", "stop"), host = "127.0.0.1",
-  port = "auto", launch_browser = interactive(), reload_interval = 5,
-  purge_orphaned_data = TRUE)
+  port = "auto",
+  launch_browser = getOption("tensorflow.tensorboard.browser", interactive()),
+  reload_interval = 5, purge_orphaned_data = TRUE)
 }
 \arguments{
 \item{log_dir}{Directories to scan for training logs. If this is a named
@@ -22,8 +23,11 @@ terminated).}
 \item{port}{Port for serving TensorBoard. If "auto" is specified (the
 default) then an unused port will be chosen automatically.}
 
-\item{launch_browser}{\code{TRUE} to open a web browser for TensorBoard after
-launching.}
+\item{launch_browser}{Open a web browser for TensorBoard after launching.
+Defaults to \code{TRUE} in interactive sessions. When running under RStudio uses
+an RStudio window by default (pass a function e.g. \code{\link[utils:browseURL]{utils::browseURL()}} to
+open in an external browser). Use the \code{tensorflow.tensorboard.browser}
+option to establish a global default behavior.}
 
 \item{reload_interval}{How often the backend should load more data.}
 
