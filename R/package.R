@@ -36,6 +36,8 @@ NULL
   # delay load tensorflow
   tf <<- import("tensorflow", delay_load = list(
 
+    priority = 5,
+
     on_load = function() {
 
       # register warning suppression handler
