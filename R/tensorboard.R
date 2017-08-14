@@ -52,7 +52,7 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
   # if log_dir is missing try to find a "latest run"
   if (missing(log_dir)) {
     latest <- tfruns::latest_run()
-    if (length(latest) > 0)
+    if (nrow(latest) > 0)
       log_dir <- latest
     else
       stop("A log_dir must be specified for tensorboard")
