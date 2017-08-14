@@ -58,6 +58,11 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
       stop("A log_dir must be specified for tensorboard")
   }
 
+  # accept data frame with run_dir
+  if (is.data.frame(log_dir) && !is.null(log_dir$run_dir)) {
+    log_dir <- log_dir$run_dir
+  }
+
   # expand log dir path
   log_dir <- path.expand(log_dir)
 
@@ -142,7 +147,7 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
 
 launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interval, purge_orphaned_data) {
 
-  # check for names and provide defaults if length > 1
+  # check for names and provide defaults
   names <- names(log_dir)
   if (is.null(names))
     names <- basename(log_dir)
