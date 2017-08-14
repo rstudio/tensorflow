@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 1.3.0.9004
+Version: 1.3.0.9005
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cre"), email = "jj@rstudio.com"),
   person(family = "RStudio", role = c("cph", "fnd")),
@@ -37,7 +37,7 @@ Imports:
     jsonlite,
     processx,
     reticulate (>= 1.0.0.9001),
-    tfruns (>= 0.9.0.9007),
+    tfruns (>= 0.9.0.9009),
     utils,
     yaml
 Remotes:

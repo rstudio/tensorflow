@@ -18,6 +18,18 @@
 \alias{use_virtualenv}
 \alias{reexports}
 \alias{use_condaenv}
+\alias{reexports}
+\alias{flags}
+\alias{reexports}
+\alias{flag_numeric}
+\alias{reexports}
+\alias{flag_integer}
+\alias{reexports}
+\alias{flag_string}
+\alias{reexports}
+\alias{flag_boolean}
+\alias{reexports}
+\alias{run_dir}
 \title{Objects exported from other packages}
 \keyword{internal}
 \description{
@@ -26,5 +38,7 @@ below to see their documentation.
 
 \describe{
   \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{dict}}, \code{\link[reticulate]{tuple}}, \code{\link[reticulate]{iterate}}, \code{\link[reticulate]{\%as\%}}, \code{\link[reticulate]{use_python}}, \code{\link[reticulate]{use_virtualenv}}, \code{\link[reticulate]{use_condaenv}}}
+
+  \item{tfruns}{\code{\link[tfruns]{flags}}, \code{\link[tfruns]{flag_numeric}}, \code{\link[tfruns]{flag_integer}}, \code{\link[tfruns]{flag_string}}, \code{\link[tfruns]{flag_boolean}}, \code{\link[tfruns]{run_dir}}}
 }}
 
