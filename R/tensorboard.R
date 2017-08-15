@@ -58,10 +58,8 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
       stop("A log_dir must be specified for tensorboard")
   }
 
-  # accept data frame with run_dir
-  if (is.data.frame(log_dir) && !is.null(log_dir$run_dir)) {
-    log_dir <- log_dir$run_dir
-  }
+  # convert input to run_dir
+  log_dir <- tfruns::as_run_dir(log_dir)
 
   # expand log dir path
   log_dir <- path.expand(log_dir)
