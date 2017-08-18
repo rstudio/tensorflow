@@ -52,8 +52,8 @@ NULL
         }
       ))
 
-      # if we loaded tensorflow then register tf help topics
-      register_tf_help_topics()
+      # if we loaded tensorflow then register tf help handler
+      register_tf_help_handler()
     }
     ,
 
