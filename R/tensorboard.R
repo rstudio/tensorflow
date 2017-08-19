@@ -167,37 +167,37 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
                                "--purge_orphaned_data", purge_orphaned_data),
                              stdout = "|", stderr = "|")
 
-  # poll for output until we've succesfully started up or the process dies
+  # poll for availability of the http server (continue as long as the
+  # process is still alive). note that we used to poll for stdout however
+  # tensorflow v1.3 stopped writing a newline after printing the host:port
+  # and caused us to haning in p$read_output_lines()
   started <- FALSE
+  Sys.sleep(0.25)
+  conn <- url(paste0("http://", host, ":", as.character(port)))
   while(!started && p$is_alive()) {
+    Sys.sleep(0.25)
+    tryCatch({
+      readLines(conn, n = -1)
+      started = TRUE
+      close(conn)
+    },
+    error = function(e) {},
+    warning = function(w) {}
+    )
+  }
 
-    # poll for io
-    res <- p$poll_io(100L)
+  # poll for error messages
+  res <- p$poll_io(100L)
 
-    # see if we have stdout
-    if (identical(res[["output"]], "ready")) {
+  # see if we have stderr
+  if (identical(res[["error"]], "ready")) {
 
-      # capture output
-      out <- p$read_output_lines()
+    # capture error output
+    err <- p$read_error_lines()
 
-      # check if it's a startup notification. if it is then set the started flag,
-      # otherwise just forward the ouptut
-      if (any(grepl("http://", out, fixed = TRUE)))
-        started <- TRUE
-      else
-        write(out, stdout())
-    }
-
-    # see if we have stderr
-    if (identical(res[["error"]], "ready")) {
-
-      # capture error output
-      err <- p$read_error_lines()
-
-      # write it unless it's a port in use error when we are auto-binding
-      if (explicit_port || !any(grepl(paste0("^.*", port, ".*already in use.*$"), err)))
-        write(err, stderr())
-    }
+    # write it unless it's a port in use error when we are auto-binding
+    if (explicit_port || !any(grepl(paste0("^.*", port, ".*already in use.*$"), err)))
+      write(err, stderr())
   }
 
   # return the process
