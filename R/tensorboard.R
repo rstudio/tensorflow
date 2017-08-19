@@ -126,8 +126,9 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
     url <- paste0("http://", host, ":", port)
     cat("Started TensorBoard at", url, "\n")
     if (isTRUE(launch_browser)) {
+      # try to use the page_viewer on osx (qtwebkit can't currently handle tensorboard)
       page_viewer <- getOption("page_viewer")
-      if (!is.null(page_viewer))
+      if (is_osx() && !is.null(page_viewer))
         page_viewer(url, title = "TensorBoard - RStudio")
       else
         getOption("browser")(url)
