@@ -174,15 +174,14 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
   started <- FALSE
   Sys.sleep(0.25)
   conn <- url(paste0("http://", host, ":", as.character(port)))
+  on.exit(close(conn), add = TRUE)
   while(!started && p$is_alive()) {
     Sys.sleep(0.25)
     tryCatch({
-      readLines(conn, n = -1)
+      suppressWarnings(readLines(conn, n = -1))
       started = TRUE
-      close(conn)
     },
-    error = function(e) {},
-    warning = function(w) {}
+    error = function(e) {}
     )
   }
 
