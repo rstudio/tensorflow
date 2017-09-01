@@ -336,7 +336,7 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, pack
   }
 
   # upgrade pip so it can find tensorflow
-  pip_install(pip_version, "Upgrading pip")
+  pip_install("pip", "Upgrading pip")
 
   # install updated version of the wheel package
   pip_install("wheel", "Upgrading wheel")
