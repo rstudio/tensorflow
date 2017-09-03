@@ -6,6 +6,13 @@
 #' @examples 
 #' set_random_seed(42)
 set_random_seed <- function(seed = 42) {
+  # Ensure reproducibility for certain hash-based operations for Python 3
+  # References: https://docs.python.org/3.4/using/cmdline.html#envvar-PYTHONHASHSEED
+  #             https://github.com/fchollet/keras/issues/2280#issuecomment-306959926
+  if (identical(substring(tf_config()$python_version, 0, 1), "3")) {
+    os$environ[["PYTHONHASHSEED"]] <- "0"
+  }
+  
   seed <- as.integer(seed)
   np$random$seed(seed)
   random$seed(seed)
