@@ -18,3 +18,7 @@ your TensorFlow program needs to give reproducible results. Note that this sessi
 only single thread since multiple threads are a potential source of non-reproducible results.
 For further details, see: https://stackoverflow.com/questions/42022950/which-seeds-have-to-be-set-where-to-realize-100-reproducibility-of-training-res
 }
+\examples{
+sess <- tf_session_with_seed()
+sess$run(tf$constant(1L) + tf$constant(2L))
+}

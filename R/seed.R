@@ -3,6 +3,8 @@
 #' @param seed The random seed number
 #' 
 #' @export
+#' @examples 
+#' set_random_seed(42)
 set_random_seed <- function(seed = 42) {
   seed <- as.integer(seed)
   np$random$seed(seed)
@@ -21,6 +23,10 @@ set_random_seed <- function(seed = 42) {
 #' @return The TensorFlow Session object with the specified random seed
 #' 
 #' @export
+#' 
+#' @examples 
+#' sess <- tf_session_with_seed()
+#' sess$run(tf$constant(1L) + tf$constant(2L))
 tf_session_with_seed <- function(seed = 42) {
   session_conf <- tf$ConfigProto(intra_op_parallelism_threads = 1L, inter_op_parallelism_threads = 1L)
   set_random_seed(seed)
