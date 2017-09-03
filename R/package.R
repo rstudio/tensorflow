@@ -22,6 +22,8 @@
 #' @name tensorflow
 NULL
 
+np <- NULL
+
 # globals
 .globals <- new.env(parent = emptyenv())
 .globals$tensorboard <- NULL
@@ -64,6 +66,10 @@ NULL
     }
 
   ))
+  
+  # other modules
+  np <<- import("numpy", convert = FALSE, delay_load = TRUE)
+  random <<- import("random", convert = FALSE, delay_load = TRUE)
 }
 
 
