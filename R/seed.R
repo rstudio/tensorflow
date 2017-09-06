@@ -55,7 +55,7 @@ use_session_with_seed <- function(seed,
 
   # destroy existing session call before hook
   tf$reset_default_graph()
-  call_hook("tensorflow.on_before_use_session")
+  call_hook("tensorflow.on_before_use_session", quiet)
 
   # note what has been disabled
   disabled <- character()
@@ -104,7 +104,7 @@ use_session_with_seed <- function(seed,
     message(msg)
 
   # call after hook
-  call_hook("tensorflow.on_use_session", sess)
+  call_hook("tensorflow.on_use_session", sess, quiet)
 
   # return  session invisibly
   invisible(sess)
