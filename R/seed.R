@@ -35,7 +35,7 @@
 #'
 #' @details Packages which need to be notified before and after the seed is set
 #'   can register for the "tensorflow.on_before_use_session" and
-#'   "tensorflow.on_after_use_session" hooks (see [setHook()]) for additional
+#'   "tensorflow.on_use_session" hooks (see [setHook()]) for additional
 #'   details on hooks).
 #'
 #' @examples
@@ -104,7 +104,7 @@ use_session_with_seed <- function(seed,
     message(msg)
 
   # call after hook
-  call_hook("tensorflow.on_after_use_session", sess)
+  call_hook("tensorflow.on_use_session", sess)
 
   # return  session invisibly
   invisible(sess)
