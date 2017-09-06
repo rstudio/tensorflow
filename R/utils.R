@@ -39,8 +39,11 @@ call_hook <- function(name, ...) {
   hooks <- getHook(name)
   if (!is.list(hooks))
     hooks <- list(hooks)
+  response <- FALSE
   lapply(hooks, function(hook) {
-    hook(...)
+    if (isTRUE(hook(...)))
+      response <<- TRUE
   })
+  response
 }
 
