@@ -18,6 +18,8 @@ reference:
       - tf_imperative
       - shape
 
-  - title: "TensorBoard"
+  - title: "Utilities"
     contents:
       - tensorboard
+      - use_session_with_seed
+
