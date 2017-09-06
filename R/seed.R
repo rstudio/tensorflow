@@ -53,9 +53,14 @@ use_session_with_seed <- function(seed,
   # cast seed to integer
   seed <- as.integer(seed)
 
+  # call hook (returns TRUE if TF seed should be set, this allows users to
+  # call this function even when using front-end packages like keras that
+  # may not use TF as their backend)
+  using_tf <- call_hook("tensorflow.on_before_use_session", quiet)
+
   # destroy existing session call before hook
-  tf$reset_default_graph()
-  call_hook("tensorflow.on_before_use_session", quiet)
+  if (using_tf)
+    tf$reset_default_graph()
 
   # note what has been disabled
   disabled <- character()
@@ -72,32 +77,38 @@ use_session_with_seed <- function(seed,
   # set Python/NumPy random seed
   py_set_seed(seed)
 
-  # Force TensorFlow to use single thread as multiple threads are a potential
-  # source of non-reproducible results. For further details, see:
-  # https://stackoverflow.com/questions/42022950/which-seeds-have-to-be-set-where-to-realize-100-reproducibility-of-training-res
+  # TF if we are using tf
+  if (using_tf) {
+    # Force TensorFlow to use single thread as multiple threads are a potential
+    # source of non-reproducible results. For further details, see:
+    # https://stackoverflow.com/questions/42022950/which-seeds-have-to-be-set-where-to-realize-100-reproducibility-of-training-res
 
-  # disable parallelism if requested
-  config <- list()
-  if (disable_gpu) {
-    config$device_count <-  list(gpu = 0L)
+    # disable parallelism if requested
+    config <- list()
+    if (disable_gpu) {
+      config$device_count <-  list(gpu = 0L)
+    }
+    if (disable_parallel_cpu) {
+      config$intra_op_parallelism_threads <- 1L
+      config$inter_op_parallelism_threads <- 1L
+      disabled <- c(disabled, "CPU parallelism")
+    }
+    session_conf <- do.call(tf$ConfigProto, config)
+
+    # The below tf$set_random_seed() will make random number generation in the
+    # TensorFlow backend have a well-defined initial state. For further details,
+    # see: https://www.tensorflow.org/api_docs/python/tf/set_random_seed
+    tf$set_random_seed(seed)
+
+    # create session
+    sess <- tf$Session(graph = tf$get_default_graph(), config = session_conf)
+
+  } else {
+    sess <- NULL
   }
-  if (disable_parallel_cpu) {
-    config$intra_op_parallelism_threads <- 1L
-    config$inter_op_parallelism_threads <- 1L
-    disabled <- c(disabled, "CPU parallelism")
-  }
-  session_conf <- do.call(tf$ConfigProto, config)
-
-  # The below tf$set_random_seed() will make random number generation in the
-  # TensorFlow backend have a well-defined initial state. For further details,
-  # see: https://www.tensorflow.org/api_docs/python/tf/set_random_seed
-  tf$set_random_seed(seed)
-
-  # create session
-  sess <- tf$Session(graph = tf$get_default_graph(), config = session_conf)
 
   # show message
-  msg <- paste("Set TensorFlow session seed to", seed)
+  msg <- paste("Set session seed to", seed)
   if (length(disabled) > 0)
     msg <- paste0(msg, " (disabled ", paste(disabled, collapse = ", "), ")")
   if (!quiet)
