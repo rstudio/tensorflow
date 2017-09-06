@@ -10,6 +10,9 @@ reticulate::dict
 reticulate::tuple
 
 #' @export
+reticulate::np_array
+
+#' @export
 reticulate::iterate
 
 #' @export

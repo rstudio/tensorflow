@@ -31,17 +31,16 @@ This function must be called at the very top of your script (i.e.
 immediately after \code{library(tensorflow)}, \code{library(keras)}, etc.). Any
 existing TensorFlow session is torn down via \code{tf$reset_default_graph()}.
 
-This function takes all measures known to promote reproducible results
-from TensorFlow sessions, however it's possible that various individual
-TensorFlow features or dependent libraries escape the effects of this
-function. If you encounter non-reproducible results please investigate
-the possible sources of the problem, contributions via pull request are
-very welcome!
+This function takes all measures known to promote reproducible results from
+TensorFlow sessions, however it's possible that various individual
+TensorFlow features or dependent libraries escape its effects. If you
+encounter non-reproducible results please investigate the possible sources
+of the problem, contributions via pull request are very welcome!
 
-Packages which need to be notified before and after the seed is
-set can register for the "tensorflow.on_before_use_session" and
-"tensorflow.on_after_use_session" hooks (see \code{\link[=setHook]{setHook()}}) for
-additional details on hooks).
+Packages which need to be notified before and after the seed is set
+can register for the "tensorflow.on_before_use_session" and
+"tensorflow.on_use_session" hooks (see \code{\link[=setHook]{setHook()}}) for additional
+details on hooks).
 }
 \section{Parallelism}{
  By default the \code{use_session_with_seed()} function
