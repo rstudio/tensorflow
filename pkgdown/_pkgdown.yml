@@ -15,7 +15,6 @@ reference:
   - title: "TensorFlow API"
     contents:
       - tf
-      - tf_imperative
       - shape
 
   - title: "Utilities"
