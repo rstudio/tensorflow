@@ -111,9 +111,12 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
         install_commands <- NULL
         if (is_osx()) {
           if (!have_pip)
-            install_commands <- c(install_commands, "$ sudo easy_install pip")
-          if (!have_virtualenv)
-            install_commands <- c(install_commands, "$ sudo pip install --upgrade virtualenv")
+            install_commands <- c(install_commands, "$ sudo /usr/bin/easy_install pip")
+          if (!have_virtualenv) {
+            if (is.null(pip))
+              pip <- "/usr/local/bin/pip"
+            install_commands <- c(install_commands, sprintf("$ sudo %s install --upgrade virtualenv", pip))
+          }
           if (!is.null(install_commands))
             install_commands <- paste(install_commands, collapse = "\n")
         } else if (is_ubuntu()) {
