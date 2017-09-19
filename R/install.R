@@ -289,9 +289,18 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url, extra_pac
   # install additional packages
   conda_install(envname, tf_extra_pkgs(), conda = conda)
 
-  # install extra packages (use pip to ensure we don't get legacy versions)
-  if (!is.null(extra_packages))
-    conda_install(envname, extra_packages, pip = TRUE, conda = conda)
+  # install extra packages (use pip to ensure we don't get legacy versions, set
+  # pip_ignore_installed to FALSE to ensure that pip source installs on
+  # windows don't attempt to override conda binary packages (e.g. SciPy which
+  # will likely fail to install via pip due to compilation dependencies)
+  if (!is.null(extra_packages)) {
+    conda_install(
+      envname,
+      extra_packages,
+      pip = TRUE,
+      pip_ignore_installed = FALSE,
+      conda = conda)
+  }
 }
 
 install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, package_url, extra_packages = NULL) {
