@@ -246,6 +246,9 @@ install_tensorflow_conda <- function(conda, version, gpu, package_url, extra_pac
     releases <- fromJSON("https://api.github.com/repos/tensorflow/tensorflow/releases")
     latest <- subset(releases, grepl("^v\\d+\\.\\d+\\.\\d+$", releases$tag_name))$tag_name[[1]]
     version <- sub("v", "", latest)
+    # workaround the fact that v1.3.1 is a GitHub only release w/ no tarball
+    if (identical(version, "1.3.1"))
+      version <- "1.3.0"
     cat("done\n")
   }
 
