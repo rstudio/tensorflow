@@ -34,7 +34,8 @@
 #'   terminate TensorBoard.
 #'
 #' @export
-tensorboard <- function(log_dir, action = c("start", "stop"),
+tensorboard <- function(log_dir = file.path(getwd(), "logs"),
+                        action = c("start", "stop"),
                         host = "127.0.0.1", port = "auto",
                         launch_browser = getOption("tensorflow.tensorboard.browser",
                                                    interactive()),
@@ -72,7 +73,7 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
   }))
 
   # if we already have a tensorboard for this session then kill it and re-use it's port
-  if (!is.null(.globals$tensorboard)) {
+  if (tensorboard_is_running()) {
     p <- .globals$tensorboard$process
     if (p$is_alive()) {
       p$kill()
@@ -203,13 +204,6 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
   p
 }
 
-
-
-
-
-
-
-
-
-
-
+tensorboard_is_running <- function() {
+  !is.null(.globals$tensorboard)
+}
