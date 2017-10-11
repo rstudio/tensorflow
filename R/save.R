@@ -27,8 +27,8 @@ export_savedmodel <- function(object, export_dir_base, ...) {
 #'
 #' @export
 view_savedmodel <- function(
-  export_dir = file.path(getwd(), "trained/tensorflow-mnist/1/saved_model.pb"),
-  log_dir = file.path(getwd(), "logs")
+  export_dir,
+  log_dir = tempdir()
 ) {
   export_files <- dir(export_dir, full.names = TRUE, recursive = TRUE)
   export_pb <- export_files[grepl("\\.pb$", export_files)]
@@ -56,5 +56,5 @@ view_savedmodel <- function(
     train_writer$close()
   })
 
-  if (interactive() && !tensorboard_is_running()) tensorboard(log_dir = log_dir)
+  tensorboard(log_dir = log_dir)
 }
