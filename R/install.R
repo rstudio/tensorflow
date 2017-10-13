@@ -417,6 +417,11 @@ parse_tensorflow_version <- function(version) {
 
     ver$package_url <- version
 
+  # nightly
+  } else if (grepl("nightly", version)) {
+
+    ver$package_url <- version
+
   # another version
   } else {
 
