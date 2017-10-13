@@ -240,6 +240,36 @@ install_tensorflow_conda <- function(conda, version, gpu, packages, extra_packag
     python <- conda_create(envname, packages = python_packages, conda = conda)
   }
 
+  # Short circuit to install everything with conda when no custom packages
+  # (typically tf-nightly or a daily build URL) and no gpu-enabled build
+  # is requested (conda doesn't currently have GPU enabled builds.
+  #
+  # This avoids any use of pip, which addresses the following issue:
+  # https://github.com/rstudio/keras/issues/147
+  #
+  # This issue is in turn created by two other issues:
+  #
+  # 1) TensorBoard appears to rely on an older version of html5lib which is
+  #    force installed, and which as a result breaks pip:
+  #    https://github.com/tensorflow/tensorboard/issues/588
+  #
+  # 2) Anaconda 5.0.0 is unable to recover from this because the installation
+  #    of the old version of html5lib actually propagates to the root
+  #    environment, which permantely breaks pip for *all* conda environments:
+  #    https://github.com/conda/conda/issues/6079
+  #
+  # Hopefully these two issues will be addressed and we can return to using
+  # pip in all scenarios (as that is the officially supported version)
+  #
+  if (is.null(packages) && gpu == FALSE) {
+    conda_forge_install(
+      envname,
+      tf_pkgs(version, gpu, packages, extra_packages = extra_packages),
+      conda = conda
+    )
+    return(invisible(NULL))
+  }
+
   # determine tf version
   if (version == "latest") {
     cat("Determining latest release of TensorFlow...")
@@ -305,6 +335,26 @@ install_tensorflow_conda <- function(conda, version, gpu, packages, extra_packag
       conda = conda)
   }
 }
+
+
+conda_forge_install <- function(envname, packages, conda = "auto") {
+
+  # resolve conda binary
+  conda <- conda_binary(conda)
+
+  # use native conda package manager with conda forge enabled
+  result <- system2(conda, shQuote(c("install", "-c", "conda-forge", "--yes", "--name", envname, packages)))
+
+  # check for errors
+  if (result != 0L) {
+    stop("Error ", result, " occurred installing packages into conda environment ",
+         envname, call. = FALSE)
+  }
+
+  invisible(NULL)
+}
+
+
 
 install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, packages, extra_packages = NULL) {
 
