@@ -261,7 +261,7 @@ install_tensorflow_conda <- function(conda, version, gpu, packages, extra_packag
   # Hopefully these two issues will be addressed and we can return to using
   # pip in all scenarios (as that is the officially supported version)
   #
-  if (is.null(packages) && gpu == FALSE) {
+  if (is_windows() && is.null(packages) && gpu == FALSE) {
     conda_forge_install(
       envname,
       tf_pkgs(version, gpu, packages, extra_packages = extra_packages),
