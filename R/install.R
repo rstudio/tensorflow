@@ -424,6 +424,14 @@ parse_tensorflow_version <- function(version) {
 
   }
 
+  # if it's the nightly version then set packages to nightly[-gpu]
+  # (also add tensorboard since it's not included in tf-nightly)
+  version <- sub("^tf-nightly$", "nightly", version)
+  if (identical(version, "nightly")) {
+    ver$packages <- c(sprintf("tf-nightly%s", ifelse(ver$gpu, "-gpu", "")),
+                      "tensorflow-tensorboard")
+  }
+
   # return
   ver
 }
