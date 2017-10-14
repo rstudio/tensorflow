@@ -602,8 +602,12 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
   }
 
   # perform the installation
-  if (identical(type, "conda"))
-    conda_install("r-tensorflow", packages, pip = TRUE, conda = conda)
+  if (identical(type, "conda")) {
+    if (is_windows())
+      conda_forge_install("r-tensorflow", packages, conda = conda)
+    else
+      conda_install("r-tensorflow", packages, pip = TRUE, conda = conda)
+  }
   else if (identical(type, "virtualenv"))
     virtualenv_install("r-tensorflow", packages)
   else if (identical(type, "system"))
