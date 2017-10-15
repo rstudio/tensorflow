@@ -463,7 +463,7 @@ parse_tensorflow_version <- function(version) {
     ver$gpu <-TRUE
 
   # full path to installer binary
-  } else if (grepl("^http", version)) {
+  } else if (grepl("^.*\\.whl$", version)) {
 
     ver$packages <- version
 
