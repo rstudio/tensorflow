@@ -465,7 +465,10 @@ parse_tensorflow_version <- function(version) {
   # full path to installer binary
   } else if (grepl("^.*\\.whl$", version)) {
 
-    ver$packages <- version
+    if (grepl("^http", version))
+      ver$packages <- version
+    else
+      ver$packages <- normalizePath(version)
 
   # another version
   } else {
