@@ -5,23 +5,21 @@
 #' @importFrom httpuv runServer
 #' @export
 serve <- function(
-  model_path,
-  host = "127.0.0.1",
+  model_dir,
+  host = "localhost",
   port = 8089,
   browse = interactive()
   ) {
-
-  run_server(host, port, sess, graph, httpuv::runServer, model_path, browse)
-
+  server_run(model_dir, host, port, httpuv::runServer, browse)
 }
 
-load_model <- function(sess, model_path) {
+server_load_model <- function(sess, model_dir) {
   tf$reset_default_graph()
 
   graph <- tf$saved_model$loader$load(
     sess,
     list(tf$python$saved_model$tag_constants$SERVING),
-    model_path)
+    model_dir)
 
   graph$signature_def
 }
@@ -68,25 +66,25 @@ server_invalid_request <- function(message = NULL) {
 
 server_handlers <- function(host, port) {
   list(
-    "^/swagger.json" = function(req, sess, graph) {
+    "^/swagger.json" = function(req, sess, model_dir) {
       list(
         status = 200L,
         headers = list(
           "Content-Type" = paste0(server_content_type("json"), "; charset=UTF-8")
         ),
         body = charToRaw(enc2utf8(
-          swagger_from_graph(graph, host, port)
+          swagger_from_signature_def(signature_def, host, port)
         ))
       )
     },
-    "^/$" = function(req, sess, graph) {
+    "^/$" = function(req, sess, signature_def) {
       server_static_file_response("swagger-ui/index.html")
     },
-    "^/[^/]*$" = function(req, sess, graph) {
+    "^/[^/]*$" = function(req, sess, signature_def) {
       server_static_file_response(file.path("swagger-ui", req$PATH_INFO))
     },
-    "^/api/[^/]*/predict" = function(req, sess, graph) {
-      signature_names <- graph$keys()
+    "^/api/[^/]*/predict" = function(req, sess, signature_def) {
+      signature_names <- signature_def$keys()
       signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
 
       if (!signature_name %in% signature_names) {
@@ -97,22 +95,22 @@ server_handlers <- function(host, port) {
       json_raw <- req$rook.input$read()
       json_req <- jsonlite::fromJSON(rawToChar(json_raw))
 
-      tensor_input_names <- graph$get(signature_name)$inputs$keys()
+      tensor_input_names <- signature_def$get(signature_name)$inputs$keys()
       if (length(tensor_input_names) != 1) {
         server_invalid_request("Currently, only single-tensor inputs are supported but found ", length(tensor_input_names))
         return()
       }
 
-      tensor_output_names <- graph$get(signature_name)$outputs$keys()
+      tensor_output_names <- signature_def$get(signature_name)$outputs$keys()
 
       fetches_list <- lapply(seq_along(tensor_output_names), function(fetch_idx) {
         sess$graph$get_tensor_by_name(
-          graph$get(signature_name)$outputs$get(tensor_output_names[[fetch_idx]])$name
+          signature_def$get(signature_name)$outputs$get(tensor_output_names[[fetch_idx]])$name
         )
       })
 
       feed_dict <- list()
-      feed_dict[[graph$get(signature_name)$inputs$get(tensor_input_names[[1]])$name]] <- json_req$instances
+      feed_dict[[signature_def$get(signature_name)$inputs$get(tensor_input_names[[1]])$name]] <- json_req$instances
       result <- sess$run(
         fetches = fetches_list,
         feed_dict = feed_dict
@@ -128,20 +126,19 @@ server_handlers <- function(host, port) {
         ))
       )
     },
-    ".*" = function(req, graph) {
+    ".*" = function(req, signature_def) {
       server_invalid_request()
     }
   )
 }
 
-run_server <- function(host, port, sess, graph, start, model_path, browse) {
+server_run <- function(model_dir, host, port, start, browse) {
   sess <- tf$Session()
-  graph <- load_model(sess, model_path)
-  # sess$run(tf$global_variables_initializer())
+  signature_def <- serve_signature_from_model(sess, model_dir)
 
   if (browse) utils::browseURL(paste0("http://", host, ":", port))
 
-  handlers <- server_handlers(host, port)
+  handlers <- server_load_model(host, port)
 
   start(host, port, list(
     onHeaders = function(req) {
@@ -149,7 +146,7 @@ run_server <- function(host, port, sess, graph, start, model_path, browse) {
     },
     call = function(req){
       matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
-      handlers[matches][[1]](req, sess, graph)
+      handlers[matches][[1]](req, sess, signature_def)
     },
     onWSOpen = function(ws) {
       NULL
