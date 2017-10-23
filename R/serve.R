@@ -105,7 +105,9 @@ serve_handlers <- function(host, port) {
 
       tensor_input_names <- signature_def$get(signature_name)$inputs$keys()
       if (length(tensor_input_names) != 1) {
-        serve_invalid_request("Currently, only single-tensor inputs are supported but found ", length(tensor_input_names))
+        serve_invalid_request(paste(
+          "Currently, only single-tensor inputs are supported but found", length(tensor_input_names)
+        ))
         return()
       }
 
