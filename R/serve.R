@@ -11,7 +11,7 @@
 #'
 #' @importFrom httpuv runServer
 #' @export
-serve <- function(
+serve_savedmodel <- function(
   model_dir,
   host = "127.0.0.1",
   port = 8089,

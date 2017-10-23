@@ -71,7 +71,7 @@ test_that("can serve mnist model", {
   trained <- test_mnist_train(sess)
   test_mnist_save(sess, model_dir, trained$input, trained$output)
 
-  handle <- serve(model_dir, daemonized = TRUE)
+  handle <- serve_savedmodel(model_dir, daemonized = TRUE)
 
   expect_true(!is.null(handle))
 
