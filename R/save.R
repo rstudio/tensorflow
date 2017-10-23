@@ -2,21 +2,18 @@
 #'
 #' View a serialized model from disk.
 #'
-#' @param export_dir The path to the exported directory, as a string.
-#' @param log_dir Directories to scan for training logs. If this is a named
-#'   character vector then the specified names will be used as aliases within
-#'   TensorBoard.
+#' @param model_dir The path to the exported model, as a string.
 #'
-#' @return The path to the exported directory, as a string.
+#' @return URL for browsing TensorBoard (invisibly).
 #'
 #' @export
 view_savedmodel <- function(
-  export_dir,
-  log_dir = tempdir()
+  model_dir
 ) {
-  export_files <- dir(export_dir, full.names = TRUE, recursive = TRUE)
+  log_dir <- tempfile()
+  export_files <- dir(model_dir, full.names = TRUE, recursive = TRUE)
   export_pb <- export_files[grepl("\\.pb$", export_files)]
-  if (length(export_pb) != 1) stop("Failed to find 'pb' file under ", export_dir)
+  if (length(export_pb) != 1) stop("Failed to find 'pb' file under ", model_dir)
 
   gfile <- tf$python$platform$gfile
   compat <- tf$python$util$compat

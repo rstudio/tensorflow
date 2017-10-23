@@ -4,19 +4,13 @@
 \alias{view_savedmodel}
 \title{View a Saved Model}
 \usage{
-view_savedmodel(export_dir = file.path(getwd(),
-  "trained/tensorflow-mnist/1/saved_model.pb"), log_dir = file.path(getwd(),
-  "logs"))
+view_savedmodel(model_dir)
 }
 \arguments{
-\item{export_dir}{The path to the exported directory, as a string.}
-
-\item{log_dir}{Directories to scan for training logs. If this is a named
-character vector then the specified names will be used as aliases within
-TensorBoard.}
+\item{model_dir}{The path to the exported model, as a string.}
 }
 \value{
-The path to the exported directory, as a string.
+URL for browsing TensorBoard (invisibly).
 }
 \description{
 View a serialized model from disk.
