@@ -6,7 +6,7 @@
 #' @export
 serve <- function(
   model_dir,
-  host = "localhost",
+  host = "127.0.0.1",
   port = 8089,
   browse = interactive()
   ) {
@@ -66,7 +66,7 @@ server_invalid_request <- function(message = NULL) {
 
 server_handlers <- function(host, port) {
   list(
-    "^/swagger.json" = function(req, sess, model_dir) {
+    "^/swagger.json" = function(req, sess, signature_def) {
       list(
         status = 200L,
         headers = list(
@@ -134,11 +134,11 @@ server_handlers <- function(host, port) {
 
 server_run <- function(model_dir, host, port, start, browse) {
   sess <- tf$Session()
-  signature_def <- serve_signature_from_model(sess, model_dir)
+  signature_def <- server_load_model(sess, model_dir)
 
   if (browse) utils::browseURL(paste0("http://", host, ":", port))
 
-  handlers <- server_load_model(host, port)
+  handlers <- server_handlers(host, port)
 
   start(host, port, list(
     onHeaders = function(req) {

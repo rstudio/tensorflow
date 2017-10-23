@@ -9,7 +9,7 @@
 #' @export
 swagger_from_signature_def <- function(
   signature_def,
-  host = "localhost",
+  host = "127.0.0.1",
   port = 8089,
   model_dir = NULL) {
   def <- c(
