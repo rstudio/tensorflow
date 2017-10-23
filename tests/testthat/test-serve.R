@@ -52,7 +52,7 @@ test_mnist_save <- function(sess, model_dir, x, y) {
       tf$python$saved_model$tag_constants$SERVING
     ),
     signature_def_map = list(
-      predict_images = tf$saved_model$signature_def_utils$build_signature_def(
+      serving_default = tf$saved_model$signature_def_utils$build_signature_def(
         inputs = list(images = tf$saved_model$utils$build_tensor_info(x)),
         outputs = list(scores = tf$saved_model$utils$build_tensor_info(y)),
         method_name = tf$saved_model$signature_constants$PREDICT_METHOD_NAME
@@ -74,6 +74,12 @@ test_that("can serve mnist model", {
   handle <- serve_savedmodel(model_dir, daemonized = TRUE)
 
   expect_true(!is.null(handle))
+
+  swagger_file <- tempfile(fileext = ".json")
+  download.file("http://127.0.0.1:8089/swagger.json", swagger_file)
+  swagger_contents <- readChar(swagger_file, file.info(swagger_file)$size)
+
+  expect_true(grepl("serving_default", swagger_contents))
 
   httpuv::stopDaemonizedServer(handle)
 })
