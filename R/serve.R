@@ -2,17 +2,23 @@
 #'
 #' Serve a TensorFlow Model into a local REST/JSON API.
 #'
+#' @param model_dir The path to the exported model, as a string.
+#' @param host Address to use to serve model, as a string.
+#' @param port Port to use to serve model, as numeric.
+#' @param daemonized Makes 'httpuv' server daemonized so R interactive sessions
+#'   are not blocked to handle requests. To terminate a daemonized server, call
+#'   'httpuv::stopDaemonizedServer()' with the handle returned from this call.
+#'
 #' @importFrom httpuv runServer
 #' @export
 serve <- function(
   model_dir,
   host = "127.0.0.1",
   port = 8089,
-  browse = interactive(),
   daemonized = FALSE
   ) {
   httpuv_start <- if (daemonized) httpuv::startDaemonizedServer else httpuv::runServer
-  serve_run(model_dir, host, port, httpuv_start, browse)
+  serve_run(model_dir, host, port, httpuv_start, !daemonized && interactive())
 }
 
 serve_load_model <- function(sess, model_dir) {

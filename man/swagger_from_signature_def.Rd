@@ -4,8 +4,7 @@
 \alias{swagger_from_signature_def}
 \title{Create Swagger Definition}
 \usage{
-swagger_from_signature_def(signature_def, host = "localhost", port = 8089,
-  model_dir = NULL)
+swagger_from_signature_def(signature_def)
 }
 \arguments{
 \item{signature_def}{A signature definition exported indirectly through

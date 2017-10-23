@@ -4,7 +4,18 @@
 \alias{serve}
 \title{Serve a TensorFlow Model}
 \usage{
-serve(model_dir, host = "localhost", port = 8089, browse = interactive())
+serve(model_dir, host = "127.0.0.1", port = 8089, daemonized = FALSE)
+}
+\arguments{
+\item{model_dir}{The path to the exported model, as a string.}
+
+\item{host}{Address to use to serve model, as a string.}
+
+\item{port}{Port to use to serve model, as numeric.}
+
+\item{daemonized}{Makes 'httpuv' server daemonized so R interactive sessions
+are not blocked to handle requests. To terminate a daemonized server, call
+'httpuv::stopDaemonizedServer()' with the handle returned from this call.}
 }
 \description{
 Serve a TensorFlow Model into a local REST/JSON API.
