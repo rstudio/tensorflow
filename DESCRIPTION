@@ -34,6 +34,7 @@ LazyData: true
 Depends: R (>= 3.1)
 Imports:
     config,
+    httpuv,
     jsonlite (>= 1.2),
     processx,
     reticulate (>= 1.2),
