@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 1.4.0.9000
+Version: 1.4.0.9003
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cre"), email = "jj@rstudio.com"),
   person(family = "RStudio", role = c("cph", "fnd")),
@@ -34,7 +34,7 @@ LazyData: true
 Depends: R (>= 3.1)
 Imports:
     config,
-    jsonlite,
+    jsonlite (>= 1.2),
     processx,
     reticulate (>= 1.2),
     tfruns (>= 0.9.1),
