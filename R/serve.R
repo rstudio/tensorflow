@@ -75,7 +75,7 @@ serve_handlers <- function(host, port) {
           "Content-Type" = paste0(serve_content_type("json"), "; charset=UTF-8")
         ),
         body = charToRaw(enc2utf8(
-          swagger_from_signature_def(signature_def, host, port)
+          swagger_from_signature_def(signature_def)
         ))
       )
     },

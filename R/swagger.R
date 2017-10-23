@@ -8,26 +8,17 @@
 #' @import jsonlite
 #' @export
 swagger_from_signature_def <- function(
-  signature_def,
-  host = "127.0.0.1",
-  port = 8089,
-  model_dir = NULL) {
+  signature_def) {
   def <- c(
-    swagger_header(host, port),
+    swagger_header(),
     swagger_paths(signature_def),
     swagger_defs(signature_def)
   )
 
-  json <- jsonlite::toJSON(def)
-
-  if (is.character(model_dir)) {
-    writeLines(as.character(json), file.path(model_dir, "swagger.json"))
-  }
-
-  json
+  jsonlite::toJSON(def)
 }
 
-swagger_header <- function(host, port) {
+swagger_header <- function() {
   list(
     swagger = unbox("2.0"),
     info = list(
@@ -35,7 +26,6 @@ swagger_header <- function(host, port) {
       version = unbox("1.0.0"),
       title = unbox("TensorFlow Model")
     ),
-    host = unbox(paste(host, port, sep = ":")),
     basePath = unbox("/api"),
     schemes = list(
       unbox("http")
