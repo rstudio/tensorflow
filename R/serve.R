@@ -45,7 +45,7 @@ serve_content_type <- function(file_path) {
 }
 
 serve_static_file_response <- function(file_path) {
-  file_path <- system.file(file_path, package = "tfserve")
+  file_path <- system.file(file_path, package = "tensorflow")
   file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
 
   list(
