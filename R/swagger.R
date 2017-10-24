@@ -1,12 +1,3 @@
-#' Create Swagger Definition
-#'
-#' Creates a Swagger definition from a TensorFlow signature.
-#'
-#' @param signature_def A signature definition exported indirectly through
-#'   'export_savedmodel()' or explicitly using 'build_signature_def()'.
-#'
-#' @import jsonlite
-#' @export
 swagger_from_signature_def <- function(
   signature_def) {
   def <- c(
