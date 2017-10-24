@@ -96,38 +96,63 @@ serve_handlers <- function(host, port) {
       signature_name <- strsplit(req$PATH_INFO, "/")[[1]][[3]]
 
       if (!signature_name %in% signature_names) {
-        serve_invalid_request()
-        return()
+        stop("Signature '", signature_name, "' not available in model signatures.")
       }
 
       json_raw <- req$rook.input$read()
-      json_req <- jsonlite::fromJSON(rawToChar(json_raw))
+      json_req <- jsonlite::fromJSON(
+        rawToChar(json_raw),
+        simplifyDataFrame = FALSE,
+        simplifyMatrix = FALSE
+      )
 
-      tensor_input_names <- signature_def$get(signature_name)$inputs$keys()
-      if (length(tensor_input_names) != 1) {
-        serve_invalid_request(paste(
-          "Currently, only single-tensor inputs are supported but found", length(tensor_input_names)
-        ))
-        return()
+      signature_obj <- signature_def$get(signature_name)
+
+      tensor_input_names <- signature_obj$inputs$keys()
+      if (length(tensor_input_names) == 0) {
+        stop("Signature '", signature_name, "' contains no inputs.")
       }
 
-      tensor_output_names <- signature_def$get(signature_name)$outputs$keys()
+      tensor_output_names <- signature_obj$outputs$keys()
 
       fetches_list <- lapply(seq_along(tensor_output_names), function(fetch_idx) {
         sess$graph$get_tensor_by_name(
-          signature_def$get(signature_name)$outputs$get(tensor_output_names[[fetch_idx]])$name
+          signature_obj$outputs$get(tensor_output_names[[fetch_idx]])$name
         )
       })
 
       input_instances <- json_req$instances
-      if (is.list(input_instances)) {
-        input_instances <- lapply(input_instances, function(instance) {
-          if ("b64" %in% names(instance)) jsonlite::base64_dec(instance$b64) else instance
-        })
-      }
 
       feed_dict <- list()
-      feed_dict[[signature_def$get(signature_name)$inputs$get(tensor_input_names[[1]])$name]] <- input_instances
+      if (is.list(input_instances)) {
+        lapply(tensor_input_names, function(tensor_input_name) {
+          placeholder_name <- signature_obj$inputs$get(tensor_input_name)$name
+
+          feed_dict[[placeholder_name]] <<- lapply(input_instances, function(input_instance) {
+            if (is.list(input_instance) && "b64" %in% names(input_instance)) {
+              jsonlite::base64_dec(instance$b64)
+            }
+            else if (length(tensor_input_names) == 1) {
+              input_instance
+            }
+            else if (!tensor_input_name %in% names(input_instance)) {
+              stop("Input named '", tensor_input_name, "' not defined in all input instances.")
+            }
+            else {
+              lapply(input_instance[[tensor_input_name]], function(e) {
+                if (is.list(e) && "b64" %in% names(e))
+                  jsonlite::base64_dec(instance$b64)
+                else
+                  e
+              })
+            }
+          })
+        })
+      }
+      else {
+        feed_dict[[signature_obj$inputs$get(tensor_input_names[[1]])$name]] <- input_instances
+      }
+
       result <- sess$run(
         fetches = fetches_list,
         feed_dict = feed_dict
@@ -144,7 +169,7 @@ serve_handlers <- function(host, port) {
       )
     },
     ".*" = function(req, signature_def) {
-      serve_invalid_request()
+      stop("Invalid path.")
     }
   )
 }
@@ -161,9 +186,13 @@ serve_run <- function(model_dir, host, port, start, browse) {
     onHeaders = function(req) {
       NULL
     },
-    call = function(req){
-      matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
-      handlers[matches][[1]](req, sess, signature_def)
+    call = function(req) {
+      tryCatch({
+        matches <- sapply(names(handlers), function(e) grepl(e, req$PATH_INFO))
+        handlers[matches][[1]](req, sess, signature_def)
+      }, error = function(e) {
+        serve_invalid_request(e$message)
+      })
     },
     onWSOpen = function(ws) {
       NULL
