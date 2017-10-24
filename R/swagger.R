@@ -124,6 +124,15 @@ swagger_dtype_to_swagger <- function(dtype) {
   lapply(result, jsonlite::unbox)
 }
 
+swagger_type_to_example <- function(type) {
+  switch(type,
+         integer = 1.0,
+         number  = 1.0,
+         string  = "ABC",
+         boolean = TRUE
+  )
+}
+
 swagger_def <- function(signature_def, signature_key, signature_id) {
   tensor_input_names <- signature_def$get(signature_key)$inputs$keys()
   if (length(tensor_input_names) != 1) {
@@ -135,17 +144,28 @@ swagger_def <- function(signature_def, signature_key, signature_id) {
   tensor_input_dim <- tensor_input$tensor_shape$dim
   tensor_input_dim_len <- tensor_input_dim$`__len__`()
 
-  swagger_type_def <- NULL
-  if (tensor_input_dim_len == 0) {
-    swagger_type_def <- swagger_dtype_to_swagger(tf$DType(tensor_input$dtype))
-  }
-  else {
-    swagger_type_def <- list(
-      type = unbox("array"),
-      items = swagger_dtype_to_swagger(tf$DType(tensor_input$dtype)),
-      example = rep(1.0, tensor_input$tensor_shape$dim[[tensor_input_dim_len - 1]]$size)
+  properties_def <- list(
+    b64 = list(
+      type = unbox("string"),
+      example = unbox("")
     )
+  )
 
+  tensor_input_example_length <- 1
+  if (tensor_input_dim_len > 0)
+    tensor_input_example_length <- tensor_input$tensor_shape$dim[[tensor_input_dim_len - 1]]$size
+
+  swagger_items <- swagger_dtype_to_swagger(tf$DType(tensor_input$dtype))
+  swagger_example <- swagger_type_to_example(swagger_items$type)
+
+  swagger_type_def <- list(
+    type = unbox("object"),
+    items = swagger_items,
+    example = rep(swagger_example, tensor_input_example_length),
+    properties = properties_def
+  )
+
+  if (tensor_input_dim_len > 0) {
     for (idx in seq_len(tensor_input_dim_len - 1)) {
       swagger_type_def <- list(
         type = unbox("array"),
