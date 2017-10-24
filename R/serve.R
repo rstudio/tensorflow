@@ -119,8 +119,15 @@ serve_handlers <- function(host, port) {
         )
       })
 
+      input_instances <- json_req$instances
+      if (is.list(input_instances)) {
+        input_instances <- lapply(input_instances, function(instance) {
+          if ("b64" %in% names(instance)) jsonlite::base64_dec(instance$b64) else instance
+        })
+      }
+
       feed_dict <- list()
-      feed_dict[[signature_def$get(signature_name)$inputs$get(tensor_input_names[[1]])$name]] <- json_req$instances
+      feed_dict[[signature_def$get(signature_name)$inputs$get(tensor_input_names[[1]])$name]] <- input_instances
       result <- sess$run(
         fetches = fetches_list,
         feed_dict = feed_dict
