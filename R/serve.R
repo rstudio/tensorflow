@@ -130,7 +130,7 @@ serve_handlers <- function(host, port) {
 
           feed_dict[[placeholder_name]] <<- lapply(input_instances, function(input_instance) {
             if (is.list(input_instance) && "b64" %in% names(input_instance)) {
-              jsonlite::base64_dec(instance$b64)
+              tf$decode_base64(instance$b64)
             }
             else if (length(tensor_input_names) == 1) {
               input_instance
@@ -141,7 +141,7 @@ serve_handlers <- function(host, port) {
             else {
               lapply(input_instance[[tensor_input_name]], function(e) {
                 if (is.list(e) && "b64" %in% names(e))
-                  jsonlite::base64_dec(instance$b64)
+                  tf$decode_base64(instance$b64)
                 else
                   e
               })
