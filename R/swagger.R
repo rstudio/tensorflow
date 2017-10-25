@@ -126,8 +126,8 @@ swagger_type_to_example <- function(type) {
 
 swagger_def <- function(signature_def, signature_key, signature_id) {
   tensor_input_names <- signature_def$get(signature_key)$inputs$keys()
-  if (length(tensor_input_names) != 1) {
-    stop("Currently, only single-tensor inputs are supported but found ", length(tensor_input_names))
+  if (length(tensor_input_names) == 0) {
+    stop("No input tensor found for '", signature_key, "' signature.")
   }
 
   tensor_input <- signature_def$get(signature_key)$inputs$get(tensor_input_names[[1]])
@@ -152,8 +152,7 @@ swagger_def <- function(signature_def, signature_key, signature_id) {
   swagger_type_def <- list(
     type = unbox("object"),
     items = swagger_items,
-    example = rep(swagger_example, tensor_input_example_length),
-    properties = properties_def
+    example = rep(swagger_example, tensor_input_example_length)
   )
 
   if (tensor_input_dim_len > 0) {
@@ -164,6 +163,8 @@ swagger_def <- function(signature_def, signature_key, signature_id) {
       )
     }
   }
+
+  swagger_type_def$properties = properties_def
 
   list(
     type = unbox("object"),

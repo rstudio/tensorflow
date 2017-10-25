@@ -42,7 +42,8 @@ Imports:
     utils,
     yaml
 Remotes:
-    rstudio/reticulate
+    rstudio/reticulate,
+    rstudio/swagger
 Roxygen: list(markdown = TRUE)
 Suggests: testthat
 RoxygenNote: 6.0.1

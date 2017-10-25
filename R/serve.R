@@ -44,9 +44,15 @@ serve_content_type <- function(file_path) {
   )
 }
 
-serve_static_file_response <- function(file_path) {
-  file_path <- system.file(file_path, package = "tensorflow")
+serve_static_file_response <- function(package, file_path, remove = NULL) {
+  file_path <- system.file(file_path, package = package)
   file_contents <- if (file.exists(file_path)) readBin(file_path, "raw", n = file.info(file_path)$size) else NULL
+
+  if (!is.null(remove)) {
+    contents <- rawToChar(file_contents)
+    contents <- sub(remove, "", contents)
+    file_contents <- charToRaw(enc2utf8(contents))
+  }
 
   list(
     status = 200L,
@@ -86,10 +92,14 @@ serve_handlers <- function(host, port) {
       )
     },
     "^/$" = function(req, sess, signature_def) {
-      serve_static_file_response("swagger-ui/index.html")
+      serve_static_file_response(
+        "swagger",
+        "dist/index.html",
+        "http://petstore\\.swagger\\.io/v2"
+      )
     },
     "^/[^/]*$" = function(req, sess, signature_def) {
-      serve_static_file_response(file.path("swagger-ui", req$PATH_INFO))
+      serve_static_file_response("swagger", file.path("dist", req$PATH_INFO))
     },
     "^/api/[^/]*/predict" = function(req, sess, signature_def) {
       signature_names <- signature_def$keys()
