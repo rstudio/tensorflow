@@ -117,8 +117,8 @@ swagger_dtype_to_swagger <- function(dtype) {
 
 swagger_type_to_example <- function(type) {
   switch(type,
-         integer = 1.0,
-         number  = 1.0,
+         integer = 0.0,
+         number  = 0.0,
          string  = "ABC",
          boolean = TRUE
   )
