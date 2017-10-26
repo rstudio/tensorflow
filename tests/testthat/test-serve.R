@@ -45,7 +45,6 @@ test_mnist_train <- function(sess) {
 test_mnist_save <- function(sess, model_dir, x, y) {
   builder <- tf$saved_model$builder$SavedModelBuilder(model_dir)
 
-  legacy_init_op <- tf$group(tf$tables_initializer(), name = "legacy_init_op")
   builder$add_meta_graph_and_variables(
     sess,
     list(
@@ -54,11 +53,9 @@ test_mnist_save <- function(sess, model_dir, x, y) {
     signature_def_map = list(
       serving_default = tf$saved_model$signature_def_utils$build_signature_def(
         inputs = list(images = tf$saved_model$utils$build_tensor_info(x)),
-        outputs = list(scores = tf$saved_model$utils$build_tensor_info(y)),
-        method_name = tf$saved_model$signature_constants$PREDICT_METHOD_NAME
+        outputs = list(scores = tf$saved_model$utils$build_tensor_info(y))
       )
-    ),
-    legacy_init_op = legacy_init_op
+    )
   )
 
   builder$save()
