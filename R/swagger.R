@@ -1,3 +1,5 @@
+#' @import jsonlite
+
 swagger_from_signature_def <- function(
   signature_def) {
   def <- c(
