@@ -138,25 +138,32 @@ serve_handlers <- function(host, port) {
         lapply(tensor_input_names, function(tensor_input_name) {
           placeholder_name <- signature_obj$inputs$get(tensor_input_name)$name
 
-          feed_dict[[placeholder_name]] <<- lapply(input_instances, function(input_instance) {
-            if (is.list(input_instance) && "b64" %in% names(input_instance)) {
-              tf$decode_base64(instance$b64)
-            }
-            else if (length(tensor_input_names) == 1) {
-              input_instance
-            }
-            else if (!tensor_input_name %in% names(input_instance)) {
-              stop("Input named '", tensor_input_name, "' not defined in all input instances.")
-            }
-            else {
-              lapply(input_instance[[tensor_input_name]], function(e) {
-                if (is.list(e) && "b64" %in% names(e))
-                  tf$decode_base64(instance$b64)
-                else
-                  e
-              })
-            }
-          })
+          if (length(tensor_input_names) == 1) {
+            input_instance <- input_instances[[1]]
+          }
+          else if (!tensor_input_name %in% names(input_instances)) {
+            stop("Input '", tensor_input_name, "' found in model but not in API request.")
+          } else {
+            input_instance <- input_instances[[tensor_input_name]]
+          }
+
+          if (is.list(input_instance) && "b64" %in% names(input_instance)) {
+            feed_dict[[placeholder_name]] <<- tf$decode_base64(instance$b64)
+          }
+          else if (length(tensor_input_names) == 1 && length(names(input_instance)) == 0) {
+            feed_dict[[placeholder_name]] <<- input_instance
+          }
+          else if (!tensor_input_name %in% names(input_instance)) {
+            stop("Input named '", tensor_input_name, "' not defined in all input instances.")
+          }
+          else {
+            feed_dict[[placeholder_name]] <<- lapply(input_instance[[tensor_input_name]], function(e) {
+              if (is.list(e) && "b64" %in% names(e))
+                tf$decode_base64(instance$b64)
+              else
+                e
+            })
+          }
         })
       }
       else {
