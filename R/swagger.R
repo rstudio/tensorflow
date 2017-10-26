@@ -24,10 +24,10 @@ swagger_header <- function() {
   )
 }
 
-swagger_path <- function(siagnature_name, signature_id) {
+swagger_path <- function(signature_name, signature_id) {
   list(
     post = list(
-      summary = unbox(paste0("Perform prediction over '", siagnature_name, "'")),
+      summary = unbox(paste0("Perform prediction over '", signature_name, "'")),
       description = unbox(""),
       consumes = list(
         unbox("application/json")
@@ -39,7 +39,7 @@ swagger_path <- function(siagnature_name, signature_id) {
         list(
           "in" = unbox("body"),
           name = unbox("body"),
-          description = unbox(paste0("Prediction instances for '", siagnature_name, "'")),
+          description = unbox(paste0("Prediction instances for '", signature_name, "'")),
           required = unbox(TRUE),
           schema = list(
             "$ref" = unbox(paste0("#/definitions/Instances", signature_id))

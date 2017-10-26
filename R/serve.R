@@ -186,6 +186,8 @@ serve_handlers <- function(host, port) {
 
 serve_run <- function(model_dir, host, port, start, browse) {
   sess <- tf$Session()
+  on.exit(sess$close(), add = TRUE)
+
   signature_def <- serve_load_model(sess, model_dir)
 
   if (browse) utils::browseURL(paste0("http://", host, ":", port))

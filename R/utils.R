@@ -47,3 +47,9 @@ call_hook <- function(name, ...) {
   response
 }
 
+with_new_session <- function(f) {
+  sess <- tf$Session()
+  on.exit(sess$close(), add = TRUE)
+
+  f(sess)
+}

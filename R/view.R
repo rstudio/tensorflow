@@ -19,8 +19,7 @@ view_savedmodel <- function(
   compat <- tf$python$util$compat
   saved_model_pb2 <- tf$core$protobuf$saved_model_pb2
 
-  sess <- NULL
-  with(tf$Session() %as% sess, {
+  with_new_session(function(sess) {
     with(gfile$FastGFile(export_pb, "rb") %as% f, {
       graph_def <- tf$GraphDef()
 
