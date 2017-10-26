@@ -124,13 +124,8 @@ swagger_type_to_example <- function(type) {
   )
 }
 
-swagger_def <- function(signature_def, signature_key, signature_id) {
-  tensor_input_names <- signature_def$get(signature_key)$inputs$keys()
-  if (length(tensor_input_names) == 0) {
-    stop("No input tensor found for '", signature_key, "' signature.")
-  }
-
-  tensor_input <- signature_def$get(signature_key)$inputs$get(tensor_input_names[[1]])
+swagger_input_tensor_def <- function(signature_entry, tensor_input_name) {
+  tensor_input <- signature_entry$inputs$get(tensor_input_name)
 
   tensor_input_dim <- tensor_input$tensor_shape$dim
   tensor_input_dim_len <- tensor_input_dim$`__len__`()
@@ -166,10 +161,24 @@ swagger_def <- function(signature_def, signature_key, signature_id) {
 
   swagger_type_def$properties = properties_def
 
+  swagger_type_def
+}
+
+swagger_def <- function(signature_entry, signature_id) {
+  tensor_input_names <- signature_entry$inputs$keys()
+  if (length(tensor_input_names) == 0) {
+    stop("No input tensor found for '", signature_key, "' signature.")
+  }
+
+  swagger_input_def <- swagger_input_tensor_def(
+    signature_entry,
+    tensor_input_names[[1]]
+  )
+
   list(
     type = unbox("object"),
     properties = list(
-      instances = swagger_type_def
+      instances = swagger_input_def
     )
   )
 }
@@ -177,7 +186,7 @@ swagger_def <- function(signature_def, signature_key, signature_id) {
 swagger_defs <- function(signature_def) {
   defs_names <- signature_def$keys()
   defs_values <- lapply(seq_along(defs_names), function(defs_index) {
-    swagger_def(signature_def, defs_names[[defs_index]], defs_index)
+    swagger_def(signature_def$get(defs_names[[defs_index]]), defs_index)
   })
   names(defs_values) <- lapply(seq_along(defs_names), function(def_idx) {
     paste0("Instances", def_idx)
