@@ -178,6 +178,12 @@ swagger_def <- function(signature_entry, signature_id) {
   })
   names(swagger_input_defs) <- tensor_input_names
 
+  if (length(tensor_input_names) == 1) {
+    properties_def <- tensor_input_names[[1]]
+  } else {
+    properties_def <- tensor_input_names
+  }
+
   list(
     type = unbox("object"),
     properties = list(
