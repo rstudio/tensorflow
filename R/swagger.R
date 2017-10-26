@@ -170,15 +170,21 @@ swagger_def <- function(signature_entry, signature_id) {
     stop("No input tensor found for '", signature_key, "' signature.")
   }
 
-  swagger_input_def <- swagger_input_tensor_def(
-    signature_entry,
-    tensor_input_names[[1]]
-  )
+  swagger_input_defs <- lapply(tensor_input_names, function(tensor_input_name) {
+    swagger_input_tensor_def(
+      signature_entry,
+      tensor_input_name
+    )
+  })
+  names(swagger_input_defs) <- tensor_input_names
 
   list(
     type = unbox("object"),
     properties = list(
-      instances = swagger_input_def
+      instances = list(
+        type = unbox("object"),
+        properties = swagger_input_defs
+      )
     )
   )
 }
