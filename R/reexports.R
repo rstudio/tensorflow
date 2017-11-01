@@ -13,6 +13,9 @@ reticulate::tuple
 reticulate::np_array
 
 #' @export
+reticulate::array_reshape
+
+#' @export
 reticulate::iterate
 
 #' @export

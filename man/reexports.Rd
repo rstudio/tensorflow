@@ -11,6 +11,8 @@
 \alias{reexports}
 \alias{np_array}
 \alias{reexports}
+\alias{array_reshape}
+\alias{reexports}
 \alias{iterate}
 \alias{reexports}
 \alias{\%as\%}
@@ -39,7 +41,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{dict}}, \code{\link[reticulate]{tuple}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{iterate}}, \code{\link[reticulate]{\%as\%}}, \code{\link[reticulate]{use_python}}, \code{\link[reticulate]{use_virtualenv}}, \code{\link[reticulate]{use_condaenv}}}
+  \item{reticulate}{\code{\link[reticulate]{import}}, \code{\link[reticulate]{dict}}, \code{\link[reticulate]{tuple}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{array_reshape}}, \code{\link[reticulate]{iterate}}, \code{\link[reticulate]{\%as\%}}, \code{\link[reticulate]{use_python}}, \code{\link[reticulate]{use_virtualenv}}, \code{\link[reticulate]{use_condaenv}}}
 
   \item{tfruns}{\code{\link[tfruns]{flags}}, \code{\link[tfruns]{flag_numeric}}, \code{\link[tfruns]{flag_integer}}, \code{\link[tfruns]{flag_string}}, \code{\link[tfruns]{flag_boolean}}, \code{\link[tfruns]{run_dir}}}
 }}
