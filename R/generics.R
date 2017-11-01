@@ -62,7 +62,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 
 
 #' @export
-"[.tensorflow.python.framework.ops.Tensor" <- function(x, i, j, ..., drop = TRUE) {
+"[.tensorflow.python.framework.ops.Tensor" <- function(x, i, j, k, l, ..., drop = TRUE) {
 
   # check for blank spaces in the call
   is.blank <- function (x) is.name(x) && as.character(x) == ''
@@ -108,11 +108,11 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 
   n_indices <- length(x_size)
 
-  # Capture all indices beyond i and j (skip function, `x`, `drop`, `i` & `j`
+  # Capture all indices beyond i, j, k, l (skip function, `x`, `drop`, `i`, `j`, `k`, & `l`
   # from the arguments). This enables users to skip indices to get their defaults
   cl <- match.call()
   args <- as.list(cl)[-1]
-  extra_indices <- args[!names(args) %in% c('x', 'i', 'j', 'drop')]
+  extra_indices <- args[!names(args) %in% c('x', 'i', 'j', 'k', 'l', 'drop')]
 
   # if i wasn't specified, make it NA (keep all values)
   if (missing(i)) i <- list(NA)
@@ -127,11 +127,30 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
     j <- list(validate_index(j))
   }
 
+  # if k wasn't specified, but is required, keep all elements
+  # if it isn't required, skip it
+  if (missing(k)) {
+    if (n_indices > 2) k <- list(NA)
+    else k <- list()
+  } else {
+    k <- list(validate_index(k))
+  }
+
+  # if l wasn't specified, but is required, keep all elements
+  # if it isn't required, skip it
+  if (missing(l)) {
+    if (n_indices > 3) l <- list(NA)
+    else l <- list()
+  } else {
+    l <- list(validate_index(l))
+  }
+
+
   # evaluate and fill in blanks
   extra_indices <- lapply(extra_indices, evaluate_index)
 
   # combine the indices & strip out any names
-  indices <- c(i, j, extra_indices)
+  indices <- c(i, j, k, l, extra_indices)
   names(indices) <- NULL
 
   # error if wrong number of indices
