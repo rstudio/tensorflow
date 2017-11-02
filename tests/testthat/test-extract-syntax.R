@@ -177,14 +177,14 @@ test_that("incorrect number of indices errors", {
   skip_if_no_tensorflow()
 
   # set up Tensor
-  x <- tf$constant(arr(3, 3, 3, 3, 3))
+  x <- tf$constant(arr(3, 3, 3))
 
   # too many
-  expect_error(x[1:2, 2, 0:2, 3, 3, 3],
+  expect_error(x[1:2, 2, 0:2, 3],
                'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , , ,],
+  expect_error(x[1:2, 2, 0:2, 3, , ],
                'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , , ,drop = TRUE],
+  expect_error(x[1:2, 2, 0:2, 3, , drop = TRUE],
                'incorrect number of dimensions')
   # too few
   expect_error(x[],
