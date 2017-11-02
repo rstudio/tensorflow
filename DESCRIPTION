@@ -39,7 +39,8 @@ Imports:
     reticulate (>= 1.2.0.9008),
     tfruns (>= 0.9.1),
     utils,
-    yaml
+    yaml,
+    rstudioapi (>= 0.7)
 Remotes:
     rstudio/reticulate
 Roxygen: list(markdown = TRUE)

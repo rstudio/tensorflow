@@ -24,13 +24,17 @@
 #' @param extra_packages Additional Python packages to install along with
 #'   TensorFlow.
 #'
+#' @param restart_session Restart R session after installing (note this will
+#'   only occur within RStudio).
+#'
 #' @importFrom jsonlite fromJSON
 #'
 #' @export
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system"),
                                conda = "auto",
                                version = "default",
-                               extra_packages = NULL) {
+                               extra_packages = NULL,
+                               restart_session = TRUE) {
 
   # verify os
   if (!is_windows() && !is_osx() && !is_linux()) {
@@ -220,7 +224,11 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     }
   }
 
-  cat("\nInstallation of TensorFlow complete.\n\n")
+  cat("\nInstallation complete.\n\n")
+
+  if (restart_session && rstudioapi::hasFun("restartSession"))
+    rstudioapi::restartSession()
+
   invisible(NULL)
 }
 

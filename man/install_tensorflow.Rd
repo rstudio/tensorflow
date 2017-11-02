@@ -5,7 +5,8 @@
 \title{Install TensorFlow and it's dependencies}
 \usage{
 install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
-  conda = "auto", version = "default", extra_packages = NULL)
+  conda = "auto", version = "default", extra_packages = NULL,
+  restart_session = TRUE)
 }
 \arguments{
 \item{method}{Installation method. By default, "auto" automatically finds a
@@ -30,6 +31,9 @@ for a nightly binary).}
 
 \item{extra_packages}{Additional Python packages to install along with
 TensorFlow.}
+
+\item{restart_session}{Restart R session after installing (note this will
+only occur within RStudio).}
 }
 \description{
 Install TensorFlow and it's dependencies
