@@ -153,6 +153,27 @@ test_that("indexing works within functions", {
 
 })
 
+
+test_that("indexing works with variables", {
+  skip_if_no_tensorflow()
+
+  expect_ok <- function (expr) {
+    expect_is(expr, "tensorflow.python.framework.ops.Tensor")
+  }
+
+  # set up tensors
+  x1 <- tf$constant(arr(3))
+  x2 <- tf$constant(arr(3, 3))
+  x3 <- tf$constant(arr(3, 3, 3))
+
+  # extract with index (these shouldn't error)
+  index <- 2
+  expect_ok(x1[index])  # i
+  expect_ok(x2[, index])  # j
+  expect_ok(x3[, , index])  # dots
+
+})
+
 test_that("negative and decreasing indexing errors", {
   skip_if_no_tensorflow()
 
@@ -177,14 +198,14 @@ test_that("incorrect number of indices errors", {
   skip_if_no_tensorflow()
 
   # set up Tensor
-  x <- tf$constant(arr(3, 3, 3, 3, 3))
+  x <- tf$constant(arr(3, 3, 3))
 
   # too many
-  expect_error(x[1:2, 2, 0:2, 3, 3, 3],
+  expect_error(x[1:2, 2, 0:2, 3],
                'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , , ,],
+  expect_error(x[1:2, 2, 0:2, 3, , ],
                'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , , ,drop = TRUE],
+  expect_error(x[1:2, 2, 0:2, 3, , drop = TRUE],
                'incorrect number of dimensions')
   # too few
   expect_error(x[],
