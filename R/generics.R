@@ -74,7 +74,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
   evaluate_index <- function (x) {
     if (is.blank(x))
       NA
-    else if (is.call(x))
+    else if (is.call(x) | is.name(x))
       validate_index(eval(x, envir = parent.frame(n = 3)))
     else
       validate_index(x)
