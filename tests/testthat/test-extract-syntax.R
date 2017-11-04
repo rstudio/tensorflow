@@ -35,9 +35,9 @@ test_that("scalar indexing works", {
   y3_ <- x3_[1, 2, 3]
 
   # extract as Tensors
-  y1 <- x1[0]
-  y2 <- x2[0, 1]
-  y3 <- x3[0, 1, 2]
+  y1 <- x1[1]
+  y2 <- x2[1, 2]
+  y3 <- x3[1, 2, 3]
 
   # they should be equivalent
   expect_equal(y1_, grab(y1))
@@ -62,8 +62,8 @@ test_that("vector indexing works", {
   y2_ <- x2_[2:3, 1]
 
   # extract as Tensors
-  y1 <- x1[1:2]
-  y2 <- x2[1:2, 0]
+  y1 <- x1[2:3]
+  y2 <- x2[2:3, 1]
 
   # these should be equivalent (need to coerce R version back to arrays)
   expect_equal(y1_, grab(y1))
@@ -96,16 +96,16 @@ test_that("blank indices retain all elements", {
 
   # extract as Tensors
   y1 <- x1[]
-  y2a <- x2[1:2, ]  # j missing
-  y2b <- x2[, 0:1]
-  y3a <- x3[1:2, 0, ]
-  y3b <- x3[1:2, , 0]
-  y4 <- x4[1:2, 0, , 1:2]
+  y2a <- x2[2:3, ]  # j missing
+  y2b <- x2[, 1:2]
+  y3a <- x3[2:3, 1, ]
+  y3b <- x3[2:3, , 1]
+  y4 <- x4[2:3, 1, , 2:3]
 
   # these should be equivalent
   expect_equal(y1_, grab(y1))
   expect_equal(y2_a, grab(y2a))
-  expect_equal(y2_b, grab(y2b))  #
+  expect_equal(y2_b, grab(y2b))  # TODO: failing
   expect_equal(y3_a, grab(y3a))
   expect_equal(y3_b, grab(y3b))  #
   expect_equal(y4_, grab(y4))
@@ -127,11 +127,11 @@ test_that("indexing works within functions", {
 
   # set up functions
   sub1 <- function (x, a)
-    x[a - 1]
+    x[a]
   sub2 <- function (x, a, b)
-    x[a - 1, b - 1]
+    x[a, b]
   sub3 <- function (x, b, c)
-    x[, b - 1, c - 1]  # skip first element
+    x[, b, c]  # skip first element
 
   # extract as arrays
   y1_ <- x1_[1:3]
@@ -147,8 +147,8 @@ test_that("indexing works within functions", {
 
   # these should be equivalent
   expect_equal(y1_, grab(y1))
-  expect_equal(y2_, grab(y2))
-  expect_equal(y3_a, grab(y3a))
+  expect_equal(y2_, grab(y2))    # TODO: failing
+  expect_equal(y3_a, grab(y3a))  # TODO: failing
   expect_equal(y3_b, grab(y3b))
 
 })
@@ -201,11 +201,11 @@ test_that("incorrect number of indices errors", {
   x <- tf$constant(arr(3, 3, 3))
 
   # too many
-  expect_error(x[1:2, 2, 0:2, 3],
+  expect_error(x[1:2, 2, 1:2, 3],
                'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , ],
+  expect_error(x[1:2, 2, 1:2, 3, , ],
                'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , drop = TRUE],
+  expect_error(x[1:2, 2, 1:2, 3, , drop = TRUE],
                'incorrect number of dimensions')
   # too few
   expect_error(x[],
@@ -244,8 +244,8 @@ test_that("passing non-vector indices errors", {
   x2 <- tf$constant(arr(3, 3, 3))
 
   # block indices
-  block_idx_1 <- rbind(c(1, 2), c(0, 1))
-  block_idx_2 <- rbind(c(1, 2, 1), c(0, 1, 2))
+  block_idx_1 <- rbind(c(1, 2), c(1, 2))
+  block_idx_2 <- rbind(c(1, 2, 1), c(1, 2, 3))
 
   # indexing with matrices should fail
   expect_error(x1[block_idx_1],
@@ -260,7 +260,7 @@ test_that("undefined extensions extract", {
 
   # thanks to @dfalbel https://github.com/rstudio/tensorflow/issues/139
   x <- tf$placeholder(tf$int16, shape = list(NULL, 1L))
-  sub <- x[, 0L]
+  sub <- x[, 1L]
 
   # also check it returns the correct dimensions to R
   x_ <- matrix(seq_len(3), ncol = 1)

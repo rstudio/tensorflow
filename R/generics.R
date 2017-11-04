@@ -64,6 +64,13 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 #' @export
 "[.tensorflow.python.framework.ops.Tensor" <- function(x, i, j, ..., drop = TRUE) {
 
+  # handle 0 vs. 1-based indexes. we used to have 0-based indexes but migrated
+  # to 1-based indexes (a package option allows restoring of the old behavior)
+  one_based_index <- getOption("tensorflow.one_based_extract", TRUE)
+
+  # define index begin is dervied from one_based
+  index_begin <- ifelse(one_based_index, 1, 0)
+
   # check for blank spaces in the call
   is.blank <- function (x) is.name(x) && as.character(x) == ''
 
@@ -142,7 +149,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
   # find index starting element on each dimension
   begin <- vapply(indices,
                   function (x) {
-                    if (length(x) == 1 && is.na(x)) 0
+                    if (length(x) == 1 && is.na(x)) index_begin
                     else x[1]
                   },
                   0)
@@ -154,6 +161,21 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
                   else x[length(x)]
                 },
                 0)
+
+  # handle 1-based indexing
+  if (one_based_index) {
+
+    # warn if we see any zero indexes
+    if (any(begin == 0)) {
+      warning("The tensorflow package now uses 1-based indexes for the ",
+              "tensor extract operator and you have passed a 0 index.\n",
+              "You can restore the old behavior with: ",
+              "options(tensorflow.one_based_extract = FALSE)")
+    }
+
+    # subtract one from each begin index to account for 0-based indexes
+    begin <- begin - 1
+  }
 
   # truncate missing indices to be finite & add one to the ends to account for
   # Python's exclusive upper bound
