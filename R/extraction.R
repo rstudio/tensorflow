@@ -7,6 +7,9 @@ extract_r_like <- function(x, call) {
 
   dims_in <- dim(x)
 
+  # replace NULL dimensions with 1
+  dims_in <- sapply(dims_in, function(dim) if (is.null(dim)) 1L else dim)
+
   # create a dummy array containing the order of elements Python-style
   dummy_in <- dummy(dims_in)
 
