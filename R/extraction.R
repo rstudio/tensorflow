@@ -16,8 +16,10 @@ extract_r_like <- function(x, call) {
   # modify the call and environment to swap dummy_in for the target, and use
   # primitive subsetting
   call_list <- as.list(call)[-1]
+  dummy_name <- ".dummy_in"
+  call_list[[1]] <- as.name(dummy_name)
   env <- as.list(parent.frame(n = 2))
-  env[[call_list[[1]]]] <- dummy_in
+  env[[dummy_name]] <- dummy_in
   dummy_out <- with(env, do.call(.Primitive("["), call_list))
 
   # coerce result to an array

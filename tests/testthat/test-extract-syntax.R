@@ -98,6 +98,12 @@ test_that('extract works like R', {
   check_expr(c[-(1:4), ], "c")
   check_expr(d[-(1:2), -1, ], "d")
 
+  # works on containers
+  x <- list(b = tf$constant(b))
+  r_out <- as.array(b[3, 1])
+  tf_out <- grab(x$b[3, 1])
+  expect_identical(r_out, tf_out)
+
 })
 
 # tests for 0-based indexing
