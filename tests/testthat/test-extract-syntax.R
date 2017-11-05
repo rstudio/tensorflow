@@ -15,94 +15,6 @@ arr <- function (...) {
   array(1:prod(dims), dim = dims)
 }
 
-randn <- function (...) {
-  dim <- c(...)
-  array(rnorm(prod(dim)), dim = dim)
-}
-
-# check a simple (one-object) expression produces the same result when done on
-# an R array, and when done on a tensor, with results ported back to R
-# e.g. check_expr(a[1:3], swap = "a")
-check_expr <- function (expr, name = "x") {
-
-  call <- substitute(expr)
-  r_out <- as.array(eval(expr))
-
-  # swap the array for a constant, run, and convert back to an array
-  obj <- get(name, parent.frame())
-  swapsies <- list(tf$constant(obj))
-  names(swapsies) <- name
-  tf_out <- with(swapsies, grab(eval(call)))
-
-  # check it's very very similar
-  expect_identical(r_out, tf_out)
-
-}
-
-# capture previous r-like extraction method, set to default, and return later
-old_extract_method <- options("tensorflow.r_like_extract")
-options(tensorflow.r_like_extract = NULL)
-
-test_that('extract works like R', {
-
-  skip_if_no_tensorflow()
-
-  a <- randn(10)
-  b <- randn(10, 1)
-  c <- randn(10, 5)
-  d <- randn(2, 2, 2)
-
-  # Can extract with a vector, regardless of dimension
-  check_expr(a[1:6], "a")
-  check_expr(b[1:6], "b")
-  check_expr(c[1:6], "c")
-  check_expr(d[1:6], "d")
-
-  # can extract first column, regardless of dimension
-  check_expr(b[1:6, ], "b")
-  check_expr(b[1:6, 1], "b")
-  check_expr(c[1:6, ], "c")
-  check_expr(c[1:6, 1], "c")
-  check_expr(d[1:2, , ], "d")
-  check_expr(d[1:2, 1, ], "d")
-
-  # can extract with negative dimensions
-  check_expr(a[3:1], "a")
-  check_expr(d[2:1, , 1:2], "d")
-
-  # can extract with logicals
-  check_expr(a[c(TRUE, FALSE, TRUE)], "a")
-
-  # can extract with a mix of numerics and logicals
-  check_expr(d[2:1, , c(TRUE, FALSE)], "d")
-
-  # can extract with missing entries in various places
-  check_expr(d[, , 2:1], "d")
-  check_expr(d[, 2:1, ], "d")
-  check_expr(d[2:1, , ], "d")
-
-  # can extract single elements without dropping dimensions
-  check_expr(d[, , 1], "d")
-  check_expr(d[, 1, ], "d")
-  check_expr(d[1, , ], "d")
-
-  # can do empty extracts
-  check_expr(a[], "a")
-  check_expr(b[], "b")
-  check_expr(c[], "c")
-  check_expr(d[], "d")
-
-  # can do negative extracts
-  check_expr(a[-1], "a")
-  check_expr(b[-(1:3), ], "b")
-  check_expr(c[-(1:4), ], "c")
-  check_expr(d[-(1:2), -1, ], "d")
-
-})
-
-# tests for 0-based indexing
-options(tensorflow.r_like_extract = FALSE)
-
 test_that("scalar indexing works", {
 
   skip_if_no_tensorflow()
@@ -359,8 +271,6 @@ test_that("undefined extensions extract", {
 
 })
 
-options(tensorflow.r_like_extract = NULL)
-
 test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
   skip_if_no_tensorflow()
@@ -371,9 +281,4 @@ test_that("dim(), length(), nrow(), and ncol() work on tensors", {
   expect_equal(length(a_matrix), length(a_tensor))
   expect_equal(nrow(a_matrix), nrow(a_tensor))
   expect_equal(ncol(a_matrix), ncol(a_tensor))
-
 })
-
-# reset user's extract method
-options(tensorflow.r_like_extract = old_extract_method)
-
