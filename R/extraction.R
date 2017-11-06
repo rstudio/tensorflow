@@ -2,13 +2,16 @@
 # indexing like python, but without python's R-incompatible syntax (e.g.
 # strides)
 
+unknown_dimension <- function (x) {
+  dims <- dim(x)
+  unknown <- vapply(dims, is.null, FUN.VALUE = FALSE)
+  is.list(dims) && any(unknown)
+}
+
 # tensor extraction mimicing R
 extract_r_like <- function(x, call) {
 
   dims_in <- dim(x)
-
-  # replace NULL dimensions with 1
-  dims_in <- sapply(dims_in, function(dim) if (is.null(dim)) 1L else dim)
 
   # create a dummy array containing the order of elements Python-style
   dummy_in <- dummy(dims_in)
@@ -68,9 +71,8 @@ dummy <- function (dims) {
 }
 
 # ~~~~~~
-
 # tensor extract syntax with zero-based indexing
-extract_zero_based <- function (x, i, j, ..., drop = TRUE) {
+extract_manual <- function (x, i, j, ..., drop = TRUE, basis = 0) {
 
   # tensor shape as a vector
   x_size <- x$get_shape()$as_list()
@@ -87,11 +89,14 @@ extract_zero_based <- function (x, i, j, ..., drop = TRUE) {
   # from the arguments). This enables users to skip indices to get their defaults
   cl <- match.call()
   args <- as.list(cl)[-1]
-  extra_indices <- args[!names(args) %in% c('x', 'i', 'j', 'drop')]
+  known_args <- c("x", "i", "j", "drop", "basis")
+  extra_indices <- args[!names(args) %in% known_args]
 
   # if i wasn't specified, make it NA (keep all values)
-  if (missing(i)) i <- list(NA)
-  else i <- list(validate_index(i))
+  if (missing(i))
+    i <- list(NA)
+  else
+    i <- list(validate_index(i))
 
   # if j wasn't specified, but is required, keep all elements
   # if it isn't required, skip it
@@ -117,18 +122,22 @@ extract_zero_based <- function (x, i, j, ..., drop = TRUE) {
   # find index starting element on each dimension
   begin <- vapply(indices,
                   function (x) {
-                    if (length(x) == 1 && is.na(x)) 0
-                    else x[1]
+                    if (length(x) == 1 && is.na(x))
+                      0
+                    else
+                      x[1] - basis
                   },
-                  0)
+                  FUN.VALUE = 0)
 
   # find slice end in each dimension
   end <- vapply(indices,
                 function (x) {
-                  if (length(x) == 1 && is.na(x)) Inf
-                  else x[length(x)]
+                  if (length(x) == 1 && is.na(x))
+                    Inf
+                  else
+                    x[length(x)] - basis
                 },
-                0)
+                FUN.VALUE = 0)
 
   # truncate missing indices to be finite & add one to the ends to account for
   # Python's exclusive upper bound
@@ -188,18 +197,50 @@ evaluate_index <- function (x) {
 }
 
 # check the user-specified index is valid
-validate_index <- function (x) {
+validate_index <- function (x, base = 0) {
+
+  append <- switch (as.character(base),
+                    `0` = " with 0-based indexing",
+                    `1` = " with unknown dimensions")
+
   if (!(is.numeric(x) && is.finite(x))) {
-    stop ('invalid index - must be numeric and finite')
+    stop ("invalid index - must be numeric and finite",
+          append)
   }
+
   if (!(is.vector(x))) {
-    stop ('only vector indexing of Tensors is currently supported')
+    stop ("only vector indexing of Tensors is currently supported",
+          append)
   }
+
   if (any(x < 0)) {
-    stop ('negative indexing of Tensors is not currently supported')
+    stop ("negative indexing of Tensors is not currently supported",
+          append)
   }
+
   if (x[length(x)] < x[1]) {
-    stop ('decreasing indexing of Tensors is not currently supported')
+    stop ("decreasing indexing of Tensors is not currently supported",
+          append)
   }
+
   x
+
+}
+
+
+# check for zero-based extraction indexing and warn, unless r-like indexing is
+# explicitly on
+check_zero_based <- function (call) {
+
+  explicit_r_like <- isTRUE(getOption("tensorflow.r_like_extract"))
+
+  looks_like_zero_based <- FALSE
+
+  if (looks_like_zero_based & !explicit_r_like) {
+    warning ("It looks like you might be using 0-based indexing to extract ",
+             "using [. Tensorflow now uses 1-based (R-like) indexing by ",
+             "default.\nYou can switch to 0-based indexing by setting ",
+             "options(tensorflow.r_like_extract = FALSE), or set it to TRUE ",
+             "to disable this warning")
+  }
 }

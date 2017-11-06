@@ -106,6 +106,37 @@ test_that('extract works like R', {
 
 })
 
+# test indexing for unknown dimensions
+
+test_that('extract works for unknown dimensions', {
+
+  skip_if_no_tensorflow()
+
+  # the output should retain the missing dimension
+  x <- tf$placeholder(tf$float64, shape(NULL, 10))
+  y1 <- x[, 1]
+  y2 <- x[, 1, drop = FALSE]
+
+  expect_identical(dim(y1), list(NULL))
+  expect_identical(dim(y2), list(NULL, 1L))
+
+  # expected values with 5 rows
+  x_vals <- matrix(rnorm(50), 5, 10)
+  y1_exp <- as.array(x_vals[, 1])
+  y2_exp <- as.array(x_vals[, 1, drop = FALSE])
+
+  # get observed in values for these
+  sess <- tf$Session()
+  y1_obs <- sess$run(y1,
+                     feed_dict = dict(x = x_vals))
+  y2_obs <- sess$run(y2,
+                     feed_dict = dict(x = x_vals))
+
+  expect_identical(y1_obs, y1_exp)
+  expect_identical(y2_obs, y2_exp)
+
+})
+
 # tests for 0-based indexing
 options(tensorflow.r_like_extract = FALSE)
 
