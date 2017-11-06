@@ -187,13 +187,24 @@ integer_mask <- function (mask) sum(2 ^ (seq_along(mask) - 1)[mask])
 
 # evaluate any calls (in the environment calling `[`) and replace any
 # skipped indices (blank names) with NAs
-evaluate_index <- function (x) {
-  if (is.blank(x))
-    NA
-  else if (is.call(x) | is.name(x))
-    validate_index(eval(x, envir = parent.frame(n = 3)))
-  else
-    validate_index(x)
+evaluate_index <- function (x, validate = TRUE, n = 3) {
+
+  if (is.blank(x)) {
+
+    x <- NA
+
+  } else {
+
+    if (is.call(x) | is.name(x))
+      x <- eval(x, envir = parent.frame(n = n))
+
+    if (validate)
+      x <- validate_index(x)
+
+  }
+
+  x
+
 }
 
 # check the user-specified index is valid
@@ -232,15 +243,41 @@ validate_index <- function (x, base = 0) {
 # explicitly on
 check_zero_based <- function (call) {
 
-  explicit_r_like <- isTRUE(getOption("tensorflow.r_like_extract"))
+  # get indices from the call
+  args <- as.list(call)[-1]
+  other_args <- c("x", "drop", "basis")
+  names <- names(args)
+  indices <- args[!names %in% other_args]
 
-  looks_like_zero_based <- FALSE
+  # evaluate these in the calling environment and look for 0s in them
+  indices <- lapply(indices,
+                    evaluate_index,
+                    validate = FALSE,
+                    n = 4)
 
-  if (looks_like_zero_based & !explicit_r_like) {
+  contain_zero <- vapply(indices,
+                         function (x) {
+                           (is.atomic(x) | is.list(x)) && any(is_a_zero(x))
+                         },
+                         FUN.VALUE = FALSE)
+
+  default_r_like <- is.null(getOption("tensorflow.r_like_extract"))
+
+  if (any(contain_zero) & default_r_like) {
     warning ("It looks like you might be using 0-based indexing to extract ",
-             "using [. Tensorflow now uses 1-based (R-like) indexing by ",
+             "using `[`. Tensorflow now uses 1-based (R-like) indexing by ",
              "default.\nYou can switch to 0-based indexing by setting ",
              "options(tensorflow.r_like_extract = FALSE), or set it to TRUE ",
              "to disable this warning")
   }
+
+}
+
+# does each element of this vector contain a 0
+is_a_zero <- function (x) {
+  vapply(x,
+         function (x) {
+           identical(x, 0) | identical(x, 0L)
+         },
+         FUN.VALUE = FALSE)
 }

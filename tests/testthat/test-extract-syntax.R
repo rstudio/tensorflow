@@ -411,6 +411,31 @@ test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
 })
 
+# test warnings for extraction that looks like it might be 0-based
+
+test_that('extract warns when indices look 0-based', {
+
+  skip_if_no_tensorflow()
+
+  x <- tf$constant(matrix(0, 2, 2))
+  i0 <- 0:1
+  i1 <- 1:2
+
+  # explicit 0-indexing shouldn't warn
+  options(tensorflow.r_like_extract = FALSE)
+  expect_silent(x[i0, i0])
+
+  # explicit 1-indexing shouldn't warn
+  options(tensorflow.r_like_extract = TRUE)
+  expect_silent(x[i0, i0])
+
+  # default 1-indexing should warn only if there's a zero in there
+  options(tensorflow.r_like_extract = NULL)
+  expect_silent(x[i1, i1])
+  expect_warning(x[i0, i0],
+                 "It looks like you might be using 0-based indexing")
+
+})
+
 # reset user's extract method
 options(tensorflow.r_like_extract = old_extract_method)
-

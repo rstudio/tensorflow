@@ -64,7 +64,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 #' @export
 "[.tensorflow.python.framework.ops.Tensor" <- function(x, ...) {
 
-  call <- sys.call()
+  call <- match.call()
   check_zero_based(call)
 
   r_like_extract <- getOption("tensorflow.r_like_extract", TRUE)
