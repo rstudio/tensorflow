@@ -2,13 +2,16 @@
 # indexing like python, but without python's R-incompatible syntax (e.g.
 # strides)
 
+unknown_dimension <- function (x) {
+  dims <- dim(x)
+  unknown <- vapply(dims, is.null, FUN.VALUE = FALSE)
+  is.list(dims) && any(unknown)
+}
+
 # tensor extraction mimicing R
 extract_r_like <- function(x, call) {
 
   dims_in <- dim(x)
-
-  # replace NULL dimensions with 1
-  dims_in <- sapply(dims_in, function(dim) if (is.null(dim)) 1L else dim)
 
   # create a dummy array containing the order of elements Python-style
   dummy_in <- dummy(dims_in)
@@ -16,8 +19,10 @@ extract_r_like <- function(x, call) {
   # modify the call and environment to swap dummy_in for the target, and use
   # primitive subsetting
   call_list <- as.list(call)[-1]
+  dummy_name <- ".dummy_in"
+  call_list[[1]] <- as.name(dummy_name)
   env <- as.list(parent.frame(n = 2))
-  env[[call_list[[1]]]] <- dummy_in
+  env[[dummy_name]] <- dummy_in
   dummy_out <- with(env, do.call(.Primitive("["), call_list))
 
   # coerce result to an array
@@ -66,9 +71,8 @@ dummy <- function (dims) {
 }
 
 # ~~~~~~
-
 # tensor extract syntax with zero-based indexing
-extract_zero_based <- function (x, i, j, ..., drop = TRUE) {
+extract_manual <- function (x, i, j, ..., drop = TRUE, basis = 0) {
 
   # tensor shape as a vector
   x_size <- x$get_shape()$as_list()
@@ -85,11 +89,14 @@ extract_zero_based <- function (x, i, j, ..., drop = TRUE) {
   # from the arguments). This enables users to skip indices to get their defaults
   cl <- match.call()
   args <- as.list(cl)[-1]
-  extra_indices <- args[!names(args) %in% c('x', 'i', 'j', 'drop')]
+  known_args <- c("x", "i", "j", "drop", "basis")
+  extra_indices <- args[!names(args) %in% known_args]
 
   # if i wasn't specified, make it NA (keep all values)
-  if (missing(i)) i <- list(NA)
-  else i <- list(validate_index(i))
+  if (missing(i))
+    i <- list(NA)
+  else
+    i <- list(validate_index(i))
 
   # if j wasn't specified, but is required, keep all elements
   # if it isn't required, skip it
@@ -115,18 +122,22 @@ extract_zero_based <- function (x, i, j, ..., drop = TRUE) {
   # find index starting element on each dimension
   begin <- vapply(indices,
                   function (x) {
-                    if (length(x) == 1 && is.na(x)) 0
-                    else x[1]
+                    if (length(x) == 1 && is.na(x))
+                      0
+                    else
+                      x[1] - basis
                   },
-                  0)
+                  FUN.VALUE = 0)
 
   # find slice end in each dimension
   end <- vapply(indices,
                 function (x) {
-                  if (length(x) == 1 && is.na(x)) Inf
-                  else x[length(x)]
+                  if (length(x) == 1 && is.na(x))
+                    Inf
+                  else
+                    x[length(x)] - basis
                 },
-                0)
+                FUN.VALUE = 0)
 
   # truncate missing indices to be finite & add one to the ends to account for
   # Python's exclusive upper bound
@@ -176,28 +187,97 @@ integer_mask <- function (mask) sum(2 ^ (seq_along(mask) - 1)[mask])
 
 # evaluate any calls (in the environment calling `[`) and replace any
 # skipped indices (blank names) with NAs
-evaluate_index <- function (x) {
-  if (is.blank(x))
-    NA
-  else if (is.call(x) | is.name(x))
-    validate_index(eval(x, envir = parent.frame(n = 3)))
-  else
-    validate_index(x)
+evaluate_index <- function (x, validate = TRUE, n = 3) {
+
+  if (is.blank(x)) {
+
+    x <- NA
+
+  } else {
+
+    if (is.call(x) | is.name(x))
+      x <- eval(x, envir = parent.frame(n = n))
+
+    if (validate)
+      x <- validate_index(x)
+
+  }
+
+  x
+
 }
 
 # check the user-specified index is valid
-validate_index <- function (x) {
+validate_index <- function (x, base = 0) {
+
+  append <- switch (as.character(base),
+                    `0` = " with 0-based indexing",
+                    `1` = " with unknown dimensions")
+
   if (!(is.numeric(x) && is.finite(x))) {
-    stop ('invalid index - must be numeric and finite')
+    stop ("invalid index - must be numeric and finite",
+          append)
   }
+
   if (!(is.vector(x))) {
-    stop ('only vector indexing of Tensors is currently supported')
+    stop ("only vector indexing of Tensors is currently supported",
+          append)
   }
+
   if (any(x < 0)) {
-    stop ('negative indexing of Tensors is not currently supported')
+    stop ("negative indexing of Tensors is not currently supported",
+          append)
   }
+
   if (x[length(x)] < x[1]) {
-    stop ('decreasing indexing of Tensors is not currently supported')
+    stop ("decreasing indexing of Tensors is not currently supported",
+          append)
   }
+
   x
+
+}
+
+
+# check for zero-based extraction indexing and warn, unless r-like indexing is
+# explicitly on
+check_zero_based <- function (call) {
+
+  # get indices from the call
+  args <- as.list(call)[-1]
+  other_args <- c("x", "drop", "basis")
+  names <- names(args)
+  indices <- args[!names %in% other_args]
+
+  # evaluate these in the calling environment and look for 0s in them
+  indices <- lapply(indices,
+                    evaluate_index,
+                    validate = FALSE,
+                    n = 4)
+
+  contain_zero <- vapply(indices,
+                         function (x) {
+                           (is.atomic(x) | is.list(x)) && any(is_a_zero(x))
+                         },
+                         FUN.VALUE = FALSE)
+
+  default_r_like <- is.null(getOption("tensorflow.r_like_extract"))
+
+  if (any(contain_zero) & default_r_like) {
+    warning ("It looks like you might be using 0-based indexing to extract ",
+             "using `[`. Tensorflow now uses 1-based (R-like) indexing by ",
+             "default.\nYou can switch to 0-based indexing by setting ",
+             "options(tensorflow.r_like_extract = FALSE), or set it to TRUE ",
+             "to disable this warning")
+  }
+
+}
+
+# does each element of this vector contain a 0
+is_a_zero <- function (x) {
+  vapply(x,
+         function (x) {
+           identical(x, 0) | identical(x, 0L)
+         },
+         FUN.VALUE = FALSE)
 }

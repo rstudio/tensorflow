@@ -98,6 +98,43 @@ test_that('extract works like R', {
   check_expr(c[-(1:4), ], "c")
   check_expr(d[-(1:2), -1, ], "d")
 
+  # works on containers
+  x <- list(b = tf$constant(b))
+  r_out <- as.array(b[3, 1])
+  tf_out <- grab(x$b[3, 1])
+  expect_identical(r_out, tf_out)
+
+})
+
+# test indexing for unknown dimensions
+
+test_that('extract works for unknown dimensions', {
+
+  skip_if_no_tensorflow()
+
+  # the output should retain the missing dimension
+  x <- tf$placeholder(tf$float64, shape(NULL, 10))
+  y1 <- x[, 1]
+  y2 <- x[, 1, drop = FALSE]
+
+  expect_identical(dim(y1), list(NULL))
+  expect_identical(dim(y2), list(NULL, 1L))
+
+  # expected values with 5 rows
+  x_vals <- matrix(rnorm(50), 5, 10)
+  y1_exp <- as.array(x_vals[, 1])
+  y2_exp <- as.array(x_vals[, 1, drop = FALSE])
+
+  # get observed in values for these
+  sess <- tf$Session()
+  y1_obs <- sess$run(y1,
+                     feed_dict = dict(x = x_vals))
+  y2_obs <- sess$run(y2,
+                     feed_dict = dict(x = x_vals))
+
+  expect_identical(y1_obs, y1_exp)
+  expect_identical(y2_obs, y2_exp)
+
 })
 
 # tests for 0-based indexing
@@ -374,6 +411,31 @@ test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
 })
 
+# test warnings for extraction that looks like it might be 0-based
+
+test_that('extract warns when indices look 0-based', {
+
+  skip_if_no_tensorflow()
+
+  x <- tf$constant(matrix(0, 2, 2))
+  i0 <- 0:1
+  i1 <- 1:2
+
+  # explicit 0-indexing shouldn't warn
+  options(tensorflow.r_like_extract = FALSE)
+  expect_silent(x[i0, i0])
+
+  # explicit 1-indexing shouldn't warn
+  options(tensorflow.r_like_extract = TRUE)
+  expect_silent(x[i0, i0])
+
+  # default 1-indexing should warn only if there's a zero in there
+  options(tensorflow.r_like_extract = NULL)
+  expect_silent(x[i1, i1])
+  expect_warning(x[i0, i0],
+                 "It looks like you might be using 0-based indexing")
+
+})
+
 # reset user's extract method
 options(tensorflow.r_like_extract = old_extract_method)
-
