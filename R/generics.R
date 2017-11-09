@@ -68,25 +68,12 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
   check_zero_based(call)
 
   r_like_extract <- getOption("tensorflow.r_like_extract", TRUE)
-  unknown_dim <- unknown_dimension(x)
 
-  if (r_like_extract && !unknown_dim) {
-
-    # if we can, extract exactly as in R
-    extract_r_like(x, call)
-
-  } else {
-
-    # if the indexing is 0-based, or there are missing dimensions, do it
-    # manually
-    basis <- ifelse(r_like_extract, 1, 0)
-    call_list <- as.list(call)[-1]
-    do.call(extract_manual,
-            c(call_list, basis = basis),
-            envir = parent.frame())
-
-  }
-
+  basis <- ifelse(r_like_extract, 1, 0)
+  call_list <- as.list(call)[-1]
+  do.call(extract_manual,
+          c(call_list, basis = basis),
+          envir = parent.frame())
 }
 
 
