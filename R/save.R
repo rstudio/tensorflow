@@ -19,23 +19,24 @@ view_savedmodel <- function(
   compat <- tf$python$util$compat
   saved_model_pb2 <- tf$core$protobuf$saved_model_pb2
 
-  with(tf$Session() %as% sess, {
-    with(gfile$FastGFile(export_pb, "rb") %as% f, {
-      graph_def <- tf$GraphDef()
+  sess <- tf$Session()
+  on.exit(sess$close(), add = TRUE)
 
-      data <- compat$as_bytes(f$read())
-      sm <- saved_model_pb2$SavedModel()
-      sm$ParseFromString(data)
+  with(gfile$FastGFile(export_pb, "rb") %as% f, {
+    graph_def <- tf$GraphDef()
 
-      if (sm$meta_graphs$`__len__`() > 1) stop("Saved model contains more than one graph")
+    data <- compat$as_bytes(f$read())
+    sm <- saved_model_pb2$SavedModel()
+    sm$ParseFromString(data)
 
-      g_in <- tf$import_graph_def(sm$meta_graphs[[0]]$graph_def)
-    })
+    if (sm$meta_graphs$`__len__`() > 1) stop("Saved model contains more than one graph")
 
-    train_writer <- tf$summary$FileWriter(log_dir)
-    train_writer$add_graph(sess$graph)
-    train_writer$close()
+    g_in <- tf$import_graph_def(sm$meta_graphs[[0]]$graph_def)
   })
+
+  train_writer <- tf$summary$FileWriter(log_dir)
+  train_writer$add_graph(sess$graph)
+  train_writer$close()
 
   tensorboard(log_dir = log_dir)
 }
