@@ -19,20 +19,26 @@ view_savedmodel <- function(
   compat <- tf$python$util$compat
   saved_model_pb2 <- tf$core$protobuf$saved_model_pb2
 
+  # open session and file (close both on exit)
   sess <- tf$Session()
-  on.exit(sess$close(), add = TRUE)
+  f <- gfile$FastGFile(export_pb, "rb")
+  on.exit({
+    f$close()
+    sess$close()
+  }, add = TRUE)
 
-  with(gfile$FastGFile(export_pb, "rb") %as% f, {
-    graph_def <- tf$GraphDef()
+  # write graph
 
-    data <- compat$as_bytes(f$read())
-    sm <- saved_model_pb2$SavedModel()
-    sm$ParseFromString(data)
+  graph_def <- tf$GraphDef()
 
-    if (sm$meta_graphs$`__len__`() > 1) stop("Saved model contains more than one graph")
+  data <- compat$as_bytes(f$read())
+  sm <- saved_model_pb2$SavedModel()
+  sm$ParseFromString(data)
 
-    g_in <- tf$import_graph_def(sm$meta_graphs[[0]]$graph_def)
-  })
+  if (sm$meta_graphs$`__len__`() > 1) stop("Saved model contains more than one graph")
+
+  g_in <- tf$import_graph_def(sm$meta_graphs[[0]]$graph_def)
+
 
   train_writer <- tf$summary$FileWriter(log_dir)
   train_writer$add_graph(sess$graph)
