@@ -1,77 +1,7 @@
-# both options for tensor extraction, mimicing R's behaviour, or using 0-based
-# indexing like python, but without python's R-incompatible syntax (e.g.
-# strides)
 
-unknown_dimension <- function (x) {
-  dims <- dim(x)
-  unknown <- vapply(dims, is.null, FUN.VALUE = FALSE)
-  is.list(dims) && any(unknown)
-}
-
-# tensor extraction mimicing R
-extract_r_like <- function(x, call) {
-
-  dims_in <- dim(x)
-
-  # create a dummy array containing the order of elements Python-style
-  dummy_in <- dummy(dims_in)
-
-  # modify the call and environment to swap dummy_in for the target, and use
-  # primitive subsetting
-  call_list <- as.list(call)[-1]
-  dummy_name <- ".dummy_in"
-  call_list[[1]] <- as.name(dummy_name)
-  env <- as.list(parent.frame(n = 2))
-  env[[dummy_name]] <- dummy_in
-  dummy_out <- with(env, do.call(.Primitive("["), call_list))
-
-  # coerce result to an array
-  dummy_out <- as.array(dummy_out)
-
-  # get number of elements in input and dimension of output
-  nelem <- prod(dims_in)
-  dims_out <- dim(dummy_out)
-  dims_out <- do.call(shape, as.list(dims_out))
-
-  # get the index in flat python format, as a tensor
-  index <- flatten_rowwise(dummy_out)
-
-  # flatten tensor, gather using index, reshape to output dimension
-  tensor_in_flat <- tf$reshape(x, shape(nelem))
-  tf_index <- tf$constant(as.integer(index), dtype = tf$int32)
-  tensor_out_flat <- tf$gather(tensor_in_flat, tf_index)
-  tensor_out <- tf$reshape(tensor_out_flat, dims_out)
-
-  tensor_out
-
-}
-
-# convert an array to a vector row-wise
-flatten_rowwise <- function (array) {
-  dim <- dim(array)
-  array <- aperm(array, rev(seq_along(dim)))
-  dim(array) <- NULL
-  array
-}
-
-# convert an vector to an array row-wise
-unflatten_rowwise <- function (array, dim) {
-  array <- as.array(array)
-  dim(array) <- rev(dim)
-  array <- aperm(array, rev(seq_along(dim)))
-  dim(array) <- dim
-  array
-}
-
-# create an array with the same dimensions as tensor and fill it with
-# consecutive increasing integers in python order
-dummy <- function (dims) {
-  vec <- seq_len(prod(dims)) - 1
-  unflatten_rowwise(vec, dims)
-}
 
 # ~~~~~~
-# tensor extract syntax with zero-based indexing
+# tensor extract syntax with basis 0 or 1
 extract_manual <- function (x, i, j, ..., drop = TRUE, basis = 0) {
 
   # tensor shape as a vector
@@ -261,16 +191,16 @@ check_zero_based <- function (call) {
                          },
                          FUN.VALUE = FALSE)
 
-  default_r_like <- is.null(getOption("tensorflow.r_like_extract"))
+  default_one_based <- is.null(getOption("tensorflow.one_based_extract"))
 
-  if (any(contain_zero) & default_r_like) {
+  if (any(contain_zero) & default_one_based) {
     warning(paste(
       "It looks like you might be using 0-based indexing to extract using `[`.",
-      "The tensorflow package now uses 1-based (R-like) indexing by default.\n",
-      "You can switch to the old behavior (0-based indexing) with:",
-      "  options(tensorflow.r_like_extract = FALSE)\n",
+      "The tensorflow package now uses 1-based (R-like) extraction by default.\n",
+      "You can switch to the old behavior (1-based extraction) with:",
+      "  options(tensorflow.one_based_extract = FALSE)\n",
       "If your indexing is as you intend, you can disable this warning with:",
-      "  options(tensorflow.r_like_extract = TRUE)", sep = "\n"
+      "  options(tensorflow.one_based_extract = TRUE)", sep = "\n"
     ), call. = FALSE)
   }
 

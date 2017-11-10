@@ -40,71 +40,9 @@ check_expr <- function (expr, name = "x") {
 }
 
 # capture previous r-like extraction method, set to default, and return later
-old_extract_method <- options("tensorflow.r_like_extract")
-options(tensorflow.r_like_extract = NULL)
+old_extract_method <- options("tensorflow.one_based_extract")
+options(tensorflow.one_based_extract = NULL)
 
-test_that('extract works like R', {
-
-  skip_if_no_tensorflow()
-
-  a <- randn(10)
-  b <- randn(10, 1)
-  c <- randn(10, 5)
-  d <- randn(2, 2, 2)
-
-  # Can extract with a vector, regardless of dimension
-  check_expr(a[1:6], "a")
-  check_expr(b[1:6], "b")
-  check_expr(c[1:6], "c")
-  check_expr(d[1:6], "d")
-
-  # can extract first column, regardless of dimension
-  check_expr(b[1:6, ], "b")
-  check_expr(b[1:6, 1], "b")
-  check_expr(c[1:6, ], "c")
-  check_expr(c[1:6, 1], "c")
-  check_expr(d[1:2, , ], "d")
-  check_expr(d[1:2, 1, ], "d")
-
-  # can extract with negative dimensions
-  check_expr(a[3:1], "a")
-  check_expr(d[2:1, , 1:2], "d")
-
-  # can extract with logicals
-  check_expr(a[c(TRUE, FALSE, TRUE)], "a")
-
-  # can extract with a mix of numerics and logicals
-  check_expr(d[2:1, , c(TRUE, FALSE)], "d")
-
-  # can extract with missing entries in various places
-  check_expr(d[, , 2:1], "d")
-  check_expr(d[, 2:1, ], "d")
-  check_expr(d[2:1, , ], "d")
-
-  # can extract single elements without dropping dimensions
-  check_expr(d[, , 1], "d")
-  check_expr(d[, 1, ], "d")
-  check_expr(d[1, , ], "d")
-
-  # can do empty extracts
-  check_expr(a[], "a")
-  check_expr(b[], "b")
-  check_expr(c[], "c")
-  check_expr(d[], "d")
-
-  # can do negative extracts
-  check_expr(a[-1], "a")
-  check_expr(b[-(1:3), ], "b")
-  check_expr(c[-(1:4), ], "c")
-  check_expr(d[-(1:2), -1, ], "d")
-
-  # works on containers
-  x <- list(b = tf$constant(b))
-  r_out <- as.array(b[3, 1])
-  tf_out <- grab(x$b[3, 1])
-  expect_identical(r_out, tf_out)
-
-})
 
 # test indexing for unknown dimensions
 
@@ -137,9 +75,6 @@ test_that('extract works for unknown dimensions', {
 
 })
 
-# tests for 0-based indexing
-options(tensorflow.r_like_extract = FALSE)
-
 test_that("scalar indexing works", {
 
   skip_if_no_tensorflow()
@@ -160,9 +95,9 @@ test_that("scalar indexing works", {
   y3_ <- x3_[1, 2, 3]
 
   # extract as Tensors
-  y1 <- x1[0]
-  y2 <- x2[0, 1]
-  y3 <- x3[0, 1, 2]
+  y1 <- x1[1]
+  y2 <- x2[1, 2]
+  y3 <- x3[1, 2, 3]
 
   # they should be equivalent
   expect_equal(y1_, grab(y1))
@@ -170,6 +105,10 @@ test_that("scalar indexing works", {
   expect_equal(y3_, grab(y3))
 
 })
+
+# tests for 0-based indexing
+options(tensorflow.one_based_extract = FALSE)
+
 
 test_that("vector indexing works", {
   skip_if_no_tensorflow()
@@ -396,7 +335,7 @@ test_that("undefined extensions extract", {
 
 })
 
-options(tensorflow.r_like_extract = NULL)
+options(tensorflow.one_based_extract = NULL)
 
 test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
@@ -422,15 +361,15 @@ test_that('extract warns when indices look 0-based', {
   i1 <- 1:2
 
   # explicit 0-indexing shouldn't warn
-  options(tensorflow.r_like_extract = FALSE)
+  options(tensorflow.one_based_extract = FALSE)
   expect_silent(x[i0, i0])
 
   # explicit 1-indexing shouldn't warn
-  options(tensorflow.r_like_extract = TRUE)
+  options(tensorflow.one_based_extract = TRUE)
   expect_silent(x[i0, i0])
 
   # default 1-indexing should warn only if there's a zero in there
-  options(tensorflow.r_like_extract = NULL)
+  options(tensorflow.one_based_extract = NULL)
   expect_silent(x[i1, i1])
   expect_warning(x[i0, i0],
                  "It looks like you might be using 0-based indexing")
@@ -438,4 +377,4 @@ test_that('extract warns when indices look 0-based', {
 })
 
 # reset user's extract method
-options(tensorflow.r_like_extract = old_extract_method)
+options(tensorflow.one_based_extract = old_extract_method)
