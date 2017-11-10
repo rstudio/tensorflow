@@ -67,9 +67,9 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
   call <- match.call()
   check_zero_based(call)
 
-  r_like_extract <- getOption("tensorflow.r_like_extract", TRUE)
+  one_based_extract <- getOption("tensorflow.one_based_extract", TRUE)
 
-  basis <- ifelse(r_like_extract, 1, 0)
+  basis <- ifelse(one_based_extract, 1, 0)
   call_list <- as.list(call)[-1]
   do.call(extract_manual,
           c(call_list, basis = basis),

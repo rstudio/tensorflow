@@ -40,8 +40,8 @@ check_expr <- function (expr, name = "x") {
 }
 
 # capture previous r-like extraction method, set to default, and return later
-old_extract_method <- options("tensorflow.r_like_extract")
-options(tensorflow.r_like_extract = NULL)
+old_extract_method <- options("tensorflow.one_based_extract")
+options(tensorflow.one_based_extract = NULL)
 
 
 # test indexing for unknown dimensions
@@ -107,7 +107,7 @@ test_that("scalar indexing works", {
 })
 
 # tests for 0-based indexing
-options(tensorflow.r_like_extract = FALSE)
+options(tensorflow.one_based_extract = FALSE)
 
 
 test_that("vector indexing works", {
@@ -335,7 +335,7 @@ test_that("undefined extensions extract", {
 
 })
 
-options(tensorflow.r_like_extract = NULL)
+options(tensorflow.one_based_extract = NULL)
 
 test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
@@ -361,15 +361,15 @@ test_that('extract warns when indices look 0-based', {
   i1 <- 1:2
 
   # explicit 0-indexing shouldn't warn
-  options(tensorflow.r_like_extract = FALSE)
+  options(tensorflow.one_based_extract = FALSE)
   expect_silent(x[i0, i0])
 
   # explicit 1-indexing shouldn't warn
-  options(tensorflow.r_like_extract = TRUE)
+  options(tensorflow.one_based_extract = TRUE)
   expect_silent(x[i0, i0])
 
   # default 1-indexing should warn only if there's a zero in there
-  options(tensorflow.r_like_extract = NULL)
+  options(tensorflow.one_based_extract = NULL)
   expect_silent(x[i1, i1])
   expect_warning(x[i0, i0],
                  "It looks like you might be using 0-based indexing")
@@ -377,4 +377,4 @@ test_that('extract warns when indices look 0-based', {
 })
 
 # reset user's extract method
-options(tensorflow.r_like_extract = old_extract_method)
+options(tensorflow.one_based_extract = old_extract_method)

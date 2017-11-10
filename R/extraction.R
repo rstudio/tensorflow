@@ -191,16 +191,16 @@ check_zero_based <- function (call) {
                          },
                          FUN.VALUE = FALSE)
 
-  default_r_like <- is.null(getOption("tensorflow.r_like_extract"))
+  default_one_based <- is.null(getOption("tensorflow.one_based_extract"))
 
-  if (any(contain_zero) & default_r_like) {
+  if (any(contain_zero) & default_one_based) {
     warning(paste(
-      "It looks like you might be using 0-based indexing to extract using `[`.",
-      "The tensorflow package now uses 1-based (R-like) indexing by default.\n",
-      "You can switch to the old behavior (0-based indexing) with:",
-      "  options(tensorflow.r_like_extract = FALSE)\n",
+      "It looks like you might be using zero-based indexing to extract using `[`.",
+      "The tensorflow package now uses one-based (R-like) extraction by default.\n",
+      "You can switch to the old behavior (0-based extraction) with:",
+      "  options(tensorflow.one_based_extract = FALSE)\n",
       "If your indexing is as you intend, you can disable this warning with:",
-      "  options(tensorflow.r_like_extract = TRUE)", sep = "\n"
+      "  options(tensorflow.one_based_extract = TRUE)", sep = "\n"
     ), call. = FALSE)
   }
 
