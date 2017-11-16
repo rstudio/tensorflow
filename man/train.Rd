@@ -12,13 +12,5 @@ train(object, ...)
 \item{...}{Optional arguments passed on to implementing methods.}
 }
 \description{
-Train a model object. See implementation in the
-\link[tfestimators:train.tf_estimator]{tfestimators} package.
+Train a model object.
 }
-\section{Implementations}{
-
-\itemize{
-\item \link[tfestimators:train.tf_estimator]{tfestimators}
-}
-}
-
