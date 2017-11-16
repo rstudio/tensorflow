@@ -12,5 +12,13 @@ train_and_evaluate(object, ...)
 \item{...}{Optional arguments passed on to implementing methods.}
 }
 \description{
-Train and evaluate a model object.
+Train and evaluate a model object. See implementation in the
+\link[tfestimators:train_and_evaluate.tf_estimator]{tfestimators} package.
 }
+\section{Implementations}{
+
+\itemize{
+\item \link[tfestimators:train_and_evaluate.tf_estimator]{tfestimators}
+}
+}
+

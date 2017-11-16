@@ -18,5 +18,15 @@ versioned subdirectories containing exported SavedModels.}
 The path to the exported directory, as a string.
 }
 \description{
-Serialize a model to disk.
+Serialize a model to disk. See implementations in the
+\link[keras:export_savedmodel.keras.engine.training.Model]{keras} and
+\link[tfestimators:export_savedmodel.tf_estimator]{tfestimators} packages.
 }
+\section{Implementations}{
+
+\itemize{
+\item \link[keras:export_savedmodel.keras.engine.training.Model]{keras}
+\item \link[tfestimators:export_savedmodel.tf_estimator]{tfestimators}
+}
+}
+
