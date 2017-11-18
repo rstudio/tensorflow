@@ -12,7 +12,7 @@
 #'
 #' # load tensorflow and enable eager execution
 #' library(tensorflow)
-#' enable_eager_execution()
+#' tfe_enable_eager_execution()
 #'
 #' # create a random 10x10 matrix
 #' x <- tf$random_normal(shape(10, 10))
@@ -33,7 +33,8 @@
 #'   performance problems.
 #'
 #' @export
-enable_eager_execution <- function(config = NULL, device_policy = c("explicit", "warn", "silent")) {
+tfe_enable_eager_execution <- function(
+  config = NULL, device_policy = c("explicit", "warn", "silent")) {
 
   # alias eager mode (error if not available in this version of tf)
   contrib <- tf$contrib
