@@ -75,10 +75,10 @@ as.matrix.python.builtin.EagerTensor <- function(x, ...) {
     NULL
   else {
     a <- x$numpy()
-    if (length(dim(a) == 2))
+    if (length(dim(a)) == 2)
       a
     else
-      as.matrix
+      as.matrix(a)
   }
 }
 
