@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 1.4.1.9000
+Version: 1.4.2
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cre"), email = "jj@rstudio.com"),
   person(family = "RStudio", role = c("cph", "fnd")),
@@ -37,12 +37,10 @@ Imports:
     jsonlite (>= 1.2),
     processx,
     reticulate (>= 1.3),
-    tfruns (>= 0.9.1),
+    tfruns (>= 1.0),
     utils,
     yaml,
     rstudioapi (>= 0.7)
-Remotes:
-    rstudio/reticulate
 Roxygen: list(markdown = TRUE)
 Suggests: testthat
 RoxygenNote: 6.0.1
