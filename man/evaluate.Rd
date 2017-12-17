@@ -12,15 +12,5 @@ evaluate(object, ...)
 \item{...}{Optional arguments passed on to implementing methods.}
 }
 \description{
-Evaluate a model object. See implementations in the
-\link[keras:evaluate.keras.engine.training.Model]{keras} and
-\link[tfestimators:evaluate.tf_estimator]{tfestimators} packages.
+Evaluate a model object.
 }
-\section{Implementations}{
-
-\itemize{
-\item \link[keras:evaluate.keras.engine.training.Model]{keras}
-\item \link[tfestimators:evaluate.tf_estimator]{tfestimators}
-}
-}
-
