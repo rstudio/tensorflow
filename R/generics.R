@@ -8,7 +8,7 @@ py_str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
 
 #' @importFrom utils str
 #' @export
-"print.tensorflow.python.framework.ops.Tensor" <- function(x, ...) {
+"print.tensorflow.tensor" <- function(x, ...) {
   if (py_is_null_xptr(x))
     cat("<pointer: 0x0>\n")
   else {
@@ -20,9 +20,6 @@ py_str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
     }
   }
 }
-
-#' @export
-print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framework.ops.Tensor
 
 #' @importFrom utils .DollarNames
 #' @export
@@ -38,7 +35,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 }
 
 #' @export
-"dim.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"dim.tensorflow.tensor" <- function(x) {
   if (py_is_null_xptr(x))
     NULL
   else {
@@ -51,7 +48,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 }
 
 #' @export
-"length.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"length.tensorflow.tensor" <- function(x) {
   if (py_is_null_xptr(x))
     length(NULL)
   else
@@ -62,7 +59,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 
 
 #' @export
-"[.tensorflow.python.framework.ops.Tensor" <- function(x, ...) {
+"[.tensorflow.tensor" <- function(x, ...) {
 
   call <- match.call()
   check_zero_based(call)
@@ -76,39 +73,15 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
           envir = parent.frame())
 }
 
-
-#' @export
-`[.tensorflow.python.ops.variables.Variable` <- `[.tensorflow.python.framework.ops.Tensor`
-
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/groupGeneric.html
 
 #' @export
-"+.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"+.tensorflow.tensor" <- function(a, b) {
   tf$add(a, b)
 }
 
 #' @export
-"+.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$add(a, b)
-}
-
-#' @export
-"-.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
-  if (missing(b)) {
-    if (py_has_attr(tf, "negative"))
-      tf$negative(a)
-    else
-      tf$neg(a)
-  } else {
-    if (py_has_attr(tf, "subtract"))
-      tf$subtract(a, b)
-    else
-      tf$sub(a, b)
-  }
-}
-
-#' @export
-"-.tensorflow.python.framework.ops.Variable" <- function(a, b) {
+"-.tensorflow.tensor" <- function(a, b) {
   if (missing(b)) {
     if (py_has_attr(tf, "negative"))
       tf$negative(a)
@@ -124,7 +97,7 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 
 
 #' @export
-"*.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"*.tensorflow.tensor" <- function(a, b) {
   if (py_has_attr(tf, "multiply"))
     tf$multiply(a, b)
   else
@@ -132,304 +105,175 @@ print.tensorflow.python.ops.variables.Variable <- print.tensorflow.python.framew
 }
 
 #' @export
-"*.tensorflow.python.ops.variables.Variable" <- function(a, b) {
-  `*.tensorflow.python.framework.ops.Tensor`(a, b)
-}
-
-#' @export
-"/.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"/.tensorflow.tensor" <- function(a, b) {
   tf$truediv(a, b)
 }
 
-#' @export
-"/.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$truediv(a, b)
-}
 
 #' @export
-"%/%.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"%/%.tensorflow.tensor" <- function(a, b) {
   tf$floordiv(a, b)
 }
 
-#' @export
-"%/%.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$floordiv(a, b)
-}
 
 #' @export
-"%%.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"%%.tensorflow.tensor" <- function(a, b) {
   tf$mod(a, b)
 }
 
-#' @export
-"%%.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$mod(a, b)
-}
 
 #' @export
-"^.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"^.tensorflow.tensor" <- function(a, b) {
   tf$pow(a, b)
 }
 
-#' @export
-"^.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$pow(a, b)
-}
 
 #' @export
-"&.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"&.tensorflow.tensor" <- function(a, b) {
   tf$logical_and(a, b)
 }
 
-#' @export
-"&.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$logical_and(a, b)
-}
 
 #' @export
-"|.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"|.tensorflow.tensor" <- function(a, b) {
   tf$logical_or(a, b)
 }
 
-#' @export
-"|.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$logical_or(a, b)
-}
 
 #' @export
-"!.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"!.tensorflow.tensor" <- function(x) {
   tf$logical_not(x)
 }
 
-#' @export
-"!.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$logical_not(x)
-}
 
 #' @export
-"==.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"==.tensorflow.tensor" <- function(a, b) {
   tf$equal(a, b)
 }
 
-#' @export
-"==.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$equal(a, b)
-}
 
 #' @export
-"!=.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"!=.tensorflow.tensor" <- function(a, b) {
   tf$not_equal(a, b)
 }
 
-#' @export
-"!=.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$not_equal(a, b)
-}
 
 #' @export
-"<.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"<.tensorflow.tensor" <- function(a, b) {
   tf$less(a, b)
 }
 
-#' @export
-"<.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$less(a, b)
-}
 
 #' @export
-"<=.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+"<=.tensorflow.tensor" <- function(a, b) {
   tf$less_equal(a, b)
 }
 
-#' @export
-"<=.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$less_equal(a, b)
-}
 
 #' @export
-">.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+">.tensorflow.tensor" <- function(a, b) {
   tf$greater(a, b)
 }
 
-#' @export
-">.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$greater(a, b)
-}
 
 #' @export
-">=.tensorflow.python.framework.ops.Tensor" <- function(a, b) {
+">=.tensorflow.tensor" <- function(a, b) {
   tf$greater_equal(a, b)
 }
 
-#' @export
-">=.tensorflow.python.framework.ops.Variable" <- function(a, b) {
-  tf$greater_equal(a, b)
-}
 
 #' @export
-"abs.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"abs.tensorflow.tensor" <- function(x) {
   tf$abs(x)
 }
 
-#' @export
-"abs.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$abs(x)
-}
 
 #' @export
-"sign.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"sign.tensorflow.tensor" <- function(x) {
   tf$sign(x)
 }
 
-#' @export
-"sign.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$sign(x)
-}
 
 #' @export
-"sqrt.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"sqrt.tensorflow.tensor" <- function(x) {
   tf$sqrt(x)
 }
 
-#' @export
-"sqrt.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$sqrt(x)
-}
 
 #' @export
-"floor.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"floor.tensorflow.tensor" <- function(x) {
   tf$floor(x)
 }
 
-#' @export
-"floor.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$floor(x)
-}
 
 #' @export
-"ceiling.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"ceiling.tensorflow.tensor" <- function(x) {
   tf$ceil(x)
 }
 
-#' @export
-"ceiling.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$ceil(x)
-}
 
 #' @export
-"round.tensorflow.python.framework.ops.Tensor" <- function(x, digits = 0) {
+"round.tensorflow.tensor" <- function(x, digits = 0) {
   if (digits != 0)
     stop("TensorFlow round only supports rounding to integers")
   tf$round(x)
 }
 
-#' @export
-"round.tensorflow.python.framework.ops.Variable" <- function(x, digits = 0) {
-  if (digits != 0)
-    stop("TensorFlow round only supports rounding to integers")
-  tf$round(x)
-}
 
 #' @export
-"exp.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"exp.tensorflow.tensor" <- function(x) {
   tf$exp(x)
 }
 
 #' @export
-"exp.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$exp(x)
-}
-
-#' @export
-"log.tensorflow.python.framework.ops.Tensor" <- function(x, base = exp(1)) {
+"log.tensorflow.tensor" <- function(x, base = exp(1)) {
   if (base != exp(1))
     stop("TensorFlow log suppports only natural logarithms")
   tf$log(x)
 }
 
-#' @export
-"log.tensorflow.python.framework.ops.Variable" <- function(x, base = exp(1)) {
-  if (base != exp(1))
-    stop("TensorFlow log suppports only natural logarithms")
-  tf$log(x)
-}
 
 #' @export
-"cos.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"cos.tensorflow.tensor" <- function(x) {
   tf$cos(x)
 }
 
-#' @export
-"cos.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$cos(x)
-}
 
 #' @export
-"sin.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"sin.tensorflow.tensor" <- function(x) {
   tf$sin(x)
 }
 
-#' @export
-"sin.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$sin(x)
-}
 
 #' @export
-"tan.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"tan.tensorflow.tensor" <- function(x) {
   tf$tan(x)
 }
 
-#' @export
-"tan.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$tan(x)
-}
 
 #' @export
-"acos.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"acos.tensorflow.tensor" <- function(x) {
   tf$acos(x)
 }
 
-#' @export
-"acos.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$acos(x)
-}
 
 #' @export
-"asin.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"asin.tensorflow.tensor" <- function(x) {
   tf$asin(x)
 }
 
-#' @export
-"asin.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$asin(x)
-}
 
 #' @export
-"atan.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"atan.tensorflow.tensor" <- function(x) {
   tf$atan(x)
 }
 
 #' @export
-"atan.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$atan(x)
-}
-
-#' @export
-"lgamma.tensorflow.python.framework.ops.Tensor" <- function(x) {
+"lgamma.tensorflow.tensor" <- function(x) {
   tf$lgamma(x)
 }
 
 #' @export
-"lgamma.tensorflow.python.framework.ops.Variable" <- function(x) {
-  tf$lgamma(x)
-}
-
-#' @export
-"digamma.tensorflow.python.framework.ops.Tensor" <- function(x) {
-  tf$digamma(x)
-}
-
-#' @export
-"digamma.tensorflow.python.framework.ops.Variable" <- function(x) {
+"digamma.tensorflow.tensor" <- function(x) {
   tf$digamma(x)
 }
