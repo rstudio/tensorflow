@@ -287,6 +287,9 @@ install_tensorflow_conda <- function(conda, version, gpu, packages, extra_packag
     # workaround the fact that v1.3.1 is a GitHub only release w/ no tarball
     if (identical(version, "1.3.1"))
       version <- "1.3.0"
+    # workaround the fact that v1.4.1 is a GitHub only release w/ no tarball
+    if (identical(version, "1.4.1"))
+      version <- "1.4.0"
     cat("done\n")
   }
 
