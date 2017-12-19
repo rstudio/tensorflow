@@ -46,3 +46,37 @@ view_savedmodel <- function(
 
   tensorboard(log_dir = log_dir)
 }
+
+#' @export
+export_savedmodel.tensorflow.python.client.session.Session <- function(
+  object, export_dir_base, inputs, outputs, ...) {
+
+  sess <- object
+  if (dir.exists(export_dir_base))
+    stop("Directory ", export_dir_base, " already exists.")
+
+  tensor_inputs_info <- lapply(inputs, function(i) tf$saved_model$utils$build_tensor_info(i))
+  tensor_outputs_info <- lapply(outputs, function(o) tf$saved_model$utils$build_tensor_info(o))
+
+  prediction_signature <- tf$saved_model$signature_def_utils$build_signature_def(
+    inputs = tensor_inputs_info,
+    outputs = tensor_outputs_info,
+    method_name = tf$saved_model$signature_constants$PREDICT_METHOD_NAME)
+
+  signature_def_map_class_dig <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
+  signature <- list(
+    signature_def_map_class_dig = prediction_signature
+  )
+
+  builder <- tf$saved_model$builder$SavedModelBuilder(export_dir_base)
+
+  builder$add_meta_graph_and_variables(
+    sess,
+    list(
+      tf$python$saved_model$tag_constants$SERVING
+    ),
+    signature_def_map = signature
+  )
+
+  builder$save()
+}
