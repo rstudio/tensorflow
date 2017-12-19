@@ -49,21 +49,14 @@ view_savedmodel <- function(
 
 #' @export
 export_savedmodel.tensorflow.python.client.session.Session <- function(
-  sess, export_dir_base, ...) {
+  object, export_dir_base, inputs, outputs, ...) {
 
-  args <- list(...)
-
-  if (is.null(args$inputs) || !is.list(args$inputs))
-    stop("Using export_savedmodel() requires 'inputs' paramaeter as a list of named input tensors.")
-
-  if (is.null(args$outputs) || !is.list(args$outputs))
-    stop("Using export_savedmodel() requires 'outputs' parameter as a list of named outputs tensors.")
-
+  sess <- object
   if (dir.exists(export_dir_base))
     stop("Directory ", export_dir_base, " already exists.")
 
-  tensor_inputs_info <- lapply(args$inputs, function(i) tf$saved_model$utils$build_tensor_info(i))
-  tensor_outputs_info <- lapply(args$outputs, function(o) tf$saved_model$utils$build_tensor_info(o))
+  tensor_inputs_info <- lapply(inputs, function(i) tf$saved_model$utils$build_tensor_info(i))
+  tensor_outputs_info <- lapply(outputs, function(o) tf$saved_model$utils$build_tensor_info(o))
 
   prediction_signature <- tf$saved_model$signature_def_utils$build_signature_def(
     inputs = tensor_inputs_info,
