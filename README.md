@@ -9,10 +9,10 @@ The [TensorFlow API](https://www.tensorflow.org/api_docs/python/index.html) is c
 
 ## Installation
 
-To get started, install the tensorflow R package from CRAN as follows:
+To get started, install the tensorflow R package from GitHub as follows:
 
 ```r
-install.packages("tensorflow")
+devtools::install_github("rstudio/tensorflow")
 ```
 
 Then, use the `install_tensorflow()` function to install TensorFlow:
