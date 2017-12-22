@@ -64,9 +64,8 @@ export_savedmodel.tensorflow.python.client.session.Session <- function(
     method_name = tf$saved_model$signature_constants$PREDICT_METHOD_NAME)
 
   signature_def_map_class_dig <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
-  signature <- list(
-    signature_def_map_class_dig = prediction_signature
-  )
+  signature <- list()
+  signature[[signature_def_map_class_dig]] <- prediction_signature
 
   builder <- tf$saved_model$builder$SavedModelBuilder(export_dir_base)
 
