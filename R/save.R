@@ -77,5 +77,5 @@ export_savedmodel.tensorflow.python.client.session.Session <- function(
     signature_def_map = signature
   )
 
-  builder$save()
+  invisible(builder$save())
 }
