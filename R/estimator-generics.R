@@ -81,7 +81,7 @@ export_savedmodel <- function(
   object,
   export_dir,
   overwrite = TRUE,
-  versioned = FALSE,
+  versioned = !overwrite,
   ...) {
   UseMethod("export_savedmodel")
 }
