@@ -64,8 +64,6 @@ train_and_evaluate <- function(object, ...) {
 #' @param object An \R object.
 #' @param export_dir_base A string containing a directory in which to export the
 #'   SavedModel.
-#' @param overwrite Should the \code{export_dir} directory be overwritten?
-#' @param versioned Should the model be exported under a versioned subdirectory?
 #' @param ... Optional arguments passed on to implementing methods.
 #'
 #' @return The path to the exported directory, as a string.

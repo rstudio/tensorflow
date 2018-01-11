@@ -13,10 +13,6 @@ export_savedmodel(object, export_dir_base, ...)
 SavedModel.}
 
 \item{...}{Optional arguments passed on to implementing methods.}
-
-\item{overwrite}{Should the \code{export_dir} directory be overwritten?}
-
-\item{versioned}{Should the model be exported under a versioned subdirectory?}
 }
 \value{
 The path to the exported directory, as a string.
