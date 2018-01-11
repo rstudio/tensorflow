@@ -9,10 +9,14 @@ export_savedmodel(object, export_dir_base, ...)
 \arguments{
 \item{object}{An \R object.}
 
-\item{export_dir_base}{A string containing a directory in which to create
-versioned subdirectories containing exported SavedModels.}
+\item{export_dir_base}{A string containing a directory in which to export the
+SavedModel.}
 
 \item{...}{Optional arguments passed on to implementing methods.}
+
+\item{overwrite}{Should the \code{export_dir} directory be overwritten?}
+
+\item{versioned}{Should the model be exported under a versioned subdirectory?}
 }
 \value{
 The path to the exported directory, as a string.
