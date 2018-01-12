@@ -49,10 +49,20 @@ view_savedmodel <- function(
 
 #' @export
 export_savedmodel.tensorflow.python.client.session.Session <- function(
-  object, export_dir_base, inputs, outputs, ...) {
+  object,
+  export_dir_base,
+  inputs,
+  outputs,
+  overwrite = TRUE,
+  versioned = !overwrite,
+  ...) {
+
+  if (versioned) {
+    export_dir_base <- file.path(export_dir_base, format(Sys.time(), "%Y%m%d%H%M%OS", tz = "GMT"))
+  }
 
   sess <- object
-  if (dir.exists(export_dir_base))
+  if (!overwrite && !versioned && dir.exists(export_dir_base))
     stop("Directory ", export_dir_base, " already exists.")
 
   tensor_inputs_info <- lapply(inputs, function(i) tf$saved_model$utils$build_tensor_info(i))
@@ -66,6 +76,9 @@ export_savedmodel.tensorflow.python.client.session.Session <- function(
   signature_def_map_class_dig <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
   signature <- list()
   signature[[signature_def_map_class_dig]] <- prediction_signature
+
+  if (overwrite && dir.exists(export_dir_base))
+    unlink(export_dir_base, recursive = TRUE)
 
   builder <- tf$saved_model$builder$SavedModelBuilder(export_dir_base)
 
