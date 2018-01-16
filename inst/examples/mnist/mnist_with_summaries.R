@@ -18,13 +18,13 @@
 
 library(tensorflow)
 
-flags <- tf$app$flags
-flags$DEFINE_boolean('fake_data', FALSE, 'If true, uses fake data for unit testing.')
-flags$DEFINE_integer('max_steps', 1000L, 'Number of steps to run trainer.')
-flags$DEFINE_float('learning_rate', 0.001, 'Initial learning rate.')
-flags$DEFINE_float('dropout', 0.9, 'Keep probability for training dropout.')
-flags$DEFINE_string('summaries_dir', '/tmp/mnist_logs', 'Summaries directory')
-FLAGS <- parse_flags()
+FLAGS <- flags(
+  flag_boolean('fake_data', FALSE, 'If true, uses fake data for unit testing.'),
+  flag_integer('max_steps', 1000, 'Number of steps to run trainer.'),
+  flag_numeric('learning_rate', 0.001, 'Initial learning rate.'),
+  flag_numeric('dropout', 0.9, 'Keep probability for training dropout.'),
+  flag_string('summaries_dir', '/tmp/mnist_logs', 'Summaries directory')
+)
 
 train <- function() {
   # Import data

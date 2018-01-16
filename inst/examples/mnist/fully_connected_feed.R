@@ -26,15 +26,16 @@ source("mnist.R")
 input_data <- tf$contrib$learn$datasets$mnist
 
 # Basic model parameters as external flags.
-flags <- tf$app$flags
-flags$DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
-flags$DEFINE_integer('max_steps', 5000L, 'Number of steps to run trainer.')
-flags$DEFINE_integer('hidden1', 128L, 'Number of units in hidden layer 1.')
-flags$DEFINE_integer('hidden2', 32L, 'Number of units in hidden layer 2.')
-flags$DEFINE_integer('batch_size', 100L, 'Batch size. Must divide evenly into the dataset sizes.')
-flags$DEFINE_string('train_dir', 'MNIST-data', 'Directory to put the training data.')
-flags$DEFINE_boolean('fake_data', FALSE, 'If true, uses fake data for unit testing.')
-FLAGS <- parse_flags()
+FLAGS <- flags(
+  flag_numeric('learning_rate', 0.01, 'Initial learning rate.'),
+  flag_integer('max_steps', 5000L, 'Number of steps to run trainer.'),
+  flag_integer('hidden1', 128L, 'Number of units in hidden layer 1.'),
+  flag_integer('hidden2', 32L, 'Number of units in hidden layer 2.'),
+  flag_integer('batch_size', 100L, 'Batch size. Must divide evenly into the dataset sizes.'),
+  flag_string('train_dir', 'MNIST-data', 'Directory to put the training data.'),
+  flag_boolean('fake_data', FALSE, 'If true, uses fake data for unit testing.')
+)
+
 
 # Generate placeholder variables to represent the input tensors.
 #
