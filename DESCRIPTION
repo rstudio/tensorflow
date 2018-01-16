@@ -42,5 +42,5 @@ Imports:
     yaml,
     rstudioapi (>= 0.7)
 Roxygen: list(markdown = TRUE)
-Suggests: testthat
+Suggests: testthat, keras, tfestimators
 RoxygenNote: 6.0.1
