@@ -41,6 +41,9 @@ train_mnist <- function(sess) {
 }
 
 test_that("export_savedmode() works with MNIST", {
+
+  skip_if_no_tensorflow()
+
   sess <- tf$Session()
   tensors <- train_mnist(sess)
   temp_path <- tempfile()
