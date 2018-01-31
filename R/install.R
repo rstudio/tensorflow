@@ -180,7 +180,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
         if (!have_system && !have_conda) {
           stop("Installing TensorFlow requires a 64-bit version of Python 3.5 or 3.6\n\n",
                "Please install 64-bit Python 3.5 or 3.6 to continue, supported versions include:\n\n",
-               " - Anaconda Python (Recommended): https://www.continuum.io/downloads#windows\n",
+               " - Anaconda Python (Recommended): https://www.anaconda.com/download/#windows\n",
                " - Python Software Foundation   : https://www.python.org/downloads/\n\n",
                call. = FALSE)
         } else if (have_conda) {
@@ -195,7 +195,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
       # validate that we have conda
       if (!have_conda) {
         stop("Conda installation failed (no conda binary found)\n\n",
-             "Install Anaconda 3.x for Windows (https://www.continuum.io/downloads#windows)\n",
+             "Install Anaconda 3.x for Windows (https://www.anaconda.com/download/#windows)\n",
              "before installing TensorFlow.",
              call. = FALSE)
       }
