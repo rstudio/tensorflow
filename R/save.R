@@ -55,6 +55,7 @@ export_savedmodel.tensorflow.python.client.session.Session <- function(
   outputs,
   overwrite = TRUE,
   versioned = !overwrite,
+  as_text = FALSE,
   ...) {
 
   if (versioned) {
@@ -90,5 +91,5 @@ export_savedmodel.tensorflow.python.client.session.Session <- function(
     signature_def_map = signature
   )
 
-  invisible(builder$save())
+  invisible(builder$save(as_text = as_text))
 }
