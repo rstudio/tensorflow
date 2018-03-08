@@ -51,9 +51,15 @@ tfe_enable_eager_execution <- function(
     warn = tfe$DEVICE_PLACEMENT_WARN,
     silent = tfe$DEVICE_PLACEMENT_SILENT
   )
-
+  
   # enter eager mode
-  tf$contrib$eager$enable_eager_execution(
+  if (tf_version() >= '1.7') {
+    enable_eager_execution_fn <- tf$python$framework$ops$enable_eager_execution
+  } else {
+    enable_eager_execution_fn <- tf$contrib$eager$enable_eager_execution
+  }
+
+  enable_eager_execution_fn(
     config = config,
     device_policy = device_policy
   )
@@ -113,17 +119,3 @@ as.logical.python.builtin.EagerTensor <- function(x, ...) {
   else
     as.logical(as.array(x))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
