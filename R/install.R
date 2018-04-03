@@ -501,7 +501,7 @@ parse_tensorflow_version <- function(version) {
 }
 
 python_unix_binary <- function(bin) {
-  locations <- file.path(c("/usr/bin", "/usr/local/bin"), bin)
+  locations <- file.path(c("/usr/bin", "/usr/local/bin", path.expand("~/.local/bin")), bin)
   locations <- locations[file.exists(locations)]
   if (length(locations) > 0)
     locations[[1]]
