@@ -138,30 +138,25 @@ evaluate_index <- function (x, validate = TRUE, n = 3) {
 }
 
 # check the user-specified index is valid
-validate_index <- function (x, base = 0) {
-
-  append <- switch (as.character(base),
-                    `0` = " with 0-based indexing",
-                    `1` = " with unknown dimensions")
+validate_index <- function (x) {
 
   if (!(is.numeric(x) && is.finite(x))) {
     stop ("invalid index - must be numeric and finite",
-          append)
+          call. = FALSE)
   }
 
   if (!(is.vector(x))) {
     stop ("only vector indexing of Tensors is currently supported",
-          append)
+          call. = FALSE)
   }
 
   if (any(x < 0)) {
-    stop ("negative indexing of Tensors is not currently supported",
-          append)
+    stop ("negative indexing of Tensors is not currently supported")
   }
 
   if (x[length(x)] < x[1]) {
     stop ("decreasing indexing of Tensors is not currently supported",
-          append)
+          call. = FALSE)
   }
 
   x
