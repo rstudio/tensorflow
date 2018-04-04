@@ -247,14 +247,14 @@ test_that("negative and decreasing indexing errors", {
 
   # extract with negative indices
   expect_error(x1[-1],
-               'negative indexing of Tensors is not currently supported')
+               'positive')
   expect_error(x2[1:-2, ],
-               'negative indexing of Tensors is not currently supported')
+               'positive')
   # extract with decreasing indices
   expect_error(x1[3:2],
-               'decreasing indexing of Tensors is not currently supported')
+               'increasing integers')
   expect_error(x2[2:1, ],
-               'decreasing indexing of Tensors is not currently supported')
+               'increasing integers')
 
 })
 
@@ -373,6 +373,22 @@ test_that('extract warns when indices look 0-based', {
   expect_silent(x[i1, i1])
   expect_warning(x[i0, i0],
                  "It looks like you might be using 0-based indexing")
+
+})
+
+test_that('extract errors when indices have missing elements', {
+
+  skip_if_no_tensorflow()
+
+  x <- tf$constant(array(0, dim = c(2, 4, 2)))
+
+  # indexing with sequential values shouldn't error
+  x[1, 1:3, ]
+  x[1, c(1, 2, 3), ]
+
+  # indexing with a non-sequential vector should error
+  expect_error( x[1, c(1, 3), ],
+                "no missing elements")
 
 })
 

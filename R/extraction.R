@@ -150,12 +150,18 @@ validate_index <- function (x) {
           call. = FALSE)
   }
 
-  if (any(x < 0)) {
-    stop ("negative indexing of Tensors is not currently supported")
-  }
+  negative <- any(x < 0)
 
-  if (x[length(x)] < x[1]) {
-    stop ("decreasing indexing of Tensors is not currently supported",
+  first <- x[1]
+  last <- x[length(x)]
+
+  decreasing <- last < first
+
+  sequential_x <- seq(first, last)
+  non_sequential <- !identical(sequential_x, as.integer(x))
+
+  if (negative | decreasing | non_sequential) {
+    stop ("indices must be sequences of positive, increasing integers with no missing elements",
           call. = FALSE)
   }
 
