@@ -1,6 +1,6 @@
 
 
-#' Install TensorFlow and it's dependencies
+#' Install TensorFlow and its dependencies
 #'
 #' @inheritParams reticulate::conda_list
 #'
