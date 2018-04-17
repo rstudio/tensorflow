@@ -57,21 +57,7 @@ py_str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
 
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/InternalMethods.html
 
-
-#' @export
-"[.tensorflow.tensor" <- function(x, ...) {
-
-  call <- match.call()
-  check_zero_based(call)
-
-  one_based_extract <- getOption("tensorflow.one_based_extract", TRUE)
-
-  basis <- ifelse(one_based_extract, 1, 0)
-  call_list <- as.list(call)[-1]
-  do.call(extract_manual,
-          c(call_list, basis = basis),
-          envir = parent.frame())
-}
+# extract `[.tensorflow.tensor` in R/extract.R
 
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/groupGeneric.html
 
