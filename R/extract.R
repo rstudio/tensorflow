@@ -58,10 +58,21 @@ maybe_reparse_as_slice_spec_then_force <- function(..., .env) {
       return(py_slice())
 
     if (is_has_colon(d)) {
-      d <- deparse(d, width.cutoff = 500, backtick = !is.name(d))
-      d <- strsplit(d, ":", fixed = TRUE)[[1]]
-      d[!nzchar(d)] <- "NULL"
-      d <- lapply(d, function(a) eval(parse1(a), envir = .env))
+
+      if (is_colon_call(d)) {
+        d <- as.list(d)[-1]
+        if (is_colon_call(d[[1]]))
+          d <- c(as.list(d[[1]])[-1], d[-1])
+
+      } else { # single name with colon , like `::2`
+        d <- deparse(d, width.cutoff = 500, backtick = !is.name(d))
+        d <- strsplit(d, ":", fixed = TRUE)[[1]]
+        d[!nzchar(d)] <- "NULL"
+        d <- lapply(d, parse1)
+      }
+
+      stopifnot(length(d) <= 3L)
+      d <- lapply(d, eval, envir = .env)
       class(d) <- "py_slice_spec"
       return(d)
     }
@@ -75,9 +86,13 @@ is_missing <- function(x) identical(x, quote(expr=))
 
 parse1 <- function(text) parse(text = text, keep.source = FALSE)[[1]]
 
+
+is_colon_call <- function(x)
+  is.call(x) && identical(x[[1L]], quote(`:`))
+
 is_has_colon <- function(x) {
 
-  if (is.call(x) && identical(x[[1]], quote(`:`))) # unbackticked call to :
+  if (is_colon_call(x)) # unbackticked call to :
     TRUE
 
   else if (is.name(x) && grepl(":", as.character(x), fixed = TRUE)) # backticked
