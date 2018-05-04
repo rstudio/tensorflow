@@ -1,54 +1,307 @@
 
+#' Subset tensors with `[`
+#'
+#' @param x Tensorflow tensor
+#' @param ... slicing specs. See examples and details.
+#' @param drop whether to drop scalar dimensions
+#' @param style One of `"python"` or `"R"`.
+#' @param options An object returned by `tf_extract_opts()`
+#'
 #' @export
-"[.tensorflow.tensor" <-
-  function(x, ..., drop = getOption("tensorflow.drop_on_extract", TRUE)) {
+#'
+#' @examples
+#' grab <- (function() {
+#'   sess <- tf$Session()
+#'   function(x) sess$run(x)
+#' })()
+#' print.tensorflow.tensor <- function(x) print(grab(x))
+#'
+#' x <- tf$constant(1:15, shape = c(3, 5))
+#' x
+#' # by default, numerics supplied to `...` are interperted R style
+#' x[,1] # first column
+#' x[1:2,] # first two rows
+#' x[,1, drop = FALSE]
+#'
+#' # strided steps can be specified in R syntax or python syntax
+#' x[, seq(1, 5, by = 2)]
+#' x[, 1:5:2]
+#' # if you are unfamiliar with python-style strided steps, see:
+#' # https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing
+#'
+#' # missing arguments for python syntax are valid, but they must by backticked
+#' or supplied as NULL
+#' x[, `::2`]
+#' x[, NULL:NULL:2]
+#' x[, `2:`]
+#'
+#' # Another python features that is available is a python style ellipsis `...`
+#' # (not to be confused with R dots `...`)
+#' # a py_ellipsis() expands to the shape of the tensor
+#' y <- tf$constant(1:(3^5), shape = c(3,3,3,3,3))
+#' identical(
+#'   grab( y[py_ellipsis(), 1] ),
+#'   grab( y[,,,,1] )
+#'   )
+#'
+#' # tf$newaxis are valid
+#' x[,, tf$newaxis]
+#'
+#' # negative numbers are always interperted python style
+#' # The first time a negative number is supplied to `[`, a warning is issued
+#' # about the non-standard behavior.
+#' x[-1,] # last row, with a warning
+#' x[-1,] # the warning is only issued once
+#'
+#' # specifying `style = 'python'` changes the following:
+#' # +  zero-based indexing is used
+#' # +  slice sequences in the form of `start:stop` do not include `stop`
+#' #    in the returned value
+#'
+#' # The style argument can be supplied to individual calls of `[` or set
+#' # as a global option
+#'
+#' # example of zero based  indexing
+#' x[0, , style = 'python'] # first row
+#' x[1, , style = 'python'] # second row
+#'
+#' # example of slices with exclusive stop
+#' options(tensorflow.extract.style = 'python')
+#' x[, 0:1] # just the first column
+#' x[, 0:2] # first and second column
+#' options(tensorflow.extract.style = NULL)
+#'
+#' # slicing with tensors is valid too, but note, tensors are never
+#' # translated and are always interperted python-style.
+#' # A warning is issued the first time a tensor is passed to `[`
+#' x[, tf$constant(0L):tf$constant(2L)]
+#' # just as in python, only scalar tensors are valid
+#' # https://www.tensorflow.org/api_docs/python/tf/Tensor#__getitem__
+#'
+#' # To silence the warnings about tensors being passed as-is and negative numbers
+#' # being interperted python-style, set
+#' options(tensorflow.extract.style = 'R')
+#'
+#' # clean up from examples
+#' rm(print.tensorflow.tensor, grab, x, y)
+#' options(tensorflow.extract.style = NULL)
+`[.tensorflow.tensor` <-
+  function(x, ...,
+           drop = getOption("tensorflow.extract.drop", TRUE),
+           style = getOption("tensorflow.extract.style"),
+           options = tf_extract_opts(style)) {
+
+    stopifnot(inherits(options, "tf_extract_options"))
+    check_is_TRUE_or_FALSE(drop)
+    options$drop <- drop
 
     dots <- maybe_reparse_as_slice_spec_then_force(..., .env = parent.frame())
 
-    one_based_extract <- getOption("tensorflow.one_based_extract")
-    if(is.null(one_based_extract)){
-      stop_if_any_zeros(dots)
-      one_based_extract <- TRUE
-    }
-    check_is_TRUE_or_FALSE(one_based_extract)
+    if(is_scalar(dots) && length(dim(dots[[1]])) > 1L) # indexing w/ array
+       stop("Subsetting tensors with R matrices or arrays is not currently supported")
 
-    if (should_warn_about_negative_indices())
+    if (length(dropNULL(dots)) != py_len(x$shape)) {  # NULL == tf$newaxis
+      is_ellipsis <- vapply(dots, is_py_ellipsis, FALSE)
+      if (!any(is_ellipsis)) stop(
+        "Incorrect number of dimensions supplied. The number of supplied arguments, ",
+        "(not counting any NULL, tf$newaxis or np$newaxis) must match the",
+        "number of dimensions in the tensor, unless a py_ellipsis() was supplied")
+    }
+
+    if(options$one_based)
+      stop_if_any_zeros(dots)
+
+    if (options$disallow_out_of_bounds)
+      stop_if_any_out_of_bounds(x, dots, options)
+
+    if (options$warn_negatives_interpreted_python_style)
       warn_if_any_negative(dots)
 
-    dots <- lapply(dots,
-                   as_valid_py__getitem__arg,
-                   one_based = one_based_extract,
-                   drop = drop)
+    if (options$warn_tensors_passed_asis)
+      warn_if_any_tensors(dots)
 
-
-    # NULL == tf$newaxis
-    if (length(dropNULL(dots)) != py_len(x$shape)) {
-
-      is_ellipsis <- vapply(dots, function(d)
-          inherits(d, "python.builtin.ellipsis"), FALSE)
-
-      if (!any(is_ellipsis)) stop(
-          "An incorrect number of dimensions was specified. The number of\n",
-          "supplied arguments, (not counting any NULL, tf$newaxis or np$newaxis),\n",
-          "must match the number of dimensions in the tensor, unless a\n",
-          "py_ellipsis() was supplied")
-      }
+    dots <- lapply(dots, as_valid_py__getitem__arg, options)
 
     # mirror the python parser, where single argumets in [] are passed
-    # as-supplied, otherwise they wrapped in a tuple
-    if(is_scalar(dots))
-      dots <- dots[[1L]]
-    else
-      dots <- tuple(dots)
+    # as-supplied, otherwise they are wrapped in a tuple
+    dots <-  if (is_scalar(dots)) dots[[1L]] else tuple(dots)
 
     x$`__getitem__`(dots)
   }
+
+
+
+#' Tensor extract options
+#'
+#' @param style one of `NULL` (the default) `"R"` or `"python"`. `"python"` is
+#'   equivelant to all the other arguments being `FALSE`. `"R"` is equivelant to
+#'   and `warn_tensors_passed_asis` and
+#'   `warn_negatives_interpreted_python_style` set to `FALSE`
+#' @param ... ignored
+#' @param one_based TRUE or FALSE, if one-based indexing should be used
+#' @param inclusive_stop TRUE or FALSE, if slices like `start:stop` should be
+#'   inclusive of `stop`
+#' @param disallow_out_of_bounds TRUE or FALSE, whether check are performed on
+#'   the slicing index to ensure
+#' @param warn_tensors_passed_asis TRUE or FALSE, whether to emit a warning the
+#'   first time a tensor is supplied to `[` that tensors are passed as-is, with
+#'   no R to python translation
+#' @param warn_negatives_interpreted_python_style TRUE or FALSE, whether to emit
+#'   a warning the first time a negative number is supplied to `[` about the
+#'   non-standard (python-style) interpretation
+#'
+#' @return
+#' @export
+#'
+#' @examples
+tf_extract_opts <- function(
+  style = getOption("tensorflow.extract.style"),
+  ...,
+  one_based =
+    getOption("tensorflow.extract.one_based", TRUE), # NULL, TRUE or FALSE
+  inclusive_stop =
+    getOption("tensorflow.extract.inclusive_stop", TRUE),
+  disallow_out_of_bounds =
+    getOption("tensorflow.extract.dissallow_out_of_bounds", TRUE),
+  warn_tensors_passed_asis =
+    getOption("tensorflow.extract.warn_tensors_passed_asis", TRUE),
+  warn_negatives_interpreted_python_style =
+    getOption("tensorflow.extract.warn_negatives_interpreted_python_style", TRUE)
+) {
+
+  if(length(list(...)))
+    warning("arguments passed to `...` are ignored")
+
+  check_is_TRUE_or_FALSE(
+    one_based,
+    inclusive_stop,
+    disallow_out_of_bounds,
+    warn_tensors_passed_asis,
+    warn_negatives_interpreted_python_style
+  )
+
+  # backwards compatability, one_based_extract -> renamed to extract.one_based
+  if (!is.null(getOption("tensorflow.one_based_extract"))) {
+    check_is_TRUE_or_FALSE(getOption("tensorflow.one_based_extract"))
+    if (missing(one_based) || is.null(getOption("tensorflow.extract.one_based"))) {
+      one_based <- getOption("tensorflow.one_based_extract")
+      # warning("option tensorflow.one_based_extract ",
+      #         "renamed to tensorflow.extract.one_based")
+    } else
+      warning( "options `tensorflow.one_based_extract` is ignored and",
+               "overridden by option `tensorflow.extract.one_based")
+  }
+
+  opts <- nlist(
+    one_based,
+    inclusive_stop,
+    disallow_out_of_bounds,
+    warn_tensors_passed_asis,
+    warn_negatives_interpreted_python_style
+  )
+
+  if (!is.null(style)) {
+    style <- match.arg(style, choices = c("R", "python"))
+    if (style == "python")
+      opts <- lapply(opts, function(x) FALSE)
+    else {
+      opts$warn_tensors_passed_asis <- FALSE
+      opts$warn_negatives_interpreted_python_style <- FALSE
+    }
+
+  } else {
+
+    if (warned_about$negative_indices)
+      opts$warn_negatives_interpreted_python_style <- FALSE
+
+    if (warned_about$tensors_passed_asis)
+      opts$warn_tensors_passed_asis <- FALSE
+
+  }
+
+  class(opts) <- "tf_extract_options"
+  opts
+}
+
+
+#' Python Ellipsis
+#'
+#' This function returns a python Ellipsis `...`, (not to be confused with `...`
+#' in `R`). The python ellipsis is commonly used when subsetting numpy
+#' arrays or tensorflow tensors objects with brackets.
+#'
+#' @export
+#' @examples
+#' \dontrun{
+#' # in python, if x is a numpy array or tensorflow tensor
+#' x[..., i]
+#' # the ellipsis means "expand to match number of dimension of x".
+#' # to translate the above python expression to R, write:
+#' x[py_ellipsis(), i]
+#' }
+py_ellipsis <- function()
+  .globals$builtin_ellipsis %||%
+  (.globals$builtin_ellipsis <- import_builtins(FALSE)$Ellipsis)
+
+
+builtin_slice <- function(...) {
+  slice <- .globals$py_slice
+  if(is.null(slice))
+    .globals$py_slice <- slice <- import_builtins(FALSE)$slice
+  slice(...)
+}
+
+
+py_slice <-
+  function(start = NULL, stop = NULL, step = NULL,
+           one_based = tf_extract_opts()$one_based,
+           inclusive_stop = tf_extract_opts()$inclusive_stop) {
+
+    # early return for most common case
+    if(is.null(start) && is.null(stop) && is.null(step))
+      return(builtin_slice(NULL))
+
+    check_vars(start, stop, step,
+               .fun = function(x)
+                 is.null(x) || is_scalar_integerish(x) || is_tensor(x),
+               .friendly_description =
+                 "NULL (the default if missing), a scalar whole number, or a tensor"
+    )
+    check_is_TRUE_or_FALSE(one_based, inclusive_stop)
+
+    if (is.numeric(start)) start <- as.integer(start)
+    if (is.numeric(stop)) stop <- as.integer(stop)
+    if (is.numeric(step)) step <- as.integer(step)
+
+    if (one_based) {
+      # need to offset positive integers, but not negative ones
+      if(is.numeric(start)) start <- translate_one_based_to_zero_based(start)
+      if(is.numeric(stop))  stop  <- translate_one_based_to_zero_based(stop)
+    }
+
+    # maybe invert sign of step if start:stop are selecting items in reverse
+    # (python doesn't do this, but we do because it's a nice convenience)
+    if (is.numeric(start) && is.numeric(stop) && !is_tensor(step) &&
+        start > stop && sign(start) == sign(stop) && sign(step %||% 1) == 1)
+      step <- (step %||% 1L) * -1L
+
+    # python slice() is exclusive of stop, but R is typically inclusive of all
+    # elements in a slicing sequence. Default to R behavior.
+    if (inclusive_stop) {
+      if(is.numeric(stop))
+        stop <- stop + as.integer(sign(stop) * sign(step %||% 1L))
+    }
+
+    builtin_slice(start, stop, step)
+  }
+
 
 maybe_reparse_as_slice_spec_then_force <- function(..., .env) {
   dots <- eval(substitute(alist(...)))
 
   if (!is.null(names(dots))) {
-    warning("names are ignored")
+    warning("names are ignored: ", paste(names(dots), collapse = ", "),
+            call. = FALSE)
     names(dots) <- NULL
   }
 
@@ -60,19 +313,27 @@ maybe_reparse_as_slice_spec_then_force <- function(..., .env) {
     if (is_has_colon(d)) {
 
       if (is_colon_call(d)) {
+
         d <- as.list(d)[-1]
-        if (is_colon_call(d[[1]]))
-          d <- c(as.list(d[[1]])[-1], d[-1])
+        if (is_colon_call(d[[1]] -> d1)) # step supplied
+          d <- c(as.list(d1)[-1], d[-1])
 
       } else { # single name with colon , like `::2`
-        d <- deparse(d, width.cutoff = 500, backtick = !is.name(d))
+
+        d <- deparse(d, width.cutoff = 500, backtick = FALSE)
         d <- strsplit(d, ":", fixed = TRUE)[[1]]
         d[!nzchar(d)] <- "NULL"
         d <- lapply(d, parse1)
       }
 
-      stopifnot(length(d) <= 3L)
+      if(!length(d) %in% 1:3)
+        stop("Only 1, 2, or 3 arguments can be supplied as a python-style slice")
+
       d <- lapply(d, eval, envir = .env)
+
+      if(length(d) < 3L)
+        d <- c(d, rep_len(list(NULL), 3L - length(d)))
+
       class(d) <- "py_slice_spec"
       return(d)
     }
@@ -82,60 +343,24 @@ maybe_reparse_as_slice_spec_then_force <- function(..., .env) {
   })
 }
 
-is_missing <- function(x) identical(x, quote(expr=))
 
-parse1 <- function(text) parse(text = text, keep.source = FALSE)[[1]]
-
-
-is_colon_call <- function(x)
-  is.call(x) && identical(x[[1L]], quote(`:`))
-
-is_has_colon <- function(x) {
-
-  if (is_colon_call(x)) # unbackticked call to :
-    TRUE
-
-  else if (is.name(x) && grepl(":", as.character(x), fixed = TRUE)) # backticked
-    TRUE
-
-  else
-    FALSE
-    # should return false if the colon is not the top level call, e.g. -(1:4)
-}
-
-
-should_warn_about_negative_indices <- (function() {
-  user_was_warned <- FALSE
-
-  function(x) {
-    if (user_was_warned)
-      FALSE
-    else if (missing(x))
-      !identical(
-        getOption("tensorflow.warn_negative_extract_is_python_style"), FALSE)
-    else
-      user_was_warned <<- TRUE
+as_valid_py__getitem__arg <- function(x, options) {
+  if (inherits(x, "py_slice_spec")) {
+    opts <- options[c("one_based", "inclusive_stop")]
+    return(do.call(py_slice, c(x, opts)))
   }
-})()
-
-
-
-
-as_valid_py__getitem__arg <- function(x, one_based, drop) {
-  if (inherits(x, "py_slice_spec"))
-    return(do.call(py_slice, c(x, one_based = one_based)))
 
   if(is.atomic(x) && (is.character(x) || anyNA(x) || any(is.infinite(x))))
     stop("NA, Inf, or character inputs not supported")
 
   if(is_scalar_integerish(x)) {
     x <- as.integer(x)
-    if(one_based)
+    if(options$one_based)
       x <- translate_one_based_to_zero_based(x)
 
-    if(!drop) {
+    if(!options$drop) {
       # tf.__getitem__ drops dim on scalar indexes, but not on slices. Here we
-      # convert the scalar index to an equivelant py_slice to preserve the dim
+      # convert the scalar index to an equivalent py_slice to preserve the dim
       if(x < 0)
         x <- py_slice(x, x-1L, -1L, one_based = FALSE, inclusive_stop = FALSE)
       else
@@ -145,36 +370,46 @@ as_valid_py__getitem__arg <- function(x, one_based, drop) {
   }
 
   if (is_integerish(x)) # a numeric sequence of length greater than 1
-    return(R_slicing_sequence_to_py_slice(x, one_based)) # error checking within
+    return(R_slicing_sequence_to_py_slice(x, options)) # error checking within
 
-
-  if (is_tensor(x))
-    maybe_warn_no_translation_performed()
+  ## don't translate tensors
+  # if (is_scalar_integer_tensor(x)) {
+  #   if(options$one_based)
+  #     x <- translate_one_based_to_zero_based_tensor(x)
+  #
+  #   if(!options$drop) {
+  #     x <- py_slice(x, x + sign(x), sign(x),
+  #                   inclusive_stop = FALSE, inclusive_stop = FALSE)
+  #     return(x)
+  #   }
 
   # else, just pass the input and python will throw an error if it's invalid
   x
 }
 
+# is_scalar_integer_tensor <- function(x) {
+#   is_tensor(x) && x$dtype$is_integer
+# }a
 
-R_slicing_sequence_to_py_slice <- function(x, one_based) {
+
+R_slicing_sequence_to_py_slice <- function(x, options) {
   # x is assumed to be integerish
 
   start <- x[1L]
   end <- x[length(x)]
   step <- x[2L] - start
 
-  if(is.array(x))
-    stop("Subsetting tensors with R matrixs or arrays is not currently supported")
-
   if (start < 0L || end < 0L ||
       any(suppressWarnings(x != seq.int(from = start, to = end, by = step))))
-    stop("only positive sequences with a single step size are accepted\n",
-         "if indexing with sequences not specified by a call to `:`,\n")
+    stop("only positive sequences with a single step size are accepted ",
+         "if indexing with sequences not specified by a call to `:`", call. = FALSE)
 
-  if(abs(step) == 1L)
+  if(identical(step, 1L))
     step <- NULL
 
-  py_slice(start, end, step, one_based)
+  py_slice(start, end, step,
+           one_based = options$one_based,
+           inclusive_stop = options$inclusive_stop)
 }
 
 
@@ -185,109 +420,100 @@ translate_one_based_to_zero_based <- function(x) {
   else if (x < 0L)
     x
   else
-    stop("0 is not a valid slice spec if `one_based_extract` is TRUE")
-
+    stop("cannot use 0 in slice syntax if `one_based` is TRUE")
 }
 
 
-# ----- py_* functions ----
+stop_if_any_out_of_bounds <- function(x, dots, options) {
+  dims <- x$shape$as_list()
+  dots <- dropNULL(dots) # possible new dims specified
 
-# should this live in reticulate?
-#' @export
-py_ellipsis <- function()
-  import_builtins(FALSE)$Ellipsis
+  is_elip <- vapply(dots, is_py_ellipsis, FALSE)
+  if (any(is_elip)) {
+    if (sum(is_elip) > 1)
+      stop("Only one py_ellipsis() allowed if `dissallow_out_of_bounds` is TRUE")
 
-# should this live in (and be exported by) reticulate?
-py_slice <-
-  function(start = NULL, stop = NULL, step = NULL,
-           one_based = getOption("tensorflow.one_based_extract", TRUE),
-           inclusive_stop = getOption("tensorflow.py_slice_stop_is_inclusive", TRUE)) {
-    # python default for inclusive_stop is FALSE
+    elip <- which(is_elip)
 
-    if(is_tensor(start) || is_tensor(stop) || is_tensor(step)) {
-      # this is not an exported function, so to check if we should warn we only
-      # need to inspect the global options, not the function args here
-      maybe_warn_no_translation_performed()
-      return(import_builtins()$slice(start, stop, step))
+    n_missing <- length(dims) - (length(dots) - length(elip))
+    # expand py_ellipsis to a list of missing language exprs
+    # (actual user-supplied missing args were replaced with py_slice()'s earlier)
+    dots <- c(dots[seq_len(elip - 1)],
+              rep_len(list(quote(expr =)), n_missing),
+              dots[-seq_len(elip)])
+  }
+
+  out_of_bounds <- mapply(function(arg, dim) {
+    if (is_missing(arg) || is.null(dim)) # unknown dim size
+      return(FALSE)
+
+    stopifnot(is_scalar_integerish(dim))
+
+    if (inherits(arg, "py_slice_spec")) {
+      # arg[[3]] <- NULL # ignore step
+      arg <- arg[1:pmax(length(arg), 2)]
+      arg <- unlist(arg[vapply(arg, is.numeric, TRUE)]) # drop tensors, NULLs
     }
 
+    if (!is_integerish(arg) || !length(arg))
+      return(FALSE) # no check for tensors
 
-  check_is_scalar_integerish_or_NULL(start, stop, step)
-  check_is_TRUE_or_FALSE(one_based)
+    max_idx <- pmax(max(arg) - options$one_based, min(arg) * -1)
+    max_idx > dim
+  }, arg = dots, dim = dims)
 
-  start <- as_nullable_integer(start)
-  stop  <- as_nullable_integer(stop)
-  step  <- as_nullable_integer(step)
-
-  if (one_based) {
-    # need to offset positive integers, but not negative ones
-    if(!is.null(start)) start <- translate_one_based_to_zero_based(start)
-    if(!is.null(stop))  stop  <- translate_one_based_to_zero_based(stop)
-  }
-
-  # maybe invert sign of step if start:stop are selecting items in reverse
-  if (isTRUE(start %||% NA > stop %||% NA) &&
-      isTRUE(sign(start %||% NA) == sign(stop %||% NA)) &&
-      sign(step %||% 1L) == 1)
-    step <- (step %||% 1L) * -1L
-
-  # python slice() is exclusive of stop, but R is typically inclusive of all
-  # elements in a slicing sequence. Default to R behavior.
-  if (isTRUE(inclusive_stop)) {
-    if(!is.null(stop))
-      stop <- stop + as.integer(sign(stop) * sign(step %||% 1L))
-  }
-
-  import_builtins()$slice(start, stop, step)
+  if(any(out_of_bounds))
+    stop(paste(
+      "Arg supplied to index dimension", which(out_of_bounds),
+      "is out bounds. Please supply a different value, or alternatively, set",
+      "options(tensorflow.extract.disallow_out_of_bounds = FALSE)"))
 }
 
-
-
-# ---- warn about python <--> R slicing pitfalls
 
 stop_if_any_zeros <- function(dots) {
-
-  has_zero <- rapply(dots, function(d) isTRUE(any(d == 0)),
-    classes = c("numeric", "integer"), deflt = FALSE)
-
-  if(any(has_zero))
-    stop(paste(
-      "It looks like you might be using 0-based indexing to extract using `[`.",
-      "The tensorflow package now uses 1-based (R-like) extraction by default.\n",
-      "You can switch to the old behavior (1-based extraction) with:",
-      "  options(tensorflow.one_based_extract = FALSE)\n", sep = "\n"
-    ), call. = FALSE)
+  recursivly_check_dots( dots,
+    function(d) isTRUE(any(d == 0)),
+    if_any_TRUE = stop( paste(
+        "It looks like you might be using 0-based indexing to extract using `[`.",
+        "The tensorflow package now uses 1-based (R-like) extraction by default.\n",
+        "You can switch to the old behavior (1-based extraction) with:",
+        "  options(tensorflow.extract.one_based = FALSE)\n", sep = "\n" ),
+      call. = FALSE
+      ))
 }
+
+
+warned_about <- new.env(parent = emptyenv())
+warned_about$negative_indices <- FALSE
+warned_about$tensors_passed_asis <- FALSE
 
 
 warn_if_any_negative <- function(dots) {
-
-  has_negative <- rapply(dots, function(d)
-    is_scalar_integerish(d) && d < 0,
-    classes = c("numeric", "integer"), deflt = FALSE)
-  # only check scalars because longer sequences with any negative numbers throw
-  # an error later
-
-  if(any(has_negative)) {
-    warning("negative numbers are interperted python-style when subsetting tensorflow tensors.\n",
-            "(they select items by counting from the back). For more details, see:\n",
-            "https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing\n",
-            "To turn of this warning, set 'options(tensorflow.warn_negative_extract_is_python_style = FALSE)'")
-    should_warn_about_negative_indices(FALSE) # warn only once
-  }
+  recursivly_check_dots( dots,
+    check_fun = function(d) is_scalar_integerish(d) && d < 0,
+    ignore_py_slice_step = TRUE,
+    if_any_TRUE = {
+      warning( call. = FALSE,
+        "Negative numbers are interpreted python-style when subsetting tensorflow tensors.",
+        "(they select items by counting from the back). For more details, see: ",
+        "https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing\n",
+        "To turn off this warning, set ",
+        "'options(tensorflow.extract.warn_negatives_interpreted_python_style = FALSE)'")
+      warned_about$negative_indices <- TRUE
+    })
 }
 
-maybe_warn_no_translation_performed <- function() {
-  if (!isFALSE(getOption("tensorflow.warn_tensors_in_extract_passed_as_is")) &&
-      (!isFALSE(getOption("tensorflow.one_based_extract")) ||
-       !isFALSE(getOption( "tensorflow.py_slice_stop_is_inclusive")))
-  )
-  warning(
-    "No index offsetting or translation is performed when indexing tensors\n",
-    "with tensors. Indexing tensors are passed as-is to python. Specified options\n",
-    "for one_based_extract and inclusive_stop are ignored and treated as FALSE\n",
-    "to silence this warning, set\n",
-    "option(tensorflow.warn_tensors_in_extract_passed_as_is = FALSE)")
+warn_if_any_tensors <- function(dots) {
+  recursivly_check_dots(dots,
+    function(x) TRUE, classes = "tensorflow.tensor",
+    if_any_TRUE = {
+      warning(call. = FALSE,
+        "Indexing tensors are passed as-is to python, no index offsetting or ",
+        "R to python translation is performed. Selected options for one_based ",
+        "and inclusive_stop are ignored and treated as FALSE to silence this warning, set ",
+        "option(tensorflow.extract.warn_tensors_passed_asis = FALSE)")
+      warned_about$tensors_passed_asis <- TRUE
+    })
 }
 
 
@@ -307,29 +533,19 @@ check_vars <- function(..., .fun, .friendly_description) {
   invisible(TRUE)
 }
 
-check_is_TRUE_or_FALSE <- function(...) {
-  check_vars(...,
-             .fun = function(x)
-               identical(x, TRUE) || identical(x, FALSE),
-             .friendly_description = "TRUE or FALSE")
-}
+
+check_is_TRUE_or_FALSE <-
+  function(..., .friendly_description = "TRUE or FALSE") {
+    check_vars( ..., .fun = function(x) isTRUE(x) || isFALSE(x),
+      .friendly_description = .friendly_description)
+  }
 
 
-check_is_scalar_integerish_or_NULL <- function(...) {
-  check_vars( ..., .fun = function(x) {
-      is.null(x) || is_scalar_integerish(x)
-    },
-    .friendly_description = "a whole (integer-like) number or NULL"
-  )
-}
-
-
-# ------ mini utils -------
+# ------ mini-utils -------
 
 dropNULL <- function(x) x[!vapply(x, is.null, FALSE)]
 
 is_scalar <- function(x) identical(length(x), 1L)
-
 
 is_scalar_integerish <- function(x) {
   is_scalar(x) && is.numeric(x) && !is.na(x) && is.finite(x) &&
@@ -338,7 +554,7 @@ is_scalar_integerish <- function(x) {
 
 is_integerish <- function(x) {
   is.numeric(x) &&
-    all(x == suppressWarnings(as.integer(x)))
+    isTRUE(all(x == suppressWarnings(as.integer(x))))
 }
 
 as_nullable_integer <- function (x) {
@@ -351,3 +567,61 @@ as_nullable_integer <- function (x) {
 is_tensor <- function(x) inherits(x, "tensorflow.tensor")
 
 isFALSE <- function(x) identical(x, FALSE)
+
+nlist <- function(...) {
+  nms <- vapply(eval(substitute(alist(...))), deparse, "")
+  vals <- list(...)
+  names(vals) <- nms
+  vals
+}
+
+recursivly_check_dots <- function(dots, check_fun, if_any_TRUE,
+                                  classes = c("numeric", "integer"),
+                                  ignore_py_slice_step = FALSE) {
+  if(ignore_py_slice_step)
+    dots <- lapply(dots, function(x)
+        if (inherits(x, "py_slice_spec")) x[1:2] else x)
+
+  results <- rapply(dots, check_fun, classes, deflt = FALSE)
+  if(any(results))
+    force(if_any_TRUE)
+}
+
+is_py_ellipsis <- function(x) inherits(x, "python.builtin.ellipsis")
+
+is_missing <- function(x) identical(x, quote(expr=))
+
+parse1 <- function(text) parse(text = text, keep.source = FALSE)[[1]]
+
+is_colon_call <- function(x)
+  is.call(x) && identical(x[[1L]], quote(`:`))
+
+is_has_colon <- function(x) {
+  is_colon_call(x) ||
+    (is.name(x) && grepl(":", as.character(x), fixed = TRUE))
+  # should return false if the colon is not the top level call, e.g. -(1:4)
+}
+
+
+
+
+translate_one_based_to_zero_based_tensor <- function(x) {
+  stopifnot(is_tensor(x))
+  tf$assert_rank(x, 0L)
+  tf$assert_none_equal(x, 0L)
+
+  x + tf$maximum(sign(x), 0L)
+}
+
+translate_to_inclusive_stop_tensor <- function(stop, step) {
+  stopifnot(is_tensor(stop))
+  step_sign <- if (is_tensor(step))
+    sign(step)
+  else if (is_numeric(step))
+    as.integer(sign(step))
+  else
+    1L
+  stop + (sign(stop) * step_sign)
+  is_colon_call(x) || (is.name(x) && grepl(":", as.character(x), fixed = TRUE))
+}
+
