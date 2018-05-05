@@ -454,8 +454,7 @@ stop_if_any_out_of_bounds <- function(x, dots, options) {
     stopifnot(is_scalar_integerish(dim))
 
     if (inherits(arg, "py_slice_spec")) {
-      # arg[[3]] <- NULL # ignore step
-      arg <- arg[1:pmax(length(arg), 2)]
+      arg[[3]] <- NULL # ignore step
       arg <- unlist(arg[vapply(arg, is.numeric, TRUE)]) # drop tensors, NULLs
     }
 
