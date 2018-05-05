@@ -4,8 +4,7 @@
 \alias{[.tensorflow.tensor}
 \title{Subset tensors with \code{[}}
 \usage{
-\method{[}{tensorflow.tensor}(x, ...,
-  drop = getOption("tensorflow.extract.drop", TRUE),
+\method{[}{tensorflow.tensor}(x, ..., drop = TRUE,
   style = getOption("tensorflow.extract.style"),
   options = tf_extract_opts(style))
 }

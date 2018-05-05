@@ -15,10 +15,11 @@ tf_extract_opts(style = getOption("tensorflow.extract.style"), ...,
   TRUE))
 }
 \arguments{
-\item{style}{one of \code{NULL} (the default) \code{"R"} or \code{"python"}. \code{"python"} is
-equivelant to all the other arguments being \code{FALSE}. \code{"R"} is equivelant to
-and \code{warn_tensors_passed_asis} and
-\code{warn_negatives_interpreted_python_style} set to \code{FALSE}}
+\item{style}{one of \code{NULL} (the default) \code{"R"} or \code{"python"}. If supplied,
+this overrides all other options. \code{"python"} is equivelant to all the other
+arguments being \code{FALSE}. \code{"R"} is equivelant to
+\code{warn_tensors_passed_asis} and \code{warn_negatives_interpreted_python_style}
+set to \code{FALSE}}
 
 \item{...}{ignored}
 

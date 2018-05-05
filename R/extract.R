@@ -86,8 +86,7 @@
 #' rm(print.tensorflow.tensor, grab, x, y)
 #' options(tensorflow.extract.style = NULL)
 `[.tensorflow.tensor` <-
-  function(x, ...,
-           drop = getOption("tensorflow.extract.drop", TRUE),
+  function(x, ..., drop = TRUE,
            style = getOption("tensorflow.extract.style"),
            options = tf_extract_opts(style)) {
 
@@ -133,10 +132,11 @@
 
 #' Tensor extract options
 #'
-#' @param style one of `NULL` (the default) `"R"` or `"python"`. `"python"` is
-#'   equivelant to all the other arguments being `FALSE`. `"R"` is equivelant to
-#'   and `warn_tensors_passed_asis` and
-#'   `warn_negatives_interpreted_python_style` set to `FALSE`
+#' @param style one of `NULL` (the default) `"R"` or `"python"`. If supplied,
+#'   this overrides all other options. `"python"` is equivelant to all the other
+#'   arguments being `FALSE`. `"R"` is equivelant to
+#'   `warn_tensors_passed_asis` and `warn_negatives_interpreted_python_style`
+#'   set to `FALSE`
 #' @param ... ignored
 #' @param one_based TRUE or FALSE, if one-based indexing should be used
 #' @param inclusive_stop TRUE or FALSE, if slices like `start:stop` should be
@@ -171,7 +171,7 @@ tf_extract_opts <- function(
   style = getOption("tensorflow.extract.style"),
   ...,
   one_based =
-    getOption("tensorflow.extract.one_based", TRUE), # NULL, TRUE or FALSE
+    getOption("tensorflow.extract.one_based", TRUE),
   inclusive_stop =
     getOption("tensorflow.extract.inclusive_stop", TRUE),
   disallow_out_of_bounds =
@@ -201,8 +201,8 @@ tf_extract_opts <- function(
       # warning("option tensorflow.one_based_extract ",
       #         "renamed to tensorflow.extract.one_based")
     } else
-      warning( "options `tensorflow.one_based_extract` is ignored and",
-               "overridden by option `tensorflow.extract.one_based")
+      warning("options `tensorflow.one_based_extract` is ignored and",
+              "overridden by option `tensorflow.extract.one_based")
   }
 
   opts <- nlist(
