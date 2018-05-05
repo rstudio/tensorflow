@@ -57,6 +57,7 @@
 #' # +  zero-based indexing is used
 #' # +  slice sequences in the form of `start:stop` do not include `stop`
 #' #    in the returned value
+#' # +  out-of-bounds indices in a slice are valid
 #'
 #' # The style argument can be supplied to individual calls of `[` or set
 #' # as a global option
@@ -69,6 +70,9 @@
 #' options(tensorflow.extract.style = 'python')
 #' x[, 0:1] # just the first column
 #' x[, 0:2] # first and second column
+#'
+#' # example of out-of-bounds index
+#' x[, 0:10]
 #' options(tensorflow.extract.style = NULL)
 #'
 #' # slicing with tensors is valid too, but note, tensors are never
