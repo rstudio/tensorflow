@@ -372,24 +372,9 @@ as_valid_py__getitem__arg <- function(x, options) {
   if (is_integerish(x)) # a numeric sequence of length greater than 1
     return(R_slicing_sequence_to_py_slice(x, options)) # error checking within
 
-  ## don't translate tensors
-  # if (is_scalar_integer_tensor(x)) {
-  #   if(options$one_based)
-  #     x <- translate_one_based_to_zero_based_tensor(x)
-  #
-  #   if(!options$drop) {
-  #     x <- py_slice(x, x + sign(x), sign(x),
-  #                   inclusive_stop = FALSE, inclusive_stop = FALSE)
-  #     return(x)
-  #   }
-
   # else, just pass the input and python will throw an error if it's invalid
   x
 }
-
-# is_scalar_integer_tensor <- function(x) {
-#   is_tensor(x) && x$dtype$is_integer
-# }a
 
 
 R_slicing_sequence_to_py_slice <- function(x, options) {
@@ -597,31 +582,5 @@ is_colon_call <- function(x)
   is.call(x) && identical(x[[1L]], quote(`:`))
 
 is_has_colon <- function(x) {
-  is_colon_call(x) ||
-    (is.name(x) && grepl(":", as.character(x), fixed = TRUE))
-  # should return false if the colon is not the top level call, e.g. -(1:4)
-}
-
-
-
-
-translate_one_based_to_zero_based_tensor <- function(x) {
-  stopifnot(is_tensor(x))
-  tf$assert_rank(x, 0L)
-  tf$assert_none_equal(x, 0L)
-
-  x + tf$maximum(sign(x), 0L)
-}
-
-translate_to_inclusive_stop_tensor <- function(stop, step) {
-  stopifnot(is_tensor(stop))
-  step_sign <- if (is_tensor(step))
-    sign(step)
-  else if (is_numeric(step))
-    as.integer(sign(step))
-  else
-    1L
-  stop + (sign(stop) * step_sign)
   is_colon_call(x) || (is.name(x) && grepl(":", as.character(x), fixed = TRUE))
 }
-
