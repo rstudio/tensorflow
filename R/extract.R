@@ -30,7 +30,7 @@
 #' # https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing
 #'
 #' # missing arguments for python syntax are valid, but they must by backticked
-#' or supplied as NULL
+#' # or supplied as NULL
 #' x[, `::2`]
 #' x[, NULL:NULL:2]
 #' x[, `2:`]
