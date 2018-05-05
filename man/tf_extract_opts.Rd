@@ -11,14 +11,14 @@ tf_extract_opts(style = getOption("tensorflow.extract.style"), ...,
   TRUE),
   warn_tensors_passed_asis = getOption("tensorflow.extract.warn_tensors_passed_asis",
   TRUE),
-  warn_negatives_interpreted_python_style = getOption("tensorflow.extract.warn_negatives_interpreted_python_style",
+  warn_negatives_pythonic = getOption("tensorflow.extract.warn_negatives_pythonic",
   TRUE))
 }
 \arguments{
 \item{style}{one of \code{NULL} (the default) \code{"R"} or \code{"python"}. If supplied,
 this overrides all other options. \code{"python"} is equivelant to all the other
 arguments being \code{FALSE}. \code{"R"} is equivelant to
-\code{warn_tensors_passed_asis} and \code{warn_negatives_interpreted_python_style}
+\code{warn_tensors_passed_asis} and \code{warn_negatives_pythonic}
 set to \code{FALSE}}
 
 \item{...}{ignored}
@@ -35,7 +35,7 @@ the slicing index to ensure}
 first time a tensor is supplied to \code{[} that tensors are passed as-is, with
 no R to python translation}
 
-\item{warn_negatives_interpreted_python_style}{TRUE or FALSE, whether to emit
+\item{warn_negatives_pythonic}{TRUE or FALSE, whether to emit
 a warning the first time a negative number is supplied to \code{[} about the
 non-standard (python-style) interpretation}
 }
@@ -47,6 +47,7 @@ an object with class "tf_extract_opts", suitable for passing to
 Tensor extract options
 }
 \examples{
+\dontrun{
 x <- tf$constant(1:10)
 
 opts <-  tf_extract_opts("R")
@@ -56,7 +57,8 @@ x[1, options = opts]
 opts <- tf_extract_opts(
     one_based = FALSE,
     warn_tensors_passed_asis = FALSE,
-    warn_negatives_interpreted_python_style = FALSE
+    warn_negatives_pythonic = FALSE
 )
 x[0:2, options = opts]
+}
 }

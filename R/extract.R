@@ -117,7 +117,7 @@
     if (options$disallow_out_of_bounds)
       stop_if_any_out_of_bounds(x, dots, options)
 
-    if (options$warn_negatives_interpreted_python_style)
+    if (options$warn_negatives_pythonic)
       warn_if_any_negative(dots)
 
     if (options$warn_tensors_passed_asis)
@@ -139,7 +139,7 @@
 #' @param style one of `NULL` (the default) `"R"` or `"python"`. If supplied,
 #'   this overrides all other options. `"python"` is equivelant to all the other
 #'   arguments being `FALSE`. `"R"` is equivelant to
-#'   `warn_tensors_passed_asis` and `warn_negatives_interpreted_python_style`
+#'   `warn_tensors_passed_asis` and `warn_negatives_pythonic`
 #'   set to `FALSE`
 #' @param ... ignored
 #' @param one_based TRUE or FALSE, if one-based indexing should be used
@@ -150,7 +150,7 @@
 #' @param warn_tensors_passed_asis TRUE or FALSE, whether to emit a warning the
 #'   first time a tensor is supplied to `[` that tensors are passed as-is, with
 #'   no R to python translation
-#' @param warn_negatives_interpreted_python_style TRUE or FALSE, whether to emit
+#' @param warn_negatives_pythonic TRUE or FALSE, whether to emit
 #'   a warning the first time a negative number is supplied to `[` about the
 #'   non-standard (python-style) interpretation
 #'
@@ -159,6 +159,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' x <- tf$constant(1:10)
 #'
 #' opts <-  tf_extract_opts("R")
@@ -168,9 +169,10 @@
 #' opts <- tf_extract_opts(
 #'     one_based = FALSE,
 #'     warn_tensors_passed_asis = FALSE,
-#'     warn_negatives_interpreted_python_style = FALSE
+#'     warn_negatives_pythonic = FALSE
 #' )
 #' x[0:2, options = opts]
+#' }
 tf_extract_opts <- function(
   style = getOption("tensorflow.extract.style"),
   ...,
@@ -182,8 +184,8 @@ tf_extract_opts <- function(
     getOption("tensorflow.extract.dissallow_out_of_bounds", TRUE),
   warn_tensors_passed_asis =
     getOption("tensorflow.extract.warn_tensors_passed_asis", TRUE),
-  warn_negatives_interpreted_python_style =
-    getOption("tensorflow.extract.warn_negatives_interpreted_python_style", TRUE)
+  warn_negatives_pythonic =
+    getOption("tensorflow.extract.warn_negatives_pythonic", TRUE)
 ) {
 
   if(length(list(...)))
@@ -194,7 +196,7 @@ tf_extract_opts <- function(
     inclusive_stop,
     disallow_out_of_bounds,
     warn_tensors_passed_asis,
-    warn_negatives_interpreted_python_style
+    warn_negatives_pythonic
   )
 
   # backwards compatability, one_based_extract -> renamed to extract.one_based
@@ -214,7 +216,7 @@ tf_extract_opts <- function(
     inclusive_stop,
     disallow_out_of_bounds,
     warn_tensors_passed_asis,
-    warn_negatives_interpreted_python_style
+    warn_negatives_pythonic
   )
 
   if (!is.null(style)) {
@@ -223,13 +225,13 @@ tf_extract_opts <- function(
       opts <- lapply(opts, function(x) FALSE)
     else {
       opts$warn_tensors_passed_asis <- FALSE
-      opts$warn_negatives_interpreted_python_style <- FALSE
+      opts$warn_negatives_pythonic <- FALSE
     }
 
   } else {
 
     if (warned_about$negative_indices)
-      opts$warn_negatives_interpreted_python_style <- FALSE
+      opts$warn_negatives_pythonic <- FALSE
 
     if (warned_about$tensors_passed_asis)
       opts$warn_tensors_passed_asis <- FALSE
@@ -500,7 +502,7 @@ warn_if_any_negative <- function(dots) {
         "(they select items by counting from the back). For more details, see: ",
         "https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing\n",
         "To turn off this warning, set ",
-        "'options(tensorflow.extract.warn_negatives_interpreted_python_style = FALSE)'")
+        "'options(tensorflow.extract.warn_negatives_pythonic = FALSE)'")
       warned_about$negative_indices <- TRUE
     })
 }
