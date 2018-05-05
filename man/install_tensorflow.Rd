@@ -2,7 +2,7 @@
 % Please edit documentation in R/install.R
 \name{install_tensorflow}
 \alias{install_tensorflow}
-\title{Install TensorFlow and it's dependencies}
+\title{Install TensorFlow and its dependencies}
 \usage{
 install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
   conda = "auto", version = "default", extra_packages = NULL,
@@ -16,8 +16,8 @@ available on Windows (as this isn't supported by TensorFlow). Note also
 that since this command runs without privillege the "system" method is
 available only on Windows.}
 
-\item{conda}{Path to conda executable (or "auto" to find conda using the PATH
-and other conventional install locations).}
+\item{conda}{Path to conda executable (or "auto" to find conda using the
+PATH and other conventional install locations).}
 
 \item{version}{TensorFlow version to install. Specify "default" to install
 the CPU version of the latest release. Specify "gpu" to install the GPU
@@ -36,5 +36,5 @@ TensorFlow.}
 only occur within RStudio).}
 }
 \description{
-Install TensorFlow and it's dependencies
+Install TensorFlow and its dependencies
 }

@@ -150,10 +150,23 @@
 #'   a warning the first time a negative number is supplied to `[` about the
 #'   non-standard (python-style) interpretation
 #'
-#' @return
+#' @return an object with class "tf_extract_opts", suitable for passing to
+#'   `[.tensorflow.tensor()`
 #' @export
 #'
 #' @examples
+#' x <- tf$constant(1:10)
+#'
+#' opts <-  tf_extract_opts("R")
+#' x[1, options = opts]
+#'
+#' # or for more fine-grained control
+#' opts <- tf_extract_opts(
+#'     one_based = FALSE,
+#'     warn_tensors_passed_asis = FALSE,
+#'     warn_negatives_interpreted_python_style = FALSE
+#' )
+#' x[0:2, options = opts]
 tf_extract_opts <- function(
   style = getOption("tensorflow.extract.style"),
   ...,
