@@ -411,7 +411,7 @@ test_that("py_ellipsis()", {
 test_that("negative-integers work python style", {
 
   skip_if_no_tensorflow()
-  options(tensorflow.extract.warn_negatives_interpreted_python_style = FALSE)
+  options(tensorflow.extract.warn_negatives_pythonic = FALSE)
   # options(tensorflow.warn_negative_extract_is_python_style = FALSE)
 
   x1.r <- arr(4)
@@ -441,7 +441,7 @@ test_that("python-style strided slice", {
 
   skip_if_no_tensorflow()
   oopts <- options()
-  options(tensorflow.extract.warn_negatives_interpreted_python_style = FALSE)
+  options(tensorflow.extract.warn_negatives_pythonic = FALSE)
 
   x.r <- arr(20, 2) # 2nd dim to keep R from dropping (since tf always returns 1d array)
   x.t <- tf$constant(x.r)
