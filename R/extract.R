@@ -10,30 +10,27 @@
 #' @export
 #'
 #' @examples
-#' grab <- (function() {
-#'   sess <- tf$Session()
-#'   function(x) sess$run(x)
-#' })()
-#' print.tensorflow.tensor <- function(x) print(grab(x))
+#' \dontrun{
+#' sess <- tf$Session()
 #'
 #' x <- tf$constant(1:15, shape = c(3, 5))
-#' x
+#' sess$run(x)
 #' # by default, numerics supplied to `...` are interperted R style
-#' x[,1] # first column
-#' x[1:2,] # first two rows
-#' x[,1, drop = FALSE]
+#' sess$run( x[,1] )# first column
+#' sess$run( x[1:2,] ) # first two rows
+#' sess$run( x[,1, drop = FALSE] )
 #'
 #' # strided steps can be specified in R syntax or python syntax
-#' x[, seq(1, 5, by = 2)]
-#' x[, 1:5:2]
+#' sess$run( x[, seq(1, 5, by = 2)] )
+#' sess$run( x[, 1:5:2] )
 #' # if you are unfamiliar with python-style strided steps, see:
 #' # https://docs.scipy.org/doc/numpy-1.13.0/reference/arrays.indexing.html#basic-slicing-and-indexing
 #'
 #' # missing arguments for python syntax are valid, but they must by backticked
 #' # or supplied as NULL
-#' x[, `::2`]
-#' x[, NULL:NULL:2]
-#' x[, `2:`]
+#' sess$run( x[, `::2`] )
+#' sess$run( x[, NULL:NULL:2] )
+#' sess$run( x[, `2:`] )
 #'
 #' # Another python features that is available is a python style ellipsis `...`
 #' # (not to be confused with R dots `...`)
@@ -45,13 +42,13 @@
 #'   )
 #'
 #' # tf$newaxis are valid
-#' x[,, tf$newaxis]
+#' sess$run( x[,, tf$newaxis] )
 #'
 #' # negative numbers are always interperted python style
 #' # The first time a negative number is supplied to `[`, a warning is issued
 #' # about the non-standard behavior.
-#' x[-1,] # last row, with a warning
-#' x[-1,] # the warning is only issued once
+#' sess$run( x[-1,] ) # last row, with a warning
+#' sess$run( x[-1,] )# the warning is only issued once
 #'
 #' # specifying `style = 'python'` changes the following:
 #' # +  zero-based indexing is used
@@ -63,22 +60,22 @@
 #' # as a global option
 #'
 #' # example of zero based  indexing
-#' x[0, , style = 'python'] # first row
-#' x[1, , style = 'python'] # second row
+#' sess$run( x[0, , style = 'python'] ) # first row
+#' sess$run( x[1, , style = 'python'] ) # second row
 #'
 #' # example of slices with exclusive stop
 #' options(tensorflow.extract.style = 'python')
-#' x[, 0:1] # just the first column
-#' x[, 0:2] # first and second column
+#' sess$run( x[, 0:1] ) # just the first column
+#' sess$run( x[, 0:2] ) # first and second column
 #'
 #' # example of out-of-bounds index
-#' x[, 0:10]
+#' sess$run( x[, 0:10] )
 #' options(tensorflow.extract.style = NULL)
 #'
 #' # slicing with tensors is valid too, but note, tensors are never
 #' # translated and are always interperted python-style.
 #' # A warning is issued the first time a tensor is passed to `[`
-#' x[, tf$constant(0L):tf$constant(2L)]
+#' sess$run( x[, tf$constant(0L):tf$constant(2L)] )
 #' # just as in python, only scalar tensors are valid
 #' # https://www.tensorflow.org/api_docs/python/tf/Tensor#__getitem__
 #'
@@ -87,8 +84,8 @@
 #' options(tensorflow.extract.style = 'R')
 #'
 #' # clean up from examples
-#' rm(print.tensorflow.tensor, grab, x, y)
 #' options(tensorflow.extract.style = NULL)
+#' }
 `[.tensorflow.tensor` <-
   function(x, ..., drop = TRUE,
            style = getOption("tensorflow.extract.style"),
