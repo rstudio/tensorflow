@@ -28,7 +28,7 @@ set to \code{FALSE}}
 \item{inclusive_stop}{TRUE or FALSE, if slices like \code{start:stop} should be
 inclusive of \code{stop}}
 
-\item{disallow_out_of_bounds}{TRUE or FALSE, whether check are performed on
+\item{disallow_out_of_bounds}{TRUE or FALSE, whether checks are performed on
 the slicing index to ensure it is within bounds.}
 
 \item{warn_tensors_passed_asis}{TRUE or FALSE, whether to emit a warning the

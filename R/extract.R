@@ -147,7 +147,7 @@
 #' @param one_based TRUE or FALSE, if one-based indexing should be used
 #' @param inclusive_stop TRUE or FALSE, if slices like `start:stop` should be
 #'   inclusive of `stop`
-#' @param disallow_out_of_bounds TRUE or FALSE, whether check are performed on
+#' @param disallow_out_of_bounds TRUE or FALSE, whether checks are performed on
 #'   the slicing index to ensure it is within bounds.
 #' @param warn_tensors_passed_asis TRUE or FALSE, whether to emit a warning the
 #'   first time a tensor is supplied to `[` that tensors are passed as-is, with
