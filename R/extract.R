@@ -139,8 +139,8 @@
 #' Tensor extract options
 #'
 #' @param style one of `NULL` (the default) `"R"` or `"python"`. If supplied,
-#'   this overrides all other options. `"python"` is equivelant to all the other
-#'   arguments being `FALSE`. `"R"` is equivelant to
+#'   this overrides all other options. `"python"` is equivalent to all the other
+#'   arguments being `FALSE`. `"R"` is equivalent to
 #'   `warn_tensors_passed_asis` and `warn_negatives_pythonic`
 #'   set to `FALSE`
 #' @param ... ignored
@@ -148,7 +148,7 @@
 #' @param inclusive_stop TRUE or FALSE, if slices like `start:stop` should be
 #'   inclusive of `stop`
 #' @param disallow_out_of_bounds TRUE or FALSE, whether check are performed on
-#'   the slicing index to ensure
+#'   the slicing index to ensure it is within bounds.
 #' @param warn_tensors_passed_asis TRUE or FALSE, whether to emit a warning the
 #'   first time a tensor is supplied to `[` that tensors are passed as-is, with
 #'   no R to python translation
@@ -489,7 +489,7 @@ stop_if_any_zeros <- function(dots) {
     function(d) isTRUE(any(d == 0)),
     if_any_TRUE = stop( paste(
         "It looks like you might be using 0-based indexing to extract using `[`.",
-        "The tensorflow package now uses 1-based (R-like) extraction by default.\n",
+        "The tensorflow package now uses 1-based extraction by default.\n",
         "You can switch to the old behavior (1-based extraction) with:",
         "  options(tensorflow.extract.one_based = FALSE)\n", sep = "\n" ),
       call. = FALSE
@@ -524,7 +524,7 @@ warn_if_any_tensors <- function(dots) {
       warning(call. = FALSE,
         "Indexing tensors are passed as-is to python, no index offsetting or ",
         "R to python translation is performed. Selected options for one_based ",
-        "and inclusive_stop are ignored and treated as FALSE to silence this warning, set ",
+        "and inclusive_stop are ignored and treated as FALSE. To silence this warning, set ",
         "option(tensorflow.extract.warn_tensors_passed_asis = FALSE)")
       warned_about$tensors_passed_asis <- TRUE
     })

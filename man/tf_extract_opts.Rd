@@ -16,8 +16,8 @@ tf_extract_opts(style = getOption("tensorflow.extract.style"), ...,
 }
 \arguments{
 \item{style}{one of \code{NULL} (the default) \code{"R"} or \code{"python"}. If supplied,
-this overrides all other options. \code{"python"} is equivelant to all the other
-arguments being \code{FALSE}. \code{"R"} is equivelant to
+this overrides all other options. \code{"python"} is equivalent to all the other
+arguments being \code{FALSE}. \code{"R"} is equivalent to
 \code{warn_tensors_passed_asis} and \code{warn_negatives_pythonic}
 set to \code{FALSE}}
 
@@ -29,7 +29,7 @@ set to \code{FALSE}}
 inclusive of \code{stop}}
 
 \item{disallow_out_of_bounds}{TRUE or FALSE, whether check are performed on
-the slicing index to ensure}
+the slicing index to ensure it is within bounds.}
 
 \item{warn_tensors_passed_asis}{TRUE or FALSE, whether to emit a warning the
 first time a tensor is supplied to \code{[} that tensors are passed as-is, with
