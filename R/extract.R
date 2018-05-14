@@ -37,11 +37,11 @@
 #'
 #' # Another python features that is available is a python style ellipsis `...`
 #' # (not to be confused with R dots `...`)
-#' # a py_ellipsis() expands to the shape of the tensor
+#' # a all_dims() expands to the shape of the tensor
 #' y <- tf$constant(1:(3^5), shape = c(3,3,3,3,3))
 #' identical(
-#'   grab( y[py_ellipsis(), 1] ),
-#'   grab( y[,,,,1] )
+#'   sess$run( y[all_dims(), 1] ),
+#'   sess$run( y[,,,,1] )
 #'   )
 #'
 #' # tf$newaxis are valid
@@ -108,7 +108,7 @@
       if (!any(is_ellipsis)) stop(
         "Incorrect number of dimensions supplied. The number of supplied arguments, ",
         "(not counting any NULL, tf$newaxis or np$newaxis) must match the",
-        "number of dimensions in the tensor, unless a py_ellipsis() was supplied")
+        "number of dimensions in the tensor, unless an all_dims() was supplied",
     }
 
     if(options$one_based)
@@ -243,11 +243,11 @@ tf_extract_opts <- function(
 }
 
 
-#' Python Ellipsis
+#' All dims
 #'
-#' This function returns a python Ellipsis `...`, (not to be confused with `...`
-#' in `R`). The python ellipsis is commonly used when subsetting numpy
-#' arrays or tensorflow tensors objects with brackets.
+#' This function returns an object that can be used when subsetting tensors with
+#' `[`. If you are familiar with python,, this is equivalent to the python Ellipsis
+#' `...`, (not to be confused with `...` in `R`).
 #'
 #' @export
 #' @examples
@@ -256,9 +256,9 @@ tf_extract_opts <- function(
 #' x[..., i]
 #' # the ellipsis means "expand to match number of dimension of x".
 #' # to translate the above python expression to R, write:
-#' x[py_ellipsis(), i]
+#' x[all_dims(), i]
 #' }
-py_ellipsis <- function()
+all_dims <- function()
   .globals$builtin_ellipsis %||%
   (.globals$builtin_ellipsis <- import_builtins(FALSE)$Ellipsis)
 
@@ -435,7 +435,7 @@ stop_if_any_out_of_bounds <- function(x, dots, options) {
   is_elip <- vapply(dots, is_py_ellipsis, FALSE)
   if (any(is_elip)) {
     if (sum(is_elip) > 1)
-      stop("Only one py_ellipsis() allowed if `dissallow_out_of_bounds` is TRUE")
+      stop("Only one all_dims() allowed if `dissallow_out_of_bounds` is TRUE")
 
     elip <- which(is_elip)
 

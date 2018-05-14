@@ -369,7 +369,7 @@ test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
 
 
-test_that("py_ellipsis()", {
+test_that("all_dims()", {
 
   skip_if_no_tensorflow()
 
@@ -383,27 +383,27 @@ test_that("py_ellipsis()", {
   x3.t <- tf$constant(x3.r)
   x4.t <- tf$constant(x4.r)
 
-  expect_equal(grab( x1.t[py_ellipsis()] ), x1.r[])
+  expect_equal(grab( x1.t[all_dims()] ), x1.r[])
 
   options(tensorflow.extract.one_based = TRUE)
   # as.array() because tf returns 1d arrays, not bare atomic vectors
-  expect_equal(grab( x2.t[py_ellipsis()]    ), as.array( x2.r[,]  ))
-  expect_equal(grab( x2.t[1, py_ellipsis()]  ), as.array( x2.r[1,] ))
-  expect_equal(grab( x2.t[ py_ellipsis(), 1] ), as.array( x2.r[,1] ))
+  expect_equal(grab( x2.t[all_dims()]    ), as.array( x2.r[,]  ))
+  expect_equal(grab( x2.t[1, all_dims()]  ), as.array( x2.r[1,] ))
+  expect_equal(grab( x2.t[ all_dims(), 1] ), as.array( x2.r[,1] ))
 
-  expect_equal(grab( x3.t[py_ellipsis()]       ), as.array( x3.r[,,]   ))
-  expect_equal(grab( x3.t[1, py_ellipsis()]    ), as.array( x3.r[1,,]  ))
-  expect_equal(grab( x3.t[1, 1, py_ellipsis()] ), as.array( x3.r[1,1,] ))
-  expect_equal(grab( x3.t[1, py_ellipsis(), 1] ), as.array( x3.r[1,,1] ))
-  expect_equal(grab( x3.t[py_ellipsis(), 1]    ), as.array( x3.r[,,1]  ))
-  expect_equal(grab( x3.t[py_ellipsis(), 1, 1] ), as.array( x3.r[,1,1] ))
+  expect_equal(grab( x3.t[all_dims()]       ), as.array( x3.r[,,]   ))
+  expect_equal(grab( x3.t[1, all_dims()]    ), as.array( x3.r[1,,]  ))
+  expect_equal(grab( x3.t[1, 1, all_dims()] ), as.array( x3.r[1,1,] ))
+  expect_equal(grab( x3.t[1, all_dims(), 1] ), as.array( x3.r[1,,1] ))
+  expect_equal(grab( x3.t[all_dims(), 1]    ), as.array( x3.r[,,1]  ))
+  expect_equal(grab( x3.t[all_dims(), 1, 1] ), as.array( x3.r[,1,1] ))
 
-  expect_equal(grab( x4.t[py_ellipsis()]       ), as.array( x4.r[,,,]   ))
-  expect_equal(grab( x4.t[1, py_ellipsis()]    ), as.array( x4.r[1,,,]  ))
-  expect_equal(grab( x4.t[1, 1, py_ellipsis()] ), as.array( x4.r[1,1,,] ))
-  expect_equal(grab( x4.t[1, py_ellipsis(), 1] ), as.array( x4.r[1,,,1] ))
-  expect_equal(grab( x4.t[py_ellipsis(), 1]    ), as.array( x4.r[,,,1]  ))
-  expect_equal(grab( x4.t[py_ellipsis(), 1, 1] ), as.array( x4.r[,,1,1] ))
+  expect_equal(grab( x4.t[all_dims()]       ), as.array( x4.r[,,,]   ))
+  expect_equal(grab( x4.t[1, all_dims()]    ), as.array( x4.r[1,,,]  ))
+  expect_equal(grab( x4.t[1, 1, all_dims()] ), as.array( x4.r[1,1,,] ))
+  expect_equal(grab( x4.t[1, all_dims(), 1] ), as.array( x4.r[1,,,1] ))
+  expect_equal(grab( x4.t[all_dims(), 1]    ), as.array( x4.r[,,,1]  ))
+  expect_equal(grab( x4.t[all_dims(), 1, 1] ), as.array( x4.r[,,1,1] ))
 
 })
 
