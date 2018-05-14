@@ -109,7 +109,7 @@
         "Incorrect number of dimensions supplied. The number of supplied arguments, ",
         "(not counting any NULL, tf$newaxis or np$newaxis) must match the",
         "number of dimensions in the tensor, unless an all_dims() was supplied",
-        "(this will produce an error in the future)")
+        " (this will produce an error in the future)")
     }
 
     if(options$one_based)
