@@ -102,10 +102,14 @@
 
     if (length(dropNULL(dots)) != py_len(x$shape)) {  # NULL == tf$newaxis
       is_ellipsis <- vapply(dots, is_py_ellipsis, FALSE)
-      if (!any(is_ellipsis)) stop(
+      if(length(dropNULL(dots)) > py_len(x$shape))
+        stop( "Incorrect number of dimensions supplied. ", py_len(x$shape),
+          " required, but received ", length(dropNULL(dots)))
+      else if (!any(is_ellipsis)) warning(
         "Incorrect number of dimensions supplied. The number of supplied arguments, ",
         "(not counting any NULL, tf$newaxis or np$newaxis) must match the",
         "number of dimensions in the tensor, unless an all_dims() was supplied",
+        "(this will produce an error in the future)")
     }
 
     if(options$one_based)
@@ -128,6 +132,7 @@
 
     x$`__getitem__`(dots)
   }
+
 
 
 
@@ -430,6 +435,15 @@ stop_if_any_out_of_bounds <- function(x, dots, options) {
   dots <- dropNULL(dots) # possible new dims specified
 
   is_elip <- vapply(dots, is_py_ellipsis, FALSE)
+
+  if(length(dots) < length(dims)) {
+    # make implicit py_ellipsis explicit
+    if(!any(is_elip)) {
+      dots <- c(dots, all_dims())
+      is_elip <- c(is_elip, TRUE)
+    }
+  }
+
   if (any(is_elip)) {
     if (sum(is_elip) > 1)
       stop("Only one all_dims() allowed if `dissallow_out_of_bounds` is TRUE")

@@ -293,11 +293,11 @@ test_that("incorrect number of indices errors", {
   expect_error(x[1:2, 2, 1:2, 3, , drop = TRUE],
                'Incorrect number of dimensions')
   # too few
-  expect_error(x[],
+  expect_warning(x[],
                'Incorrect number of dimensions')
-  expect_error(x[1:2, ],
+  expect_warning(x[1:2, ],
                'Incorrect number of dimensions')
-  expect_error(x[1:2, 2],
+  expect_warning(x[1:2, 2],
                'Incorrect number of dimensions')
 
 })
