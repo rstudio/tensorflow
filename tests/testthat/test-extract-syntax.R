@@ -2,10 +2,15 @@ context("extract syntax")
 
 source("utils.R")
 
-grab <- function (x) {
-  # evaluate tf object x on the graph
-  sess <- tf$Session()
-  sess$run(x)
+.SESS <- tf$Session()
+
+grab <- function(x) .SESS$run(x)
+
+
+null_out_all_extract_opts <- function() {
+  opts <- options()
+  opts[grepl("^tensorflow[.]extract", names(opts))] <- list(NULL)
+  options(opts)
 }
 
 arr <- function (...) {
@@ -39,9 +44,17 @@ check_expr <- function (expr, name = "x") {
 
 }
 
+reset_warnings <- function() {
+  e <- tensorflow:::warned_about
+  e$negative_indices <- FALSE
+  e$tensors_passed_asis <- FALSE
+}
+
+
 # capture previous r-like extraction method, set to default, and return later
-old_extract_method <- options("tensorflow.one_based_extract")
-options(tensorflow.one_based_extract = NULL)
+# old_extract_method <- options("tensorflow.extract.one_based")
+# options(tensorflow.extract.one_based = NULL)
+# options(tensorflow.extract.style = 'R')
 
 
 # test indexing for unknown dimensions
@@ -49,6 +62,8 @@ options(tensorflow.one_based_extract = NULL)
 test_that('extract works for unknown dimensions', {
 
   skip_if_no_tensorflow()
+
+  oopt <- options(tensorflow.extract.style = "R")
 
   # the output should retain the missing dimension
   x <- tf$placeholder(tf$float64, shape(NULL, 10))
@@ -73,12 +88,13 @@ test_that('extract works for unknown dimensions', {
   expect_identical(y1_obs, y1_exp)
   expect_identical(y2_obs, y2_exp)
 
+  options(oopt)
 })
 
 test_that("scalar indexing works", {
 
   skip_if_no_tensorflow()
-
+  oopt <- options(tensorflow.extract.style = "R")
   # set up arrays
   x1_ <- arr(3)
   x2_ <- arr(3, 3)
@@ -104,15 +120,17 @@ test_that("scalar indexing works", {
   expect_equal(y2_, grab(y2))
   expect_equal(y3_, grab(y3))
 
+  options(oopt)
 })
 
 # tests for 0-based indexing
-options(tensorflow.one_based_extract = FALSE)
 
+# options(tensorflow.extract.one_based = FALSE)
 
 test_that("vector indexing works", {
   skip_if_no_tensorflow()
 
+  oopt <- options(tensorflow.extract.one_based = FALSE)
   # set up arrays
   x1_ <- arr(3)
   x2_ <- arr(3, 3)
@@ -133,10 +151,13 @@ test_that("vector indexing works", {
   expect_equal(y1_, grab(y1))
   expect_equal(array(y2_), grab(y2))
 
+  options(oopt)
 })
 
 test_that("blank indices retain all elements", {
   skip_if_no_tensorflow()
+
+  oopt <- options(tensorflow.extract.one_based = FALSE)
 
   # set up arrays
   x1_ <- arr(3)
@@ -174,10 +195,14 @@ test_that("blank indices retain all elements", {
   expect_equal(y3_b, grab(y3b))  #
   expect_equal(y4_, grab(y4))
 
+  options(oopt)
 })
 
 test_that("indexing works within functions", {
   skip_if_no_tensorflow()
+
+    # tensorflow.extract.style = "python",
+  oopt <- options(tensorflow.extract.one_based = FALSE)
 
   # set up arrays
   x1_ <- arr(3)
@@ -215,6 +240,7 @@ test_that("indexing works within functions", {
   expect_equal(y3_a, grab(y3a))
   expect_equal(y3_b, grab(y3b))
 
+  options(oopt)
 })
 
 
@@ -238,24 +264,19 @@ test_that("indexing works with variables", {
 
 })
 
-test_that("negative and decreasing indexing errors", {
+test_that("indexing with negative sequences errors", {
   skip_if_no_tensorflow()
 
+  oopt <- options(tensorflow.extract.style = "R")
   # set up Tensors
   x1 <- tf$constant(arr(3))
   x2 <- tf$constant(arr(3, 3))
 
-  # extract with negative indices
-  expect_error(x1[-1],
-               'positive')
-  expect_error(x2[1:-2, ],
-               'positive')
-  # extract with decreasing indices
-  expect_error(x1[3:2],
-               'increasing integers')
-  expect_error(x2[2:1, ],
-               'increasing integers')
+  # extract with negative indices (where : is not the top level call)
+  expect_error(x1[-(1:2)], 'positive')
+  expect_error(x2[-(1:2), ], 'positive')
 
+  options(oopt)
 })
 
 test_that("incorrect number of indices errors", {
@@ -263,21 +284,21 @@ test_that("incorrect number of indices errors", {
 
   # set up Tensor
   x <- tf$constant(arr(3, 3, 3))
-
+  # options(tensorflow.extract.one_based = TRUE)
   # too many
-  expect_error(x[1:2, 2, 0:2, 3],
-               'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , ],
-               'incorrect number of dimensions')
-  expect_error(x[1:2, 2, 0:2, 3, , drop = TRUE],
-               'incorrect number of dimensions')
+  expect_error(x[1:2, 2, 1:2, 3],
+               'Incorrect number of dimensions')
+  expect_error(x[1:2, 2, 1:2, 3, , ],
+               'Incorrect number of dimensions')
+  expect_error(x[1:2, 2, 1:2, 3, , drop = TRUE],
+               'Incorrect number of dimensions')
   # too few
-  expect_error(x[],
-               'incorrect number of dimensions')
-  expect_error(x[1:2, ],
-               'incorrect number of dimensions')
-  expect_error(x[1:2, 2],
-               'incorrect number of dimensions')
+  expect_warning(x[],
+               'Incorrect number of dimensions')
+  expect_warning(x[1:2, ],
+               'Incorrect number of dimensions')
+  expect_warning(x[1:2, 2],
+               'Incorrect number of dimensions')
 
 })
 
@@ -288,16 +309,10 @@ test_that("silly indices error", {
   x <- tf$constant(arr(3, 3, 3))
 
   # these should all error and notify the user of the failing index
-  expect_error(x[1:2, NULL, 2],
-               'invalid index - must be numeric and finite')
-  expect_error(x[1:2, NA, 2],
-               'invalid index - must be numeric and finite')
-  expect_error(x[1:2, Inf, 2],
-               'invalid index - must be numeric and finite')
-  expect_error(x[1:2, 'apple', 2],
-               'invalid index - must be numeric and finite')
-  expect_error(x[1:2, mean, 2],
-               'invalid index - must be numeric and finite')
+  expect_error(x[1:2, NA, 2], 'NA')
+  expect_error(x[1:2, Inf, 2], 'Inf')
+  expect_error(x[1:2, 'apple', 2], 'character')
+  expect_error(x[1:2, mean, 2], 'function')
 })
 
 test_that("passing non-vector indices errors", {
@@ -313,14 +328,15 @@ test_that("passing non-vector indices errors", {
 
   # indexing with matrices should fail
   expect_error(x1[block_idx_1],
-               'only vector indexing of Tensors is currently supported')
+               'not currently supported')
   expect_error(x2[block_idx_2],
-               'only vector indexing of Tensors is currently supported')
+               'not currently supported')
 
 })
 
 test_that("undefined extensions extract", {
   skip_if_no_tensorflow()
+  oopt <- options(tensorflow.extract.style = 'python')
 
   # thanks to @dfalbel https://github.com/rstudio/tensorflow/issues/139
   x <- tf$placeholder(tf$int16, shape = list(NULL, 1L))
@@ -333,9 +349,10 @@ test_that("undefined extensions extract", {
   expectation <- array(x_[, 1, drop = TRUE])
   expect_equal(result, expectation)
 
+  options(oopt)
+
 })
 
-options(tensorflow.one_based_extract = NULL)
 
 test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
@@ -350,47 +367,213 @@ test_that("dim(), length(), nrow(), and ncol() work on tensors", {
 
 })
 
+
+
+test_that("all_dims()", {
+
+  skip_if_no_tensorflow()
+
+  x1.r <- arr(3)
+  x2.r <- arr(3, 3)
+  x3.r <- arr(3, 3, 3)
+  x4.r <- arr(3, 3, 3, 3)
+
+  x1.t <- tf$constant(x1.r)
+  x2.t <- tf$constant(x2.r)
+  x3.t <- tf$constant(x3.r)
+  x4.t <- tf$constant(x4.r)
+
+  expect_equal(grab( x1.t[all_dims()] ), x1.r[])
+
+  options(tensorflow.extract.one_based = TRUE)
+  # as.array() because tf returns 1d arrays, not bare atomic vectors
+  expect_equal(grab( x2.t[all_dims()]    ), as.array( x2.r[,]  ))
+  expect_equal(grab( x2.t[1, all_dims()]  ), as.array( x2.r[1,] ))
+  expect_equal(grab( x2.t[ all_dims(), 1] ), as.array( x2.r[,1] ))
+
+  expect_equal(grab( x3.t[all_dims()]       ), as.array( x3.r[,,]   ))
+  expect_equal(grab( x3.t[1, all_dims()]    ), as.array( x3.r[1,,]  ))
+  expect_equal(grab( x3.t[1, 1, all_dims()] ), as.array( x3.r[1,1,] ))
+  expect_equal(grab( x3.t[1, all_dims(), 1] ), as.array( x3.r[1,,1] ))
+  expect_equal(grab( x3.t[all_dims(), 1]    ), as.array( x3.r[,,1]  ))
+  expect_equal(grab( x3.t[all_dims(), 1, 1] ), as.array( x3.r[,1,1] ))
+
+  expect_equal(grab( x4.t[all_dims()]       ), as.array( x4.r[,,,]   ))
+  expect_equal(grab( x4.t[1, all_dims()]    ), as.array( x4.r[1,,,]  ))
+  expect_equal(grab( x4.t[1, 1, all_dims()] ), as.array( x4.r[1,1,,] ))
+  expect_equal(grab( x4.t[1, all_dims(), 1] ), as.array( x4.r[1,,,1] ))
+  expect_equal(grab( x4.t[all_dims(), 1]    ), as.array( x4.r[,,,1]  ))
+  expect_equal(grab( x4.t[all_dims(), 1, 1] ), as.array( x4.r[,,1,1] ))
+
+})
+
+
+test_that("negative-integers work python style", {
+
+  skip_if_no_tensorflow()
+  options(tensorflow.extract.warn_negatives_pythonic = FALSE)
+  # options(tensorflow.warn_negative_extract_is_python_style = FALSE)
+
+  x1.r <- arr(4)
+  x2.r <- arr(4, 4)
+
+  x1.t <- tf$constant(x1.r)
+  x2.t <- tf$constant(x2.r)
+
+  options(tensorflow.extract.one_based = TRUE)
+  expect_equal(grab( x1.t[-1] ),     x1.r[4]    )
+  expect_equal(grab( x1.t[-2] ),     x1.r[3]    )
+  expect_equal(grab( x2.t[-2, -2] ), x2.r[3, 3] )
+  expect_equal(grab( x2.t[-1, ] ), as.array( x2.r[4,] ))
+
+  options(tensorflow.extract.one_based = FALSE)
+  # same as above
+  expect_equal(grab( x1.t[-1] ),     x1.r[4]    )
+  expect_equal(grab( x1.t[-2] ),     x1.r[3]    )
+  expect_equal(grab( x2.t[-2, -2] ), x2.r[3, 3] )
+  expect_equal(grab( x2.t[-1, ] ), as.array( x2.r[4,] ))
+
+  null_out_all_extract_opts()
+})
+
+
+test_that("python-style strided slice", {
+
+  skip_if_no_tensorflow()
+  oopts <- options()
+  options(tensorflow.extract.warn_negatives_pythonic = FALSE)
+
+  x.r <- arr(20, 2) # 2nd dim to keep R from dropping (since tf always returns 1d array)
+  x.t <- tf$constant(x.r)
+
+  options(tensorflow.extract.style = "R")
+
+  expect_equal(grab( x.t[ `5:`          ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[ `5:NULL`      ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[  5:NULL       ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[ `5:NULL:`     ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[  5:NULL:NULL  ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[ `5:NULL:NULL` ,] ), x.r[ 5:20,])
+
+  expect_equal(grab( x.t[ `5::` ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[ `:5:` ,] ), x.r[ 1:5,])
+  expect_equal(grab( x.t[ `:5`  ,] ), x.r[ 1:5,])
+  expect_equal(grab( x.t[ `2:5` ,] ), x.r[ 2:5,])
+  expect_equal(grab( x.t[ 2:5   ,] ), x.r[ 2:5,])
+
+  expect_equal(grab( x.t[ `::2` ,]       ), x.r[ seq.int(1, 20, by = 2) ,])
+  expect_equal(grab( x.t[ NULL:NULL:2 ,] ), x.r[ seq.int(1, 20, by = 2) ,])
+
+  # non syntantic names or function calls can work too
+  `_idx` <- 1
+  expect_equal(grab( x.t[ `_idx`:(identity(5)+1L),]), x.r[ 1:6, ] )
+
+
+  expect_equal(grab( x.t[ `2:6:2`,]), x.r[ seq.int(2, 6, 2) ,])
+  expect_equal(grab( x.t[  2:6:2 ,]), x.r[ seq.int(2, 6, 2) ,])
+
+  # decreasing indexes work
+  expect_equal(grab( x.t[ `6:2:-2`,]), x.r[ seq.int(6, 2, -2) ,])
+  expect_equal(grab( x.t[  6:2:-2 ,]), x.r[ seq.int(6, 2, -2) ,])
+
+  # sign of step gets automatically inverted on decreasing indexes
+  expect_equal(grab( x.t[ `6:2:2` ,]), x.r[ seq.int(6, 2, -2) ,])
+  expect_equal(grab( x.t[  6:2:2  ,]), x.r[ seq.int(6, 2, -2) ,])
+  expect_equal(grab( x.t[  6:2    ,]),   x.r[ 6:2 ,])
+  expect_equal(grab( x.t[  6:2:1 ,]),   x.r[ 6:2  ,])
+  expect_equal(grab( x.t[  6:2:-1 ,]),   x.r[ 6:2 ,])
+
+
+  options(tensorflow.extract.style = "python")
+  # options set to match python
+  # helper to actually test in python
+  test_in_python <- (function() {
+    # main <- reticulate::import_main()
+    reticulate::py_run_string(paste(
+      "import numpy as np",
+      "x = np.array(range(1, 41))",
+      "x.shape = (2, 20)",
+      "x = x.transpose()", sep = "\n"))
+    function(chr) {
+      reticulate::py_eval(chr)
+    }
+  })()
+
+
+  expect_equal(grab( x.t[ 2:5,] ), test_in_python("x[2:5,]"))
+  expect_equal(grab( x.t[ 2:-5 ,] ), test_in_python("x[ 2:-5 ,]"))
+  expect_equal(grab( x.t[ 2:5:2 ,] ), test_in_python("x[ 2:5:2 ,]"))
+  expect_equal(grab( x.t[ -2:-5:-1 ,] ), test_in_python("x[ -2:-5:-1 ,]"))
+  expect_equal(grab( x.t[ 5:2:-1 ,] ), test_in_python("x[ 5:2:-1 ,]"))
+  expect_equal(grab( x.t[ 5:2:-2 ,] ), test_in_python("x[ 5:2:-2 ,]"))
+
+
+  # indexing with tensors
+  expect_equal(grab( x.t[tf$constant(2L),] ), as.array(x.r[3,]))
+  expect_equal(grab( x.t[tf$constant(2L):tf$constant(5L),] ), x.r[3:5,])
+
+  # expect warning that no translation on tensors performed
+  null_out_all_extract_opts()
+  expect_warning(grab( x.t[tf$constant(2L),] ), "ignored")
+
+  # warn only once
+  expect_silent(grab( x.t[tf$constant(2L),] ))
+
+  # warn in slice syntax too
+  reset_warnings()
+  null_out_all_extract_opts()
+  expect_warning(grab( x.t[tf$constant(2L):tf$constant(5L),] ), "ignored")
+
+  reset_warnings()
+  options(tensorflow.extract.warn_tensors_passed_asis = FALSE)
+  expect_silent(grab( x.t[tf$constant(2L):tf$constant(5L),] ))
+
+
+  null_out_all_extract_opts()
+})
+
+
+
 # test warnings for extraction that looks like it might be 0-based
 
 test_that('extract warns when indices look 0-based', {
 
   skip_if_no_tensorflow()
+  oopts <- options()
 
   x <- tf$constant(matrix(0, 2, 2))
   i0 <- 0:1
   i1 <- 1:2
 
   # explicit 0-indexing shouldn't warn
-  options(tensorflow.one_based_extract = FALSE)
+  options(tensorflow.extract.one_based = FALSE)
   expect_silent(x[i0, i0])
 
   # explicit 1-indexing shouldn't warn
-  options(tensorflow.one_based_extract = TRUE)
-  expect_silent(x[i0, i0])
+  options(tensorflow.extract.one_based = TRUE)
+  # expect_silent(x[i0, i0]) # expect error
 
   # default 1-indexing should warn only if there's a zero in there
-  options(tensorflow.one_based_extract = NULL)
+  options(tensorflow.extract.one_based = NULL)
   expect_silent(x[i1, i1])
-  expect_warning(x[i0, i0],
-                 "It looks like you might be using 0-based indexing")
+  # expect_warning(x[i0, i0], # expect error
+  #                "It looks like you might be using 0-based indexing")
 
+  options(oopts)
 })
 
-test_that('extract errors when indices have missing elements', {
+test_that('extract errors when indices have missing elements at variable steps', {
 
   skip_if_no_tensorflow()
 
   x <- tf$constant(array(0, dim = c(2, 4, 2)))
 
   # indexing with sequential values shouldn't error
-  x[1, 1:3, ]
-  x[1, c(1, 2, 3), ]
-
-  # indexing with a non-sequential vector should error
-  expect_error( x[1, c(1, 3), ],
-                "no missing elements")
+  expect_silent(x[1, c(1, 2, 3), ])
+  expect_error( x[1, c(1, 3, 4),])
 
 })
 
+
 # reset user's extract method
-options(tensorflow.one_based_extract = old_extract_method)
+# options(tensorflow.extract.one_based = old_extract_method)
