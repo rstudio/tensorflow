@@ -132,11 +132,13 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
           if (!is.null(install_commands))
             install_commands <- paste(install_commands, collapse = "\n")
         } else if (is_ubuntu()) {
-          if (!have_pip)
+          if (!have_pip) {
             install_commands <- c(install_commands, paste0("$ sudo apt-get install python", pyver ,"-pip"))
+            pip <- paste0("/usr/bin/pip", pyver)
+          }
           if (!have_virtualenv) {
             if (identical(pyver, "3"))
-              install_commands <- c(install_commands, "$ sudo /usr/bin/pip3 install virtualenv")
+              install_commands <- c(install_commands, paste("$ sudo", pip, "install virtualenv"))
             else
               install_commands <- c(install_commands, "$ sudo apt-get install python-virtualenv")
           }
