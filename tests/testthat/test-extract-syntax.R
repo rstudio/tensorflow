@@ -2,12 +2,12 @@ context("extract syntax")
 
 source("utils.R")
 
+.SESS <- NULL
 grab <- function(x) {
   if (is.null(.SESS))
-    .SESS <- tf$Session()
+    .SESS <<- tf$Session()
   .SESS$run(x)
 }
-
 
 
 null_out_all_extract_opts <- function() {
