@@ -38,7 +38,7 @@ NULL
 
     priority = 5,
 
-    environment = "r-tensorflow",
+    environment = "r-reticulate",
 
     on_load = function() {
 
