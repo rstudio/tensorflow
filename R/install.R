@@ -249,18 +249,17 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
 
 install_tensorflow_conda <- function(conda, version, gpu, envname, packages, extra_packages = NULL) {
 
-  # create conda environment if we need to
+  # remove existing conda environment if we need to (necessary to work around TF upgrade bugs)
   conda_envs <- conda_list(conda = conda)
   conda_env <- subset(conda_envs, conda_envs$name == envname)
-  if (nrow(conda_env) == 1) {
-    cat("Using", envname, "conda environment for TensorFlow installation\n")
-    python <- conda_env$python
-  }
-  else {
-    cat("Creating", envname, "conda environment for TensorFlow installation...\n")
-    python_packages <- ifelse(is_windows(), "python=3.6", "python")
-    python <- conda_create(envname, packages = python_packages, conda = conda)
-  }
+  if (nrow(conda_env) == 1)
+    conda_remove(envname, conda = conda)
+
+  # create conda environment
+  cat("Creating", envname, "conda environment for TensorFlow installation...\n")
+  python_packages <- ifelse(is_windows(), "python=3.6", "python")
+  python <- conda_create(envname, packages = python_packages, conda = conda)
+
 
   # Short circuit to install everything with conda when no custom packages
   # (typically tf-nightly or a daily build URL) and no gpu-enabled build
@@ -397,21 +396,19 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, envn
   # helper to construct paths to virtualenv binaries
   virtualenv_bin <- function(bin) path.expand(file.path(virtualenv_path, "bin", bin))
 
-  # create virtualenv if necessary
+  # destroy and re-create virtualenv (necessary to work around tf upgrade bugs)
   virtualenv_path <- file.path(virtualenv_root, envname)
-  if (!file.exists(virtualenv_path) || !file.exists(virtualenv_bin("activate"))) {
-    cat("Creating virtualenv for TensorFlow at ", virtualenv_path, "\n")
-    result <- system2(virtualenv, shQuote(c(
-      "--system-site-packages",
-      "--python", python,
-      path.expand(virtualenv_path)))
-    )
-    if (result != 0L)
-      stop("Error ", result, " occurred creating virtualenv at ", virtualenv_path,
-           call. = FALSE)
-  } else {
-    cat("Using existing virtualenv at ", virtualenv_path, "\n")
-  }
+  if (dir_exists(virtualenv_path))
+    unlink(virtualenv_path, recursive = TRUE)
+  cat("Creating virtualenv for TensorFlow at ", virtualenv_path, "\n")
+  result <- system2(virtualenv, shQuote(c(
+    "--system-site-packages",
+    "--python", python,
+    path.expand(virtualenv_path)))
+  )
+  if (result != 0L)
+    stop("Error ", result, " occurred creating virtualenv at ", virtualenv_path,
+         call. = FALSE)
 
   # function to call pip within virtual env
   pip_install <- function(pkgs, message) {

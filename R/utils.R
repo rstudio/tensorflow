@@ -26,6 +26,10 @@ is_ubuntu <- function() {
   }
 }
 
+dir_exists <- function(x) {
+  utils::file_test('-d', x)
+}
+
 ensure_loaded <- function() {
   invisible(tf$`__version__`)
 }
