@@ -5,7 +5,7 @@
 \title{Install TensorFlow and its dependencies}
 \usage{
 install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
-  conda = "auto", version = "default", envname = "r-reticulate",
+  conda = "auto", version = "default", envname = "r-tensorflow",
   extra_packages = NULL, restart_session = TRUE)
 }
 \arguments{

@@ -35,7 +35,7 @@
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system"),
                                conda = "auto",
                                version = "default",
-                               envname = "r-reticulate",
+                               envname = "r-tensorflow",
                                extra_packages = NULL,
                                restart_session = TRUE) {
 
