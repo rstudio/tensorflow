@@ -29,15 +29,13 @@ appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").
 Alternatively, you can provide the full URL to an installer binary (e.g.
 for a nightly binary).}
 
-\item{envname}{Name of conda environment}
+\item{envname}{Name of Python environment to install within}
 
 \item{extra_packages}{Additional Python packages to install along with
 TensorFlow.}
 
 \item{restart_session}{Restart R session after installing (note this will
 only occur within RStudio).}
-
-\item{envvname}{Name of Python environment to install within}
 }
 \description{
 Install TensorFlow and its dependencies

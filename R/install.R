@@ -21,7 +21,7 @@
 #'   Alternatively, you can provide the full URL to an installer binary (e.g.
 #'   for a nightly binary).
 #'
-#' @param envvname Name of Python environment to install within
+#' @param envname Name of Python environment to install within
 #'
 #' @param extra_packages Additional Python packages to install along with
 #'   TensorFlow.
