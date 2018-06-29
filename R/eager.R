@@ -51,7 +51,7 @@ tfe_enable_eager_execution <- function(
     warn = tfe$DEVICE_PLACEMENT_WARN,
     silent = tfe$DEVICE_PLACEMENT_SILENT
   )
-  
+
   # enter eager mode
   if (tf_version() >= '1.7') {
     enable_eager_execution_fn <- tf$python$framework$ops$enable_eager_execution
@@ -119,3 +119,14 @@ as.logical.python.builtin.EagerTensor <- function(x, ...) {
   else
     as.logical(as.array(x))
 }
+
+#' @export
+py_str.python.builtin.EagerTensor <- function(object, ...) {
+  paste(c(
+    sprintf("EagerTensor <shape: %s, %s",
+            object$get_shape(),
+            gsub("[<]+", "", object$dtype)),
+    capture.output(print(object$numpy()))
+  ), collapse = "\n")
+}
+
