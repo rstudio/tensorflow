@@ -39,11 +39,13 @@ Imports:
     config,
     jsonlite (>= 1.2),
     processx,
-    reticulate (>= 1.5),
+    reticulate (>= 1.8.0.9002),
     tfruns (>= 1.0),
     utils,
     yaml,
     rstudioapi (>= 0.7)
+Remotes:
+  rstudio/reticulate
 Roxygen: list(markdown = TRUE)
 Suggests: testthat, keras, tfestimators
 RoxygenNote: 6.0.1
