@@ -309,8 +309,11 @@ py_slice <-
     # python slice() is exclusive of stop, but R is typically inclusive of all
     # elements in a slicing sequence. Default to R behavior.
     if (inclusive_stop) {
-      if(is.numeric(stop))
-        stop <- stop + as.integer(sign(stop) * sign(step %||% 1L))
+      if (is.numeric(stop)) {
+        stop <- stop + as.integer(sign(step %||% 1L))
+        if (stop == 0 && sign(step %||% 1) == 1)
+          stop <- NULL
+      }
     }
 
     builtin_slice(start, stop, step)

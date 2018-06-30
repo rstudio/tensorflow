@@ -433,6 +433,10 @@ test_that("negative-integers work python style", {
   # same as above
   expect_equal(grab( x1.t[-1] ),     x1.r[4]    )
   expect_equal(grab( x1.t[-2] ),     x1.r[3]    )
+
+  expect_equal(grab( x1.t[NULL:-2] ), x1.r[1:3] )
+  expect_equal(grab( x1.t[NULL:-1] ), x1.r[] )
+
   expect_equal(grab( x2.t[-2, -2] ), x2.r[3, 3] )
   expect_equal(grab( x2.t[-1, ] ), as.array( x2.r[4,] ))
 
