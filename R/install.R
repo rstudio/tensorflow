@@ -75,8 +75,8 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
   system_available <- is_windows() && method_available("site")
 
   # resolve and look for conda
-  conda <- tryCatch(conda_binary(conda), error = function(e) NULL)
-  have_conda <- conda_available && !is.null(conda)
+  conda_bin <- tryCatch(conda_binary(conda), error = function(e) NULL)
+  have_conda <- conda_available && !is.null(conda_bin)
 
   # mac and linux
   if (is_unix()) {
