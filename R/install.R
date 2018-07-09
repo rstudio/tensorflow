@@ -410,6 +410,31 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, envn
     stop("Error ", result, " occurred creating virtualenv at ", virtualenv_path,
          call. = FALSE)
 
+
+  # see what version of pip is installed (assume 0.1 on error)
+  installed_pip_version <- function() {
+    tryCatch({
+      # check existing version
+      cmd <- sprintf("%ssource %s && %s --version%s",
+                     ifelse(is_osx(), "", "/bin/bash -c \""),
+                     shQuote(path.expand(virtualenv_bin("activate"))),
+                     shQuote(path.expand(virtualenv_bin(pip_version))),
+                     ifelse(is_osx(), "", "\""))
+      result <- system(cmd, intern = TRUE, ignore.stderr = TRUE)
+
+      # parse result
+      matches <- regexec("^[^ ]+\\s+(\\d+)\\.(\\d+).*$", result)
+      matches <- regmatches(result, matches)[[1]]
+
+      # return as R numeric version
+      numeric_version(paste(matches[[2]], matches[[3]], sep = "."))
+
+    }, error = function(e) {
+      warning("Error occurred checking pip version: ", e$message)
+      numeric_version("0.1")
+    })
+  }
+
   # function to call pip within virtual env
   pip_install <- function(pkgs, message) {
     cmd <- sprintf("%ssource %s && %s install --ignore-installed --upgrade %s%s",
@@ -424,14 +449,12 @@ install_tensorflow_virtualenv <- function(python, virtualenv, version, gpu, envn
       stop("Error ", result, " occurred installing TensorFlow", call. = FALSE)
   }
 
-  # upgrade pip so it can find tensorflow
-  pip_install("pip", "Upgrading pip")
-
-  # install updated version of the wheel package
-  pip_install("wheel", "Upgrading wheel")
-
-  # upgrade setuptools so it can use wheels
-  pip_install("setuptools", "Upgrading setuptools")
+  # upgrade pip and related utilities if its older than 8.1
+  if (installed_pip_version() < "8.1") {
+    pip_install("pip", "Upgrading pip")
+    pip_install("wheel", "Upgrading wheel")
+    pip_install("setuptools", "Upgrading setuptools")
+  }
 
   # install tensorflow and related dependencies
   pkgs <- tf_pkgs(version, gpu, packages, scipy = TRUE, extra_packages = extra_packages)
