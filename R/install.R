@@ -575,9 +575,9 @@ tf_pkgs <- function(version, gpu, packages, scipy = TRUE, extra_packages = NULL)
   c(packages, tf_extra_pkgs(scipy = scipy, extra_packages = extra_packages))
 }
 
-# additional dependencies to install (required by some features of keras)
+# additional dependencies to install (required for keras)
 tf_extra_pkgs <- function(scipy = TRUE, extra_packages = NULL) {
-  pkgs <- c("h5py", "pyyaml",  "requests",  "Pillow")
+  pkgs <- c("keras", "h5py", "pyyaml",  "requests",  "Pillow")
   pkgs <- c(pkgs, extra_packages)
   if (scipy)
     c(pkgs, "scipy")
