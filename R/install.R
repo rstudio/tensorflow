@@ -68,6 +68,9 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
   gpu <- ver$gpu
   packages <- ver$packages
 
+  # add keras to extra_packages
+  extra_packages <- c("keras", extra_packages)
+
   # flags indicating what methods are available
   method_available <- function(name) method %in% c("auto", name)
   virtualenv_available <- method_available("virtualenv")
@@ -577,7 +580,7 @@ tf_pkgs <- function(version, gpu, packages, scipy = TRUE, extra_packages = NULL)
 
 # additional dependencies to install (required for keras)
 tf_extra_pkgs <- function(scipy = TRUE, extra_packages = NULL) {
-  pkgs <- c("keras", "h5py", "pyyaml",  "requests",  "Pillow")
+  pkgs <- c("h5py", "pyyaml",  "requests",  "Pillow")
   pkgs <- c(pkgs, extra_packages)
   if (scipy)
     c(pkgs, "scipy")
