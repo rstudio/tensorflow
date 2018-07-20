@@ -1,11 +1,5 @@
 
 
-#' @export
-py_str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
-  paste0("Variable(shape=", py_str(object$get_shape()), ", ",
-         "dtype=", object$dtype$name, ")\n", sep = "")
-}
-
 #' @importFrom utils str
 #' @export
 "print.tensorflow.tensor" <- function(x, ...) {
@@ -13,11 +7,6 @@ py_str.tensorflow.python.ops.variables.Variable <- function(object, ...) {
     cat("<pointer: 0x0>\n")
   else {
     str(x, ...)
-    if (!is.null(tf$get_default_session())) {
-      value <- tryCatch(x$eval(), error = function(e) NULL)
-      if (!is.null(value))
-        cat(" ", str(value), "\n", sep = "")
-    }
   }
 }
 

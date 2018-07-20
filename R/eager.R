@@ -120,13 +120,5 @@ as.logical.python.builtin.EagerTensor <- function(x, ...) {
     as.logical(as.array(x))
 }
 
-#' @export
-py_str.python.builtin.EagerTensor <- function(object, ...) {
-  paste(c(
-    sprintf("EagerTensor <shape: %s, %s",
-            object$get_shape(),
-            gsub("[<]+", "", object$dtype)),
-    capture.output(print(object$numpy()))
-  ), collapse = "\n")
-}
+
 
