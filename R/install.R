@@ -68,8 +68,8 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
   gpu <- ver$gpu
   packages <- ver$packages
 
-  # add keras to extra_packages
-  extra_packages <- c("keras", extra_packages)
+  # add keras and tensorflow-hub to extra_packages
+  extra_packages <- c("keras", "tensorflow-hub", extra_packages)
 
   # flags indicating what methods are available
   method_available <- function(name) method %in% c("auto", name)
