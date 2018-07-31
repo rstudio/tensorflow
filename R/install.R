@@ -257,7 +257,7 @@ install_tensorflow_conda <- function(conda, version, gpu, envname, packages, ext
 
   # create conda environment
   cat("Creating", envname, "conda environment for TensorFlow installation...\n")
-  python_packages <- ifelse(is_windows(), "python=3.6", "python")
+  python_packages <- "python=3.6" # as of TF v1.9 there are no python 3.7 binaries
   python <- conda_create(envname, packages = python_packages, conda = conda)
 
 
