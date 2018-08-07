@@ -631,4 +631,21 @@ windows_system_install <- function(python, packages) {
     stop("Error ", result, " occurred installing tensorflow package", call. = FALSE)
 }
 
+#' Install additional Python packages alongside TensorFlow
+#'
+#' This function is deprecated. Use the `extra_packages` argument to
+#' `install_tensorflow()` to install additional packages.
+#'
+#' @param packages Python packages to install
+#' @param conda Path to conda executable (or "auto" to find conda using the PATH
+#'   and other conventional install locations). Only used when TensorFlow is
+#'   installed within a conda environment.
+#'
+#' @export
+install_tensorflow_extras <- function(packages, conda = "auto") {
+  message("Extra packates not installed (this function is deprecated). \n",
+          "Use the extra_packages argument to install_tensorflow() to ",
+          "install additional packages.")
+}
+
 
