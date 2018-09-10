@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^docs$
+^issues$
 ^pkgdown$
 ^inst/examples/mnist/MNIST-data$
 ^tests/testthat/MNIST-data$

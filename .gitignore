@@ -11,3 +11,4 @@ src/*.dll
 README.html
 .Renviron
 MNIST-data
+issues/
