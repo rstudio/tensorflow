@@ -6,7 +6,8 @@
 \usage{
 install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
   conda = "auto", version = "default", envname = "r-tensorflow",
-  extra_packages = c("keras", "tensorflow-hub"), restart_session = TRUE)
+  extra_packages = c("keras", "tensorflow-hub"),
+  restart_session = TRUE)
 }
 \arguments{
 \item{method}{Installation method. By default, "auto" automatically finds a
