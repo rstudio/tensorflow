@@ -242,6 +242,24 @@
 
 
 #' @export
+#' @method sinpi tensorflow.tensor
+"sinpi.tensorflow.tensor" <- function(x) {
+  tf$sin(pi * x)
+}
+
+#' @export
+#' @method cospi tensorflow.tensor
+"cospi.tensorflow.tensor" <- function(x) {
+  tf$cos(pi * x)
+}
+
+#' @export
+#' @method tanpi tensorflow.tensor
+"tanpi.tensorflow.tensor" <- function(x) {
+  tf$tan(pi * x)
+}
+
+#' @export
 "acos.tensorflow.tensor" <- function(x) {
   tf$acos(x)
 }

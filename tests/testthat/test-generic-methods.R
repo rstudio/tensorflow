@@ -31,4 +31,17 @@ test_that("log with supplied base works", {
 
 })
 
+test_that("sinpi dispatches correctly", {
+
+  r <- array(seq(0, 4, length.out = 100))
+  t <- as_tensor(r, dtype = tf$float32)
+
+  expect_near(sinpi(r), grab( sinpi(t) ))
+  expect_near(cospi(r), grab( cospi(t) ))
+  expect_near(tanpi(r), grab( tanpi(t) ))
+
+})
+
+
+
 
