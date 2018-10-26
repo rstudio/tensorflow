@@ -200,11 +200,26 @@
   tf$exp(x)
 }
 
+
 #' @export
 "log.tensorflow.tensor" <- function(x, base = exp(1)) {
-  if (base != exp(1))
-    stop("TensorFlow log suppports only natural logarithms")
-  tf$log(x)
+  if (is_tensor(base) || base != exp(1)) {
+    base <- tf$convert_to_tensor(base, x$dtype)
+    tf$log(x) / tf$log(base)
+  } else
+    tf$log(x)
+}
+
+#' @export
+#' @method log2 tensorflow.tensor
+"log2.tensorflow.tensor" <- function(x) {
+  log(x, base = 2)
+}
+
+#' @export
+#' @method log10 tensorflow.tensor
+"log10.tensorflow.tensor" <- function(x) {
+  log(x, base = 10)
 }
 
 
@@ -225,6 +240,24 @@
   tf$tan(x)
 }
 
+
+#' @export
+#' @method sinpi tensorflow.tensor
+"sinpi.tensorflow.tensor" <- function(x) {
+  tf$sin(pi * x)
+}
+
+#' @export
+#' @method cospi tensorflow.tensor
+"cospi.tensorflow.tensor" <- function(x) {
+  tf$cos(pi * x)
+}
+
+#' @export
+#' @method tanpi tensorflow.tensor
+"tanpi.tensorflow.tensor" <- function(x) {
+  tf$tan(pi * x)
+}
 
 #' @export
 "acos.tensorflow.tensor" <- function(x) {
