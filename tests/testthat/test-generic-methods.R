@@ -6,11 +6,13 @@ grab <- (function() {
     sess$run(x)
 })()
 
-as_tensor <- tf$convert_to_tensor
+as_tensor <- function(x) tf$convert_to_tensor(x)
 
 expect_near <- function(..., tol = 1e-5) expect_equal(..., tolerance = tol)
 
 test_that("log with supplied base works", {
+
+  skip_if_no_tensorflow()
 
   r <- array(as.double(1:20))
   t <- as_tensor(r, dtype = tf$float32)
@@ -32,6 +34,8 @@ test_that("log with supplied base works", {
 })
 
 test_that("sinpi dispatches correctly", {
+
+  skip_if_no_tensorflow()
 
   r <- array(seq(0, 4, length.out = 100))
   t <- as_tensor(r, dtype = tf$float32)
