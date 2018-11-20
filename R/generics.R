@@ -285,3 +285,29 @@
 "digamma.tensorflow.tensor" <- function(x) {
   tf$digamma(x)
 }
+
+
+#' @export
+Re.tensorflow.tensor <- function(x) {
+  tf$real(x)
+}
+
+#' @export
+Im.tensorflow.tensor <- function(x) {
+  tf$imag(x)
+}
+
+#' @export
+Conj.tensorflow.tensor <- function(x) {
+  tf$conj(x)
+}
+
+#' @export
+Arg.tensorflow.tensor <- function(x) {
+  tf$angle(x)
+}
+
+#' @export
+Mod.tensorflow.tensor <- function(x) {
+  tf$abs(x)
+}
