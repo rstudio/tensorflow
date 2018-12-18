@@ -650,7 +650,7 @@ windows_system_install <- function(python, packages) {
 #'
 #' @export
 install_tensorflow_extras <- function(packages, conda = "auto") {
-  message("Extra packates not installed (this function is deprecated). \n",
+  message("Extra packages not installed (this function is deprecated). \n",
           "Use the extra_packages argument to install_tensorflow() to ",
           "install additional packages.")
 }
