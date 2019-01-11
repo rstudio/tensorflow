@@ -45,7 +45,7 @@ sess$run( x[, `::2`] )
 sess$run( x[, NULL:NULL:2] )
 sess$run( x[, `2:`] )
 
-# Another python features that is available is a python style ellipsis `...`
+# Another python feature that is available is a python style ellipsis `...`
 # (not to be confused with R dots `...`)
 # a all_dims() expands to the shape of the tensor
 y <- tf$constant(1:(3^5), shape = c(3,3,3,3,3))
