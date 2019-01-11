@@ -118,7 +118,7 @@ tf_config <- function() {
   } else {
     structure(class = "tensorflow_config", list(
       available = FALSE,
-      python_verisons = config$python_versions,
+      python_versions = config$python_versions,
       error_message = tf_config_error_message()
     ))
   }
