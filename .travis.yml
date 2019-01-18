@@ -14,8 +14,17 @@ cache:
   directories:
     - $HOME/.cache/pip
 
+matrix:
+  include:
+    - name: "1.10"
+      env: TENSORFLOW_VERSION="1.10"
+    - name: "2.0-preview"
+      env: TENSORFLOW_VERSION="https://files.pythonhosted.org/packages/14/f4/caced52bfdded13e1913c6c6700de847773297d53664666d54cd8f3c06d9/tf_nightly_2.0_preview-1.13.0.dev20190110-cp36-cp36m-manylinux1_x86_64.whl"
+    - env: "nightly"
+      name: TENSORFLOW_VERSION="nightly"
+
 before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis virtualenv
   - R CMD INSTALL .
-  - R -e 'tensorflow::install_tensorflow()'
+  - R -e 'tensorflow::install_tensorflow(Sys.getenv("TENSORFLOW_VERSION"))'
 
