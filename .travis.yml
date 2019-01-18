@@ -28,5 +28,5 @@ matrix:
 before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis virtualenv
   - R CMD INSTALL .
-  - R -e 'tensorflow::install_tensorflow(Sys.getenv("TENSORFLOW_VERSION"))'
+  - R -e 'tensorflow::install_tensorflow(version = Sys.getenv("TENSORFLOW_VERSION"))'
 
