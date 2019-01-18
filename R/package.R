@@ -56,6 +56,9 @@ NULL
 
       # if we loaded tensorflow then register tf help handler
       register_tf_help_handler()
+
+      # workaround to silence crash-causing deprecation warnings
+      tf$python$util$deprecation$silence()$`__enter__`()
     }
     ,
 
