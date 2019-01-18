@@ -22,6 +22,8 @@ matrix:
       env: TENSORFLOW_VERSION="https://files.pythonhosted.org/packages/14/f4/caced52bfdded13e1913c6c6700de847773297d53664666d54cd8f3c06d9/tf_nightly_2.0_preview-1.13.0.dev20190110-cp36-cp36m-manylinux1_x86_64.whl"
     - env: "nightly"
       name: TENSORFLOW_VERSION="nightly"
+  allow_failures:
+    - env: TENSORFLOW_VERSION="true" TENSORFLOW_VERSION="nightly"
 
 before_script:
   - pip2.7 install --upgrade --ignore-installed --user travis virtualenv
