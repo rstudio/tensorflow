@@ -32,6 +32,7 @@ before_script:
   - sudo apt-get update
   - sudo apt-get install python3
   - pip install --upgrade --ignore-installed --user travis virtualenv
+  - R -e 'reticulate::py_config()'
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow(version = Sys.getenv("TENSORFLOW_VERSION"))'
 
