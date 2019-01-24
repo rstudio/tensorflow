@@ -105,19 +105,24 @@ tf_config <- function() {
   if (have_tensorflow) {
 
     # get version
-    tfv <- strsplit(tf$VERSION, ".", fixed = TRUE)[[1]]
+    if (reticulate::py_has_attr(tf, "version"))
+      version_raw <- tf$version$VERSION
+    else
+      version_raw <- tf$VERSION
+
+    tfv <- strsplit(version_raw, ".", fixed = TRUE)[[1]]
     version <- package_version(paste(tfv[[1]], tfv[[2]], sep = "."))
 
     structure(class = "tensorflow_config", list(
       available = TRUE,
       version = version,
-      version_str = tf$VERSION,
+      version_str = version_raw,
       location = config$required_module_path,
       python = config$python,
       python_version = config$version
     ))
 
-  # didn't find it
+    # didn't find it
   } else {
     structure(class = "tensorflow_config", list(
       available = FALSE,
