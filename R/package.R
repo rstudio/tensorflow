@@ -22,6 +22,10 @@
 #' @name tensorflow
 NULL
 
+tf_v2 <- function() {
+  package_version(tf_version()) >= "2.0"
+}
+
 # globals
 .globals <- new.env(parent = emptyenv())
 .globals$tensorboard <- NULL
@@ -45,12 +49,28 @@ NULL
       # register warning suppression handler
       register_suppress_warnings_handler(list(
         suppress = function() {
-          old_verbosity <- tf$logging$get_verbosity()
-          tf$logging$set_verbosity(tf$logging$ERROR)
-          old_verbosity
+          if (tf_v2()) {
+            tf_logger <- tf$get_logger()
+            logging <- reticulate::import("logging")
+
+            old_verbosity <- tf_logger$level
+            tf_logger$setLevel(logging$ERROR)
+            old_verbosity
+          }
+          else {
+            old_verbosity <- tf$logging$get_verbosity()
+            tf$logging$set_verbosity(tf$logging$ERROR)
+            old_verbosity
+          }
         },
         restore = function(context) {
-          tf$logging$set_verbosity(context)
+          if (tf_v2()) {
+            tf_logger <- tf$get_logger()
+            tf_logger$setLevel(context)
+          }
+          else {
+            tf$logging$set_verbosity(context)
+          }
         }
       ))
 
