@@ -22,6 +22,10 @@
 #' @name tensorflow
 NULL
 
+tf_v2 <- function() {
+  package_version(tf_version()) >= "2.0"
+}
+
 # globals
 .globals <- new.env(parent = emptyenv())
 .globals$tensorboard <- NULL
@@ -45,12 +49,28 @@ NULL
       # register warning suppression handler
       register_suppress_warnings_handler(list(
         suppress = function() {
-          old_verbosity <- tf$logging$get_verbosity()
-          tf$logging$set_verbosity(tf$logging$ERROR)
-          old_verbosity
+          if (tf_v2()) {
+            tf_logger <- tf$get_logger()
+            logging <- reticulate::import("logging")
+
+            old_verbosity <- tf_logger$level
+            tf_logger$setLevel(logging$ERROR)
+            old_verbosity
+          }
+          else {
+            old_verbosity <- tf$logging$get_verbosity()
+            tf$logging$set_verbosity(tf$logging$ERROR)
+            old_verbosity
+          }
         },
         restore = function(context) {
-          tf$logging$set_verbosity(context)
+          if (tf_v2()) {
+            tf_logger <- tf$get_logger()
+            tf_logger$setLevel(context)
+          }
+          else {
+            tf$logging$set_verbosity(context)
+          }
         }
       ))
 
@@ -105,19 +125,24 @@ tf_config <- function() {
   if (have_tensorflow) {
 
     # get version
-    tfv <- strsplit(tf$VERSION, ".", fixed = TRUE)[[1]]
+    if (reticulate::py_has_attr(tf, "version"))
+      version_raw <- tf$version$VERSION
+    else
+      version_raw <- tf$VERSION
+
+    tfv <- strsplit(version_raw, ".", fixed = TRUE)[[1]]
     version <- package_version(paste(tfv[[1]], tfv[[2]], sep = "."))
 
     structure(class = "tensorflow_config", list(
       available = TRUE,
       version = version,
-      version_str = tf$VERSION,
+      version_str = version_raw,
       location = config$required_module_path,
       python = config$python,
       python_version = config$version
     ))
 
-  # didn't find it
+    # didn't find it
   } else {
     structure(class = "tensorflow_config", list(
       available = FALSE,
