@@ -492,20 +492,15 @@ parse_tensorflow_version <- function(version) {
     packages = NULL
   )
 
-  # note that TF v1.11 has an incompatibility with the R interface so we
-  # need to force v1.10.0 when version is "default" or "gpu"
-
   # full url provided
   if (identical(version, "default")) {
 
-    # default, force 1.10.0
-    ver$version <- "1.10.0"
+    ver$version <- "1.12.0"
 
   # gpu version
   } else if (identical(version, "gpu")) {
 
-    # default, force 1.10.0
-    ver$version <- "1.10.0"
+    ver$version <- "1.12.0"
 
     ver$gpu <- TRUE
 
