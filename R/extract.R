@@ -493,7 +493,7 @@ stop_if_any_zeros <- function(dots) {
     if_any_TRUE = stop( paste(
         "It looks like you might be using 0-based indexing to extract using `[`.",
         "The tensorflow package now uses 1-based extraction by default.\n",
-        "You can switch to the old behavior (1-based extraction) with:",
+        "You can switch to the old behavior (0-based extraction) with:",
         "  options(tensorflow.extract.one_based = FALSE)\n", sep = "\n" ),
       call. = FALSE
       ))
