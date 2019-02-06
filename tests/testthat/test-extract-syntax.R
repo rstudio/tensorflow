@@ -2,14 +2,6 @@ context("extract syntax")
 
 source("utils.R")
 
-.SESS <- NULL
-grab <- function(x) {
-  if (is.null(.SESS))
-    .SESS <<- tf$Session()
-  .SESS$run(x)
-}
-
-
 null_out_all_extract_opts <- function() {
   opts <- options()
   opts[grepl("^tensorflow[.]extract", names(opts))] <- list(NULL)
@@ -68,25 +60,34 @@ test_that('extract works for unknown dimensions', {
 
   oopt <- options(tensorflow.extract.style = "R")
 
-  # the output should retain the missing dimension
-  x <- tf$placeholder(tf$float64, shape(NULL, 10))
-  y1 <- x[, 1]
-  y2 <- x[, 1, drop = FALSE]
-
-  expect_identical(dim(y1), list(NULL))
-  expect_identical(dim(y2), list(NULL, 1L))
-
   # expected values with 5 rows
   x_vals <- matrix(rnorm(50), 5, 10)
   y1_exp <- as.array(x_vals[, 1])
   y2_exp <- as.array(x_vals[, 1, drop = FALSE])
 
-  # get observed in values for these
-  sess <- tf$Session()
-  y1_obs <- sess$run(y1,
-                     feed_dict = dict(x = x_vals))
-  y2_obs <- sess$run(y2,
-                     feed_dict = dict(x = x_vals))
+  if(tf$executing_eagerly()) {
+
+    t <- tf$convert_to_tensor(x_vals)
+    y1_obs <- t[, 1] %>% as.array()
+    y2_obs <- t[, 1, drop = FALSE] %>% as.array()
+
+  } else {
+
+    # the output should retain the missing dimension
+    x <- tf$placeholder(tf$float64, shape(NULL, 10))
+    y1 <- x[, 1]
+    y2 <- x[, 1, drop = FALSE]
+    expect_identical(dim(y1), list(NULL))
+    expect_identical(dim(y2), list(NULL, 1L))
+
+    # get observed in values for these
+    sess <- tf$Session()
+    y1_obs <- sess$run(y1,
+                       feed_dict = dict(x = x_vals))
+    y2_obs <- sess$run(y2,
+                       feed_dict = dict(x = x_vals))
+
+  }
 
   expect_identical(y1_obs, y1_exp)
   expect_identical(y2_obs, y2_exp)
@@ -337,18 +338,29 @@ test_that("passing non-vector indices errors", {
 
 })
 
+# thanks to @dfalbel https://github.com/rstudio/tensorflow/issues/139
+# also check it returns the correct dimensions to R
 test_that("undefined extensions extract", {
+
   skip_if_no_tensorflow()
   oopt <- options(tensorflow.extract.style = 'python')
 
-  # thanks to @dfalbel https://github.com/rstudio/tensorflow/issues/139
-  x <- tf$placeholder(tf$int16, shape = list(NULL, 1L))
-  sub <- x[, 0L]
-
-  # also check it returns the correct dimensions to R
   x_ <- matrix(seq_len(3), ncol = 1)
-  sess <- tf$Session()
-  result <- sess$run(sub, dict(x = x_))
+
+  if(tf$executing_eagerly()) {
+
+    t <- tf$convert_to_tensor(x_)
+    result <- t[, 0L] %>% as.array()
+
+  } else {
+
+    x <- tf$placeholder(tf$int16, shape = list(NULL, 1L))
+    sub <- x[, 0L]
+    sess <- tf$Session()
+    result <- sess$run(sub, dict(x = x_))
+
+  }
+
   expectation <- array(x_[, 1, drop = TRUE])
   expect_equal(result, expectation)
 

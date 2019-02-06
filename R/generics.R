@@ -205,9 +205,9 @@
 "log.tensorflow.tensor" <- function(x, base = exp(1)) {
   if (is_tensor(base) || base != exp(1)) {
     base <- tf$convert_to_tensor(base, x$dtype)
-    tf$log(x) / tf$log(base)
+    tf$math$log(x) / tf$math$log(base)
   } else
-    tf$log(x)
+    tf$math$log(x)
 }
 
 #' @export

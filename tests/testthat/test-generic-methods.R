@@ -1,5 +1,7 @@
 context("generic methods")
 
+source("utils.R")
+
 as_tensor <- function(...) tf$convert_to_tensor(...)
 
 expect_near <- function(..., tol = 1e-5) expect_equal(..., tolerance = tol)
@@ -7,12 +9,6 @@ expect_near <- function(..., tol = 1e-5) expect_equal(..., tolerance = tol)
 test_that("log with supplied base works", {
 
   skip_if_no_tensorflow()
-
-  grab <- (function() {
-    sess <- tf$Session()
-    function(x)
-      sess$run(x)
-  })()
 
   r <- array(as.double(1:20))
   t <- as_tensor(r, dtype = tf$float32)
@@ -26,7 +22,7 @@ test_that("log with supplied base works", {
   expect_near(r, grab( log10( 10 ^ t )))
 
   # log() dispatches correctly without trying to change base
-  expect_identical(grab(tf$log(t)), grab(log(t)))
+  expect_identical(grab(tf$math$log(t)), grab(log(t)))
 
   expect_near(log(r), grab(log(t)))
   expect_near(log(r, base = 3), grab(log(t, base = 3)))
@@ -36,12 +32,6 @@ test_that("log with supplied base works", {
 test_that("sinpi dispatches correctly", {
 
   skip_if_no_tensorflow()
-
-  grab <- (function() {
-    sess <- tf$Session()
-    function(x)
-      sess$run(x)
-  })()
 
   r <- array(seq(0, 4, length.out = 100))
   t <- as_tensor(r, dtype = tf$float32)
