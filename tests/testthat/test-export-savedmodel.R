@@ -24,10 +24,12 @@ train_mnist_eager <- function() {
     )
   )
 
+  # not needed if this is only entered for TF2 (vs. for eager execution in general)
+  optimizer <- if (tf_v2()) tf$keras$optimizers$Adam() else tf$train$AdamOptimizer()
+
   model$compile(
-    optimizer = "adam",
-    loss = "sparse_categorical_crossentropy",
-    metrics = list("accuracy")
+    optimizer = optimizer,
+    loss = "sparse_categorical_crossentropy"
   )
 
   model$fit(x_train[1:10, , ], y_train[1:10, ], epochs = 1L)
@@ -78,10 +80,10 @@ test_that("export_savedmodel() works with MNIST", {
 
   temp_path <- tempfile()
 
-  if (tf$executing_eagerly()) {
+  if (tf_v2()) {
 
     model <- train_mnist_eager()
-    export_savedmodel(model, temp_path)
+    tf$saved_model$save(model, temp_path)
 
   } else {
 

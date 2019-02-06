@@ -94,10 +94,3 @@ export_savedmodel.tensorflow.python.client.session.Session <- function(
   invisible(builder$save(as_text = as_text))
 }
 
-#' @export
-export_savedmodel.tensorflow.python.keras.engine.training.Model <-
-  function(object, export_dir_base) {
-    tf$saved_model$save(object, export_dir_base)
-  }
-
-
