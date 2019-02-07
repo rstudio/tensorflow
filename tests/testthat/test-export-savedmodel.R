@@ -1,5 +1,5 @@
 context("Save")
-
+source("utils.R")
 
 train_mnist_eager <- function() {
 
