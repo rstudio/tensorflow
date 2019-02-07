@@ -17,6 +17,8 @@
 #'
 #' @export
 use_compat <- function(version = c("v1")) {
+  if (tf_version() < "2.0") return()
+
   # validate method
   version <- match.arg(version)
 
