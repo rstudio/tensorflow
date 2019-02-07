@@ -16,14 +16,15 @@ run_example <- function(example) {
 }
 
 examples <- if (nzchar(Sys.getenv("TENSORFLOW_TEST_EXAMPLES"))) {
-  examples <- c("hello.R",
-                "introduction.R",
-                "regression/tensorflow_linear_regression.R")
+  examples <-   c("hello.R",
+                  "introduction.R",
+                  "mnist/mnist_softmax.R",
+                  "mnist/fully_connected_feed.R",
+                  "regression/tensorflow_linear_regression.R")
 
   if (tf_version() < "2.0") {
-    examples <- c(examples,
-                  "mnist/mnist_softmax.R",
-                  "mnist/fully_connected_feed.R")
+    # disable examples since tf_compat() requires session restart
+    examples <- NULL
   }
 
   examples
