@@ -22,7 +22,7 @@ examples <- if (nzchar(Sys.getenv("TENSORFLOW_TEST_EXAMPLES"))) {
                   "mnist/fully_connected_feed.R",
                   "regression/tensorflow_linear_regression.R")
 
-  if (tf_version() < "2.0") {
+  if (tf_version() >= "2.0") {
     # disable examples since tf_compat() requires session restart
     examples <- NULL
   }

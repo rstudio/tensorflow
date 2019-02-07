@@ -1,5 +1,4 @@
 library(tensorflow)
-use_compat("v1")
 
 sess = tf$Session()
 
