@@ -25,7 +25,12 @@ train_mnist_eager <- function() {
   )
 
   # not needed if this is only entered for TF2 (vs. for eager execution in general)
-  optimizer <- if (tf_v2()) tf$keras$optimizers$Adam() else tf$train$AdamOptimizer()
+  if (reticulate::py_has_attr(tf, "keras")) {
+    optimizer <- tf$keras$optimizers$Adam()
+  }
+  else {
+    optimizer <- tf$train$AdamOptimizer()
+  }
 
   model$compile(
     optimizer = optimizer,
@@ -80,7 +85,7 @@ test_that("export_savedmodel() works with MNIST", {
 
   temp_path <- tempfile()
 
-  if (tf_v2()) {
+  if (tf$executing_eagerly()) {
 
     model <- train_mnist_eager()
     tf$saved_model$save(model, temp_path)
