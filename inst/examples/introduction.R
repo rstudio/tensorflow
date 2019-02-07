@@ -1,4 +1,5 @@
 library(tensorflow)
+use_compat("v1")
 
 # Create 100 phony x, y data points, y = x * 0.1 + 0.3
 x_data <- runif(100, min=0, max=1)
