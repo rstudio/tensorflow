@@ -16,8 +16,8 @@ cache:
 
 matrix:
   include:
-    - name: "1.10"
-      env: TENSORFLOW_VERSION="1.10"
+    - name: "tf-stable"
+      env: TENSORFLOW_VERSION="1.12"
     - name: "2.0-preview"
       env:
         - TENSORFLOW_VERSION="https://files.pythonhosted.org/packages/b8/48/983c8af6e63cfeebb6bb89866c38ea7d16491b8f72309f27df41b33a751e/tf_nightly_2.0_preview-1.13.0.dev20190117-cp27-cp27mu-manylinux1_x86_64.whl"
