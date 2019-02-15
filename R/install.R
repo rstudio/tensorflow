@@ -74,7 +74,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
     extra_packages <- unique(c(extra_packages, "tfp-nightly"))
     extra_packages <- setdiff(extra_packages, "tensorflow-probability")
   }
-  if (substr(version, 1, 4) %in% c("1.12", "1.13")) {
+  if (version == "default" || substr(version, 1, 4) %in% c("1.12", "1.13")) {
     extra_packages <- unique(c(extra_packages, "tensorflow-probability"))
     extra_packages <- setdiff(extra_packages, ("tfp-nightly"))
   }
