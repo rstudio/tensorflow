@@ -36,7 +36,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
                                conda = "auto",
                                version = "default",
                                envname = "r-tensorflow",
-                               extra_packages = c("keras", "tensorflow-hub"),
+                               extra_packages = NULL,
                                restart_session = TRUE) {
 
   # verify os
@@ -67,6 +67,17 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda", "system
   version <- ver$version
   gpu <- ver$gpu
   packages <- ver$packages
+
+  # extra packages
+  extra_packages <- unique(c(extra_packages, c("keras", "tensorflow-hub")))
+  if (version == "nightly") {
+    extra_packages <- unique(c(extra_packages, "tfp-nightly"))
+    extra_packages <- setdiff(extra_packages, "tensorflow-probability")
+  }
+  if (version == "default" || substr(version, 1, 4) %in% c("1.12", "1.13")) {
+    extra_packages <- unique(c(extra_packages, "tensorflow-probability"))
+    extra_packages <- setdiff(extra_packages, ("tfp-nightly"))
+  }
 
   # flags indicating what methods are available
   method_available <- function(name) method %in% c("auto", name)
@@ -527,11 +538,10 @@ parse_tensorflow_version <- function(version) {
   }
 
   # if it's the nightly version then set packages to nightly[-gpu]
-  # (also add tensorboard since it's not included in tf-nightly)
+  # as of 02/15/2019 tf-nightly includes tb-nightly, tf-estimator-nightly
   version <- sub("^tf-nightly$", "nightly", version)
   if (identical(version, "nightly")) {
-    ver$packages <- c(sprintf("tf-nightly%s", ifelse(ver$gpu, "-gpu", "")),
-                      "tensorflow-tensorboard")
+    ver$packages <- c(sprintf("tf-nightly%s", ifelse(ver$gpu, "-gpu", "")))
   }
 
   # return
