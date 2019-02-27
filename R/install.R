@@ -268,7 +268,12 @@ install_tensorflow_conda <- function(conda, version, gpu, envname, packages, ext
 
   # create conda environment
   cat("Creating", envname, "conda environment for TensorFlow installation...\n")
-  python_packages <- "python=3.6" # as of TF v1.9 there are no python 3.7 binaries
+  if (substr(version, 1, 4) == "1.13") {
+    python_packages <- "python=3.7"
+  } else {
+    python_packages <- "python=3.6"
+  }
+
   python <- conda_create(envname, packages = python_packages, conda = conda)
 
 
@@ -506,12 +511,12 @@ parse_tensorflow_version <- function(version) {
   # full url provided
   if (identical(version, "default")) {
 
-    ver$version <- "1.12.0"
+    ver$version <- "1.13.1"
 
   # gpu version
   } else if (identical(version, "gpu")) {
 
-    ver$version <- "1.12.0"
+    ver$version <- "1.13.1"
 
     ver$gpu <- TRUE
 
