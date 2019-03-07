@@ -37,6 +37,11 @@ tf_v2 <- function() {
   if (!is.na(tensorflow_python))
     Sys.setenv(RETICULATE_PYTHON = tensorflow_python)
 
+  # if TF_CPP_MIN_LOG_LEVEL is not defined then >= WARN log level
+  # 1 to filter out INFO logs, 2 to filter out WARNING, 3 to filter out ERROR.
+  Sys.setenv(TF_CPP_MIN_LOG_LEVEL =
+               Sys.getenv("TF_CPP_MIN_LOG_LEVEL", unset = 1))
+
   # delay load tensorflow
   tf <<- import("tensorflow", delay_load = list(
 
