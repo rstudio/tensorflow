@@ -83,7 +83,8 @@ tf_v2 <- function() {
       register_tf_help_handler()
 
       # workaround to silence crash-causing deprecation warnings
-      tf$python$util$deprecation$silence()$`__enter__`()
+      tryCatch(tf$python$util$deprecation$silence()$`__enter__`(),
+               error = function(e) NULL)
     }
     ,
 
