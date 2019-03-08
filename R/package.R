@@ -181,6 +181,33 @@ print.tensorflow_config <- function(x, ...) {
   }
 }
 
+#' TensorFlow GPU configuration information
+#'
+#' @return A bool, wether GPU is configured or not, or NA if could not be
+#' determined.
+#'
+#' @keywords internal
+#' @param verbose boolean. Wether to show extra GPU info.
+#' @export
+tf_gpu_configured <- function(verbose=TRUE) {
+  res <- tryCatch({
+    tf$test$is_gpu_available()
+  }, error = function(e) {
+    warning("Can not determine if GPU is configured.", call. = FALSE);
+    NA
+  })
+
+  if (!is.na(verbose) && is.logical(verbose) &&verbose) {
+    tryCatch({
+      cat(paste("TensorFlow built with CUDA: ", tf$test$is_built_with_cuda()),
+          "\n");
+      cat(paste("GPU device name: ", tf$test$gpu_device_name(),
+                collapse = "\n"))
+    }, error = function(e) {})
+  }
+  res
+}
+
 
 # Build error message for TensorFlow configuration errors
 tf_config_error_message <- function() {
