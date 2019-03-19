@@ -511,12 +511,12 @@ parse_tensorflow_version <- function(version) {
   # full url provided
   if (identical(version, "default")) {
 
-    ver$version <- "1.12"
+    ver$version <- "1.13.1"
 
   # gpu version
   } else if (identical(version, "gpu")) {
 
-    ver$version <- "1.12"
+    ver$version <- "1.13.1"
 
     ver$gpu <- TRUE
 
