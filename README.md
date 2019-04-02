@@ -1,7 +1,7 @@
 
 ## TensorFlow for R
 
-[![Travis-CI Build Status](https://travis-ci.org/rstudio/tensorflow.svg?branch=master)](https://travis-ci.org/rstudio/tensorflow) [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/tensorflow)](https://cran.r-project.org/package=tensorflow) 
+[![Travis-CI Build Status](https://travis-ci.org/rstudio/tensorflow.svg?branch=master)](https://travis-ci.org/rstudio/tensorflow) [![AppVeyor Build Status](https://ci.appveyor.com/api/projects/status/github/rstudio/tensorflow?branch=master&svg=true)](https://ci.appveyor.com/project/rstudio/tensorflow) [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/tensorflow)](https://cran.r-project.org/package=tensorflow) 
 
 [TensorFlow™](https://www.tensorflow.org) is an open source software library for numerical computation using data flow graphs. Nodes in the graph represent mathematical operations, while the graph edges represent the multidimensional data arrays (tensors) communicated between them. The flexible architecture allows you to deploy computation to one or more CPUs or GPUs in a desktop, server, or mobile device with a single API. 
 

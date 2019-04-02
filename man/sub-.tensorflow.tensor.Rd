@@ -28,7 +28,7 @@ sess <- tf$Session()
 
 x <- tf$constant(1:15, shape = c(3, 5))
 sess$run(x)
-# by default, numerics supplied to `...` are interperted R style
+# by default, numerics supplied to `...` are interpreted R style
 sess$run( x[,1] )# first column
 sess$run( x[1:2,] ) # first two rows
 sess$run( x[,1, drop = FALSE] )
@@ -57,7 +57,7 @@ identical(
 # tf$newaxis are valid
 sess$run( x[,, tf$newaxis] )
 
-# negative numbers are always interperted python style
+# negative numbers are always interpreted python style
 # The first time a negative number is supplied to `[`, a warning is issued
 # about the non-standard behavior.
 sess$run( x[-1,] ) # last row, with a warning
@@ -86,14 +86,14 @@ sess$run( x[, 0:10] )
 options(tensorflow.extract.style = NULL)
 
 # slicing with tensors is valid too, but note, tensors are never
-# translated and are always interperted python-style.
+# translated and are always interpreted python-style.
 # A warning is issued the first time a tensor is passed to `[`
 sess$run( x[, tf$constant(0L):tf$constant(2L)] )
 # just as in python, only scalar tensors are valid
 # https://www.tensorflow.org/api_docs/python/tf/Tensor#__getitem__
 
 # To silence the warnings about tensors being passed as-is and negative numbers
-# being interperted python-style, set
+# being interpreted python-style, set
 options(tensorflow.extract.style = 'R')
 
 # clean up from examples

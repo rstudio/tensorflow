@@ -288,26 +288,26 @@
 
 
 #' @export
-Re.tensorflow.tensor <- function(x) {
-  tf$real(x)
+Re.tensorflow.tensor <- function(z) {
+  tf$real(z)
 }
 
 #' @export
-Im.tensorflow.tensor <- function(x) {
-  tf$imag(x)
+Im.tensorflow.tensor <- function(z) {
+  tf$imag(z)
 }
 
 #' @export
-Conj.tensorflow.tensor <- function(x) {
-  tf$conj(x)
+Conj.tensorflow.tensor <- function(z) {
+  tf$conj(z)
 }
 
 #' @export
-Arg.tensorflow.tensor <- function(x) {
-  tf$angle(x)
+Arg.tensorflow.tensor <- function(z) {
+  tf$angle(z)
 }
 
 #' @export
-Mod.tensorflow.tensor <- function(x) {
-  tf$abs(x)
+Mod.tensorflow.tensor <- function(z) {
+  tf$abs(z)
 }
