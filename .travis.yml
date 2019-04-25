@@ -29,25 +29,21 @@ matrix:
     - name: "TensorFlow (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
-        - TENSORFLOW_PYTHON="/usr/bin/python3"
     - name: "TensorFlow Eager (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
-        - TENSORFLOW_PYTHON="/usr/bin/python3"
         - TENSORFLOW_EAGER="TRUE"
   allow_failures:
-    - name: "Tensorflow (2.0.0-alpha0)"
+    - name: "TensorFlow (2.0.0-alpha0)"
       env:
         - TENSORFLOW_VERSION="2.0.0-alpha0"
         - TENSORFLOW_TEST_EXAMPLES=""
     - name: "TensorFlow (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
-        - TENSORFLOW_PYTHON="/usr/bin/python3"
     - name: "TensorFlow Eager (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
-        - TENSORFLOW_PYTHON="/usr/bin/python3"
         - TENSORFLOW_EAGER="TRUE"
 
 before_script:
