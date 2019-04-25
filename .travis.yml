@@ -16,25 +16,39 @@ cache:
 
 matrix:
   include:
-    - name: "tf-stable"
-      env: TENSORFLOW_VERSION="1.13.1"
-    - name: "2.0-preview"
+    - name: "TensorFlow (Stable)"
+      env: TENSORFLOW_VERSION="default"
+    - name: "TensorFlow Eager (Stable)"
       env:
-        - TENSORFLOW_VERSION="https://files.pythonhosted.org/packages/ba/98/b0b9b83c9eddb9a112e0f928481c78232e1675397ccc717d1dcd92b8544b/tf_nightly_2.0_preview-2.0.0.dev20190319-cp27-cp27mu-manylinux1_x86_64.whl"
+        - TENSORFLOW_VERSION="default"
+        - TENSORFLOW_EAGER="TRUE"
+    - name: "Tensorflow (2.0.0-alpha0)"
+      env:
+        - TENSORFLOW_VERSION="2.0.0-alpha0"
         - TENSORFLOW_TEST_EXAMPLES=""
-    - name: "nightly"
+    - name: "TensorFlow (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
         - TENSORFLOW_PYTHON="/usr/bin/python3"
+    - name: "TensorFlow Eager (Nightly)"
+      env:
+        - TENSORFLOW_VERSION="nightly"
+        - TENSORFLOW_PYTHON="/usr/bin/python3"
+        - TENSORFLOW_EAGER="TRUE"
   allow_failures:
-    - name: "2.0-preview"
+    - name: "Tensorflow (2.0.0-alpha0)"
       env:
-        - TENSORFLOW_VERSION="https://files.pythonhosted.org/packages/ba/98/b0b9b83c9eddb9a112e0f928481c78232e1675397ccc717d1dcd92b8544b/tf_nightly_2.0_preview-2.0.0.dev20190319-cp27-cp27mu-manylinux1_x86_64.whl"
+        - TENSORFLOW_VERSION="2.0.0-alpha0"
         - TENSORFLOW_TEST_EXAMPLES=""
-    - name: "nightly"
+    - name: "TensorFlow (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
         - TENSORFLOW_PYTHON="/usr/bin/python3"
+    - name: "TensorFlow Eager (Nightly)"
+      env:
+        - TENSORFLOW_VERSION="nightly"
+        - TENSORFLOW_PYTHON="/usr/bin/python3"
+        - TENSORFLOW_EAGER="TRUE"
 
 before_script:
   - sudo apt-get update
