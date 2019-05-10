@@ -268,10 +268,10 @@ install_tensorflow_conda <- function(conda, version, gpu, envname, packages, ext
 
   # create conda environment
   cat("Creating", envname, "conda environment for TensorFlow installation...\n")
-  if (substr(version, 1, 4) == "1.13") {
-    python_packages <- "python=3.7"
-  } else {
+  if (grepl("1.1[0-2]", substr(version, 1, 4))) {
     python_packages <- "python=3.6"
+  } else {
+    python_packages <- "python=3.7"
   }
 
   python <- conda_create(envname, packages = python_packages, conda = conda)
