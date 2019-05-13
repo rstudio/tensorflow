@@ -167,6 +167,9 @@ tf_function <- function(f,
                         input_signature = NULL,
                         autograph = FALSE, # default is FALSE until we have an implementation
                         experimental_autograph_options = NULL) {
+
+  if(!isFALSE(autograph)) stop("Autograph functionality is not (yet) supported from R.")
+
   tf$`function`(
     reticulate::py_func(f),
     input_signature,
