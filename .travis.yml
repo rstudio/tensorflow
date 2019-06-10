@@ -22,9 +22,13 @@ matrix:
       env:
         - TENSORFLOW_VERSION="default"
         - TENSORFLOW_EAGER="TRUE"
-    - name: "Tensorflow (2.0.0-alpha0)"
+    - name: "Tensorflow (2.0.0-b0)"
       env:
-        - TENSORFLOW_VERSION="2.0.0-alpha0"
+        - TENSORFLOW_VERSION="2.0.0b0"
+        - TENSORFLOW_TEST_EXAMPLES=""
+    - name: "Tensorflow (1.14.0-rc1)"
+      env:
+        - TENSORFLOW_VERSION="1.14.0rc1"
         - TENSORFLOW_TEST_EXAMPLES=""
     - name: "TensorFlow (Nightly)"
       env:
@@ -34,10 +38,6 @@ matrix:
         - TENSORFLOW_VERSION="nightly"
         - TENSORFLOW_EAGER="TRUE"
   allow_failures:
-    - name: "TensorFlow (2.0.0-alpha0)"
-      env:
-        - TENSORFLOW_VERSION="2.0.0-alpha0"
-        - TENSORFLOW_TEST_EXAMPLES=""
     - name: "TensorFlow (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
