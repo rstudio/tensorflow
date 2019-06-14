@@ -93,7 +93,8 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
     } else if (method == "virtualenv" || method == "auto") {
       install_virtualenv(
         package = package,
-        extra_packages = extra_packages
+        extra_packages = extra_packages,
+        envname = envname
       )
     }
 
