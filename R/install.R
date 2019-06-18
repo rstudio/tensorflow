@@ -27,6 +27,9 @@
 #' @param restart_session Restart R session after installing (note this will
 #'   only occur within RStudio).
 #'
+#' @param ... other arguments passed to [reticulate::conda_install()] or
+#'   [reticulate::virtualenv_install()].
+#'
 #' @importFrom jsonlite fromJSON
 #'
 #' @export
@@ -35,7 +38,8 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                version = "default",
                                envname = "r-tensorflow",
                                extra_packages = NULL,
-                               restart_session = TRUE) {
+                               restart_session = TRUE,
+                               ...) {
 
   # verify 64-bit
   if (.Machine$sizeof.pointer != 8) {
@@ -74,13 +78,15 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
         package = package,
         extra_packages = extra_packages,
         envname = envname,
-        conda = conda
+        conda = conda,
+        ...
       )
     } else if (method == "virtualenv" || method == "auto") {
       install_virtualenv(
         package = package,
         extra_packages = extra_packages,
-        envname = envname
+        envname = envname,
+        ...
       )
     }
 
@@ -95,7 +101,8 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
         package = package,
         extra_packages = extra_packages,
         envname = envname,
-        conda = conda
+        conda = conda,
+        ...
       )
 
     }
@@ -113,9 +120,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
   invisible(NULL)
 }
 
-install_conda <- function(package, extra_packages, envname, conda) {
-
-
+install_conda <- function(package, extra_packages, envname, conda, ...) {
 
     # find if environment exists
     envname_exists <- envname %in% reticulate::conda_list(conda = conda)$name
@@ -135,25 +140,31 @@ install_conda <- function(package, extra_packages, envname, conda) {
       envname = envname,
       packages = c(package, extra_packages),
       conda = conda,
-      pip = TRUE # always use pip since it's the recommend way.
+      pip = TRUE, # always use pip since it's the recommend way.
+      ...
     )
 
 }
 
-install_virtualenv <- function(package, extra_packages, envname) {
+install_virtualenv <- function(package, extra_packages, envname, ...) {
 
     # find if environment exists
     envname_exists <- envname %in% reticulate::virtualenv_list()
 
     # remove environment
-    if (envname_exists)
+    if (envname_exists) {
+      cat("Removing ", envname, " virtualenv environment... \n")
       reticulate::virtualenv_remove(envname = envname, confirm = FALSE)
+    }
 
+    cat("Creating ", envname, " virtualenv environment... \n")
     reticulate::virtualenv_create(envname = envname)
 
+    cat("Installing python modules...\n")
     reticulate::virtualenv_install(
       envname = envname,
-      packages = c(package, extra_packages)
+      packages = c(package, extra_packages),
+      ...
     )
 
 }

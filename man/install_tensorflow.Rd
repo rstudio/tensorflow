@@ -4,9 +4,9 @@
 \alias{install_tensorflow}
 \title{Install TensorFlow and its dependencies}
 \usage{
-install_tensorflow(method = c("auto", "virtualenv", "conda", "system"),
+install_tensorflow(method = c("auto", "virtualenv", "conda"),
   conda = "auto", version = "default", envname = "r-tensorflow",
-  extra_packages = NULL, restart_session = TRUE)
+  extra_packages = NULL, restart_session = TRUE, ...)
 }
 \arguments{
 \item{method}{Installation method. By default, "auto" automatically finds a
@@ -36,6 +36,9 @@ TensorFlow.}
 
 \item{restart_session}{Restart R session after installing (note this will
 only occur within RStudio).}
+
+\item{...}{other arguments passed to \code{\link[reticulate:conda_install]{reticulate::conda_install()}} or
+\code{\link[reticulate:virtualenv_install]{reticulate::virtualenv_install()}}.}
 }
 \description{
 Install TensorFlow and its dependencies
