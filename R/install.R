@@ -67,7 +67,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
     }
 
   # install tfp-nightly
-  } else if (is.na(version) &&
+  } else if (is.na(version) ||
              (substr(version, 1, 4) %in% c("2.0.") || version == "nightly")) {
     default_packages <- c(default_packages, "tfp-nightly")
     # extra_packages cannot contain tensorflow-probability version
@@ -260,5 +260,6 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
           "Use the extra_packages argument to install_tensorflow() to ",
           "install additional packages.")
 }
+
 
 
