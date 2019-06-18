@@ -56,26 +56,12 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
 
   default_packages <- c("tensorflow-hub")
 
-  # install tensorflow-probability
+  # Resolve TF probability version.
   if (!is.na(version) && substr(version, 1, 4) %in% c("1.12", "1.13", "1.14")) {
     default_packages <- c(default_packages, "tensorflow-probability")
-    # extra_packages cannot contain the nightly version of tfp.
-    if ("tfp-nightly" %in% extra_packages) {
-      warning("tfp-nightly won't be installed since it requires TensorFlow nightly. ",
-              "tensorflow-probability will be installed instead.")
-      extra_packages <- setdiff(extra_packages, "tfp-nightly")
-    }
-
   # install tfp-nightly
-  } else if (is.na(version) ||
-             (substr(version, 1, 4) %in% c("2.0.") || version == "nightly")) {
+  } else if (is.na(version) ||(substr(version, 1, 4) %in% c("2.0.") || version == "nightly")) {
     default_packages <- c(default_packages, "tfp-nightly")
-    # extra_packages cannot contain tensorflow-probability version
-    if ("tensorflow-probability" %in% extra_packages) {
-      warning("tensorflow-probability won't be installed since it requires TensorFlow nightly. ",
-              "tfp-nightly will be installed instead.")
-      extra_packages <- setdiff(extra_packages, "tfp-nightly")
-    }
   }
 
   extra_packages <- unique(c(default_packages, extra_packages))
@@ -260,6 +246,3 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
           "Use the extra_packages argument to install_tensorflow() to ",
           "install additional packages.")
 }
-
-
-
