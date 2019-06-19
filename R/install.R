@@ -135,7 +135,7 @@ install_conda <- function(package, extra_packages, envname, conda, ...) {
     cat("Creating ", envname, " conda environment... \n")
     reticulate::conda_create(
       envname = envname, conda = conda,
-      packages = c("python", "libgcc")
+      packages = c("python=3.6")
     )
 
     cat("Installing python modules...\n")
