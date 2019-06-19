@@ -27,6 +27,9 @@
 #' @param restart_session Restart R session after installing (note this will
 #'   only occur within RStudio).
 #'
+#' @param conda_python_version the python version installed in the created conda
+#'   environment. Python 3.6 is installed by default.
+#'
 #' @param ... other arguments passed to [reticulate::conda_install()] or
 #'   [reticulate::virtualenv_install()].
 #'
@@ -39,6 +42,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                envname = "r-tensorflow",
                                extra_packages = NULL,
                                restart_session = TRUE,
+                               conda_python_version = "3.6",
                                ...) {
 
   # verify 64-bit
@@ -79,6 +83,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
         extra_packages = extra_packages,
         envname = envname,
         conda = conda,
+        conda_python_version = conda_python_version,
         ...
       )
     } else if (method == "virtualenv" || method == "auto") {
@@ -102,6 +107,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
         extra_packages = extra_packages,
         envname = envname,
         conda = conda,
+        conda_python_version = conda_python_version,
         ...
       )
 
@@ -120,7 +126,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
   invisible(NULL)
 }
 
-install_conda <- function(package, extra_packages, envname, conda, ...) {
+install_conda <- function(package, extra_packages, envname, conda, conda_python_version, ...) {
 
     # find if environment exists
     envname_exists <- envname %in% reticulate::conda_list(conda = conda)$name
@@ -135,7 +141,7 @@ install_conda <- function(package, extra_packages, envname, conda, ...) {
     cat("Creating ", envname, " conda environment... \n")
     reticulate::conda_create(
       envname = envname, conda = conda,
-      packages = c("python=3.6")
+      packages = paste0("python=", conda_python_version)
     )
 
     cat("Installing python modules...\n")
