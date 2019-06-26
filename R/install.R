@@ -180,7 +180,7 @@ install_virtualenv <- function(package, extra_packages, envname, ...) {
 
 parse_tensorflow_version <- function(version) {
 
-  default_version <- "1.13.1"
+  default_version <- "1.14.0"
 
   ver <- list(
     version = default_version,
