@@ -22,13 +22,13 @@ matrix:
       env:
         - TENSORFLOW_VERSION="default"
         - TENSORFLOW_EAGER="TRUE"
-    - name: "Tensorflow (2.0.0-b0)"
+    - name: "Tensorflow (2.0.0-b1)"
       env:
-        - TENSORFLOW_VERSION="2.0.0b0"
+        - TENSORFLOW_VERSION="2.0.0b1"
         - TENSORFLOW_TEST_EXAMPLES=""
-    - name: "Tensorflow (1.14.0-rc1)"
+    - name: "Tensorflow (1.14)"
       env:
-        - TENSORFLOW_VERSION="1.14.0rc1"
+        - TENSORFLOW_VERSION="1.14"
         - TENSORFLOW_TEST_EXAMPLES=""
     - name: "TensorFlow (Nightly)"
       env:
@@ -37,7 +37,17 @@ matrix:
       env:
         - TENSORFLOW_VERSION="nightly"
         - TENSORFLOW_EAGER="TRUE"
-  allow_failures:
+    - name: "TensorFlow (release version) with reticulate master"
+      env:
+        - TENSORFLOW_VERSION="1.14"
+      r_github_packages:
+        - rstudio/reticulate
+    - name: "TensorFlow (nightly) with reticulate master"
+      env:
+        - TENSORFLOW_VERSION="nightly"
+      r_github_packages:
+        - rstudio/reticulate
+allow_failures:
     - name: "TensorFlow (Nightly)"
       env:
         - TENSORFLOW_VERSION="nightly"
@@ -45,6 +55,11 @@ matrix:
       env:
         - TENSORFLOW_VERSION="nightly"
         - TENSORFLOW_EAGER="TRUE"
+    - name: "TensorFlow (nightly) with reticulate master"
+      env:
+        - TENSORFLOW_VERSION="nightly"
+      r_github_packages:
+        - rstudio/reticulate
 
 before_script:
   - sudo apt-get update
