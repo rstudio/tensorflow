@@ -39,7 +39,7 @@
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                conda = "auto",
                                version = "default",
-                               envname = "r-tensorflow",
+                               envname = NULL,
                                extra_packages = NULL,
                                restart_session = TRUE,
                                conda_python_version = "3.6",
@@ -61,7 +61,6 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
   package <- ver$package
 
   # Packages in this list should always be installed.
-
   default_packages <- c("tensorflow-hub")
 
   # Resolve TF probability version.
@@ -74,49 +73,15 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
 
   extra_packages <- unique(c(default_packages, extra_packages))
 
-  # Main OS verification.
-  if (is_osx() || is_linux()) {
-
-    if (method == "conda") {
-      install_conda(
-        package = package,
-        extra_packages = extra_packages,
-        envname = envname,
-        conda = conda,
-        conda_python_version = conda_python_version,
-        ...
-      )
-    } else if (method == "virtualenv" || method == "auto") {
-      install_virtualenv(
-        package = package,
-        extra_packages = extra_packages,
-        envname = envname,
-        ...
-      )
-    }
-
-  } else if (is_windows()) {
-
-    if (method == "virtualenv") {
-      stop("Installing TensorFlow into a virtualenv is not supported on Windows",
-           call. = FALSE)
-    } else if (method == "conda" || method == "auto") {
-
-      install_conda(
-        package = package,
-        extra_packages = extra_packages,
-        envname = envname,
-        conda = conda,
-        conda_python_version = conda_python_version,
-        ...
-      )
-
-    }
-
-  } else {
-    stop("Unable to install TensorFlow on this platform. ",
-         "Binary installation is available for Windows, OS X, and Linux")
-  }
+  reticulate::py_install(
+    packages       = c(package, extra_packages),
+    envname        = envname,
+    method         = method,
+    conda          = conda,
+    python_version = conda_python_version,
+    pip            = TRUE,
+    ...
+  )
 
   cat("\nInstallation complete.\n\n")
 
@@ -124,58 +89,6 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
     rstudioapi::restartSession()
 
   invisible(NULL)
-}
-
-install_conda <- function(package, extra_packages, envname, conda, conda_python_version, ...) {
-
-    # find if environment exists
-    envname_exists <- envname %in% reticulate::conda_list(conda = conda)$name
-
-    # remove environment
-    if (envname_exists) {
-      cat("Removing ", envname, " conda environment... \n")
-      reticulate::conda_remove(envname = envname, conda = conda)
-    }
-
-
-    cat("Creating ", envname, " conda environment... \n")
-    reticulate::conda_create(
-      envname = envname, conda = conda,
-      packages = paste0("python=", conda_python_version)
-    )
-
-    cat("Installing python modules...\n")
-    reticulate::conda_install(
-      envname = envname,
-      packages = c(package, extra_packages),
-      conda = conda,
-      pip = TRUE, # always use pip since it's the recommend way.
-      ...
-    )
-
-}
-
-install_virtualenv <- function(package, extra_packages, envname, ...) {
-
-    # find if environment exists
-    envname_exists <- envname %in% reticulate::virtualenv_list()
-
-    # remove environment
-    if (envname_exists) {
-      cat("Removing ", envname, " virtualenv environment... \n")
-      reticulate::virtualenv_remove(envname = envname, confirm = FALSE)
-    }
-
-    cat("Creating ", envname, " virtualenv environment... \n")
-    reticulate::virtualenv_create(envname = envname)
-
-    cat("Installing python modules...\n")
-    reticulate::virtualenv_install(
-      envname = envname,
-      packages = c(package, extra_packages),
-      ...
-    )
-
 }
 
 parse_tensorflow_version <- function(version) {
