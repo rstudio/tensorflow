@@ -62,11 +62,12 @@ addons:
   apt:
     packages:
       python3-dev
+      python3-pip
       python3-virtualenv
       python3-venv
 
 before_script:
-  - pip install --upgrade --ignore-installed --user travis virtualenv
+  - python3 -m pip install --upgrade --ignore-installed --user travis virtualenv
   - R CMD INSTALL .
   - R -e 'tensorflow::install_tensorflow(version = Sys.getenv("TENSORFLOW_VERSION"))'
   - R -e 'tensorflow::tf_config()'
