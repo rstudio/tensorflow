@@ -26,7 +26,7 @@
 #'
 #' @section Parallelism: By default the `use_session_with_seed()` function
 #'   disables GPU and CPU parallelism, since both can result in
-#'   non-determinisitc execution patterns (see
+#'   non-deterministic execution patterns (see
 #'   <https://stackoverflow.com/questions/42022950/>). You can optionally enable
 #'   GPU or CPU parallelism by setting the `disable_gpu` and/or
 #'   `disable_parallel_cpu` parameters to `FALSE`.

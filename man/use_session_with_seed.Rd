@@ -45,7 +45,7 @@ details on hooks).
 \section{Parallelism}{
  By default the \code{use_session_with_seed()} function
 disables GPU and CPU parallelism, since both can result in
-non-determinisitc execution patterns (see
+non-deterministic execution patterns (see
 \url{https://stackoverflow.com/questions/42022950/}). You can optionally enable
 GPU or CPU parallelism by setting the \code{disable_gpu} and/or
 \code{disable_parallel_cpu} parameters to \code{FALSE}.

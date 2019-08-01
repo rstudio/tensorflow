@@ -5,7 +5,7 @@
 \title{Install TensorFlow and its dependencies}
 \usage{
 install_tensorflow(method = c("auto", "virtualenv", "conda"),
-  conda = "auto", version = "default", envname = "r-tensorflow",
+  conda = "auto", version = "default", envname = NULL,
   extra_packages = NULL, restart_session = TRUE,
   conda_python_version = "3.6", ...)
 }
@@ -14,7 +14,7 @@ install_tensorflow(method = c("auto", "virtualenv", "conda"),
 method that will work in the local environment. Change the default to force
 a specific installation method. Note that the "virtualenv" method is not
 available on Windows (as this isn't supported by TensorFlow). Note also
-that since this command runs without privillege the "system" method is
+that since this command runs without privilege the "system" method is
 available only on Windows.}
 
 \item{conda}{Path to conda executable (or "auto" to find conda using the
