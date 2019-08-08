@@ -87,13 +87,13 @@
 
 #' @export
 "%/%.tensorflow.tensor" <- function(a, b) {
-  tf$floordiv(a, b)
+  switch_fun_if_tf(tf$floordiv, tf$math$floordiv)(a, b)
 }
 
 
 #' @export
 "%%.tensorflow.tensor" <- function(a, b) {
-  tf$mod(a, b)
+  switch_fun_if_tf(tf$mod, tf$math$mod)(a, b)
 }
 
 
@@ -183,7 +183,7 @@
 
 #' @export
 "ceiling.tensorflow.tensor" <- function(x) {
-  tf$ceil(x)
+  switch_fun_if_tf(tf$ceil, tf$math$ceil)(x)
 }
 
 
@@ -244,19 +244,19 @@
 #' @export
 #' @method sinpi tensorflow.tensor
 "sinpi.tensorflow.tensor" <- function(x) {
-  tf$sin(pi * x)
+  tf$sin(tf$constant(pi, dtype = x$dtype) * x)
 }
 
 #' @export
 #' @method cospi tensorflow.tensor
 "cospi.tensorflow.tensor" <- function(x) {
-  tf$cos(pi * x)
+  tf$cos(tf$constant(pi, x$dtype) * x)
 }
 
 #' @export
 #' @method tanpi tensorflow.tensor
 "tanpi.tensorflow.tensor" <- function(x) {
-  tf$tan(pi * x)
+  tf$tan(tf$constant(pi, x$dtype) * x)
 }
 
 #' @export
@@ -278,36 +278,43 @@
 
 #' @export
 "lgamma.tensorflow.tensor" <- function(x) {
-  tf$lgamma(x)
+  switch_fun_if_tf(tf$lgamma, tf$math$lgamma)(x)
 }
 
 #' @export
 "digamma.tensorflow.tensor" <- function(x) {
-  tf$digamma(x)
+  switch_fun_if_tf(tf$digamma, tf$math$digamma)(x)
 }
 
 
 #' @export
 Re.tensorflow.tensor <- function(z) {
-  tf$real(z)
+  switch_fun_if_tf(tf$real, tf$math$real)(z)
 }
 
 #' @export
 Im.tensorflow.tensor <- function(z) {
-  tf$imag(z)
+  switch_fun_if_tf(tf$imag, tf$math$imag)(z)
 }
 
 #' @export
 Conj.tensorflow.tensor <- function(z) {
-  tf$conj(z)
+  switch_fun_if_tf(tf$conj, tf$math$conj)(z)
 }
 
 #' @export
 Arg.tensorflow.tensor <- function(z) {
-  tf$angle(z)
+  switch_fun_if_tf(tf$angle, tf$math$angle)(z)
 }
 
 #' @export
 Mod.tensorflow.tensor <- function(z) {
-  tf$abs(z)
+  switch_fun_if_tf(tf$abs, tf$math$abs)(z)
+}
+
+switch_fun_if_tf <- function(x, y, version = "1.14") {
+  if (!tensorflow::tf_version() >= version)
+    x
+  else
+    y
 }
