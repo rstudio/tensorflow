@@ -66,6 +66,9 @@ test_generic <- function(name, fun, x, y = NULL) {
       out_tf <- sess$run(out_tf)
     }
 
+    if (inherits(out_tf, "python.builtin.object"))
+      out_tf <- reticulate::py_to_r(out_tf)
+
     expect_equal(out_tf, out_r)
   })
 }
