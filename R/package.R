@@ -23,7 +23,8 @@
 NULL
 
 tf_v2 <- function() {
-  package_version(tf_version()) >= "2.0"
+  # 1.14 already shows deprecation warnings.
+  package_version(tf_version()) >= "1.14"
 }
 
 # globals
@@ -62,8 +63,7 @@ tf_v2 <- function() {
             old_verbosity <- tf_logger$level
             tf_logger$setLevel(logging$ERROR)
             old_verbosity
-          }
-          else {
+          } else {
             old_verbosity <- tf$logging$get_verbosity()
             tf$logging$set_verbosity(tf$logging$ERROR)
             old_verbosity
@@ -73,8 +73,7 @@ tf_v2 <- function() {
           if (tf_v2()) {
             tf_logger <- tf$get_logger()
             tf_logger$setLevel(context)
-          }
-          else {
+          } else {
             tf$logging$set_verbosity(context)
           }
         }

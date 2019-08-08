@@ -42,6 +42,159 @@ test_that("sinpi dispatches correctly", {
 
 })
 
+test_generic <- function(name, fun, x, y = NULL) {
+  test_that(paste("Generic", name, "works"), {
+
+    skip_if_no_tensorflow()
+
+    if (is.null(y)) {
+      out_r <- fun(x)
+      out_tf <- fun(tf$constant(x))
+    } else {
+      out_r <- fun(x, y)
+      out_tf <- fun(tf$constant(x), tf$constant(y))
+    }
+
+    if (!tf$executing_eagerly() && inherits(out_tf, "tensorflow.tensor")) {
+
+      if (tf_version() >= "1.14")
+        sess <- tf$compat$v1$Session()
+      else
+        sess <- tf$Session()
+
+
+      out_tf <- sess$run(out_tf)
+    }
+
+    if (inherits(out_tf, "python.builtin.object"))
+      out_tf <- out_tf$numpy()
+
+    expect_equal(out_tf, out_r)
+  })
+}
+
+tensor_generics <- list(
+  dim,
+  length
+)
+
+for (fun in tensor_generics) {
+  test_generic(deparse(fun), fun, array(1000, dim = c(1,2,3)))
+  test_generic(deparse(fun), fun, array(1000, dim = c(1)))
+  test_generic(deparse(fun), fun, matrix(1:100))
+}
+
+logical_generics <- list(
+  `==`,
+  `!=`,
+  `<`,
+  `<=`,
+  `>`,
+  `>=`
+)
+
+for (fun in logical_generics) {
+  test_generic(
+    deparse(fun), fun,
+    x = array(runif(1000), dim = c(1,2,3)),
+    y = array(runif(1000), dim = c(1,2,3))
+  )
+
+  test_generic(
+    deparse(fun), fun,
+    x = array(1, dim = c(1,2,3)),
+    y = array(1, dim = c(1,2,3))
+  )
+}
+
+bool_operators <- list(
+  `&`,
+  `|`
+)
+
+for (fun in bool_operators) {
+  test_generic(deparse(fun), fun, TRUE, FALSE)
+  test_generic(deparse(fun), fun, TRUE, FALSE)
+}
+
+test_generic("!", `!`, TRUE)
+test_generic("!", `!`, FALSE)
+
+complex_generics <- list(
+  Re,
+  Im,
+  Conj,
+  Arg,
+  Mod
+)
+
+for (fun in complex_generics) {
+  test_generic(deparse(fun), fun, 1 + 2i)
+}
+
+binary_generics <- list(
+  `+`,
+  `-`,
+  `*`,
+  `/`,
+  `%/%`,
+  `%%`,
+  `^`
+)
+
+for (fun in binary_generics) {
+  test_generic(
+    deparse(fun), fun,
+    x = array(runif(1000), dim = c(1,2,3)),
+    y = array(runif(1000), dim = c(1,2,3))
+  )
+
+  test_generic(
+    deparse(fun), fun,
+    x = array(1, dim = c(1,2,3)),
+    y = array(1, dim = c(1,2,3))
+  )
+}
+
+generics <- list(
+  abs,
+  sign,
+  sqrt,
+  floor,
+  ceiling,
+  round,
+  exp,
+  log,
+  log2,
+  log10,
+  cos,
+  sin,
+  tan,
+  sinpi,
+  cospi,
+  tanpi,
+  acos,
+  asin,
+  atan,
+  lgamma,
+  digamma
+)
+
+for (fun in generics) {
+  test_generic(
+    deparse(fun), fun,
+    x = array(runif(1000), dim = c(1,2,3))
+  )
+
+  test_generic(
+    deparse(fun), fun,
+    x = array(1, dim = c(1,2,3))
+  )
+}
+
+
+
+
 
 
 

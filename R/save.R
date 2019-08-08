@@ -20,7 +20,12 @@ view_savedmodel <- function(
   saved_model_pb2 <- tf$core$protobuf$saved_model_pb2
 
   # open session and file (close both on exit)
-  sess <- tf$Session()
+
+  if (tf_version() >= "1.14")
+    sess <- tf$compat$v1$Session()
+  else
+    sess <- tf$Session()
+
   f <- gfile$FastGFile(export_pb, "rb")
   on.exit({
     f$close()
@@ -69,19 +74,35 @@ export_savedmodel.tensorflow.python.client.session.Session <- function(
   tensor_inputs_info <- lapply(inputs, function(i) tf$saved_model$utils$build_tensor_info(i))
   tensor_outputs_info <- lapply(outputs, function(o) tf$saved_model$utils$build_tensor_info(o))
 
-  prediction_signature <- tf$saved_model$signature_def_utils$build_signature_def(
+  build_signature_def <- if (tf_version() >= "1.14") {
+    tf$compat$v1$saved_model$signature_def_utils$build_signature_def
+  } else {
+    tf$saved_model$signature_def_utils$build_signature_def
+  }
+
+  signature_constants <- if (tf_version() >= "1.14") {
+    tf$saved_model
+  } else {
+    tf$saved_model$signature_constants
+  }
+
+  prediction_signature <- build_signature_def(
     inputs = tensor_inputs_info,
     outputs = tensor_outputs_info,
-    method_name = tf$saved_model$signature_constants$PREDICT_METHOD_NAME)
+    method_name = signature_constants$PREDICT_METHOD_NAME)
 
-  signature_def_map_class_dig <- tf$saved_model$signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
+  signature_def_map_class_dig <- signature_constants$DEFAULT_SERVING_SIGNATURE_DEF_KEY
   signature <- list()
   signature[[signature_def_map_class_dig]] <- prediction_signature
 
   if (overwrite && dir.exists(export_dir_base))
     unlink(export_dir_base, recursive = TRUE)
 
-  builder <- tf$saved_model$builder$SavedModelBuilder(export_dir_base)
+
+  if (tf_version() >= "1.14")
+    builder <- tf$compat$v1$saved_model$builder$SavedModelBuilder(export_dir_base)
+  else
+    builder <- tf$saved_model$builder$SavedModelBuilder(export_dir_base)
 
   builder$add_meta_graph_and_variables(
     sess,

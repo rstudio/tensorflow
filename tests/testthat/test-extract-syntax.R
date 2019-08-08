@@ -65,6 +65,7 @@ test_that('extract works for unknown dimensions', {
   y1_exp <- as.array(x_vals[, 1])
   y2_exp <- as.array(x_vals[, 1, drop = FALSE])
 
+
   if(tf$executing_eagerly()) {
 
     t <- tf$convert_to_tensor(x_vals)
@@ -73,15 +74,24 @@ test_that('extract works for unknown dimensions', {
 
   } else {
 
+    if (tf_version() >= "1.14")
+      placeholder <- tf$compat$v1$placeholder
+    else
+      placeholder <- tf$placeholder
+
     # the output should retain the missing dimension
-    x <- tf$placeholder(tf$float64, shape(NULL, 10))
+    x <- placeholder(tf$float64, shape(NULL, 10))
     y1 <- x[, 1]
     y2 <- x[, 1, drop = FALSE]
     expect_identical(dim(y1), list(NULL))
     expect_identical(dim(y2), list(NULL, 1L))
 
     # get observed in values for these
-    sess <- tf$Session()
+    if (tf_version() >= "1.14")
+      sess <- tf$compat$v1$Session()
+    else
+      sess <- tf$Session()
+
     y1_obs <- sess$run(y1,
                        feed_dict = dict(x = x_vals))
     y2_obs <- sess$run(y2,
@@ -354,9 +364,19 @@ test_that("undefined extensions extract", {
 
   } else {
 
-    x <- tf$placeholder(tf$int16, shape = list(NULL, 1L))
+    if (tf_version() >= "1.14")
+      placeholder <- tf$compat$v1$placeholder
+    else
+      placeholder <- tf$placeholder
+
+    x <- placeholder(tf$int16, shape = list(NULL, 1L))
     sub <- x[, 0L]
-    sess <- tf$Session()
+
+    if (tf_version() >= "1.14")
+      sess <- tf$compat$v1$Session()
+    else
+      sess <- tf$Session()
+
     result <- sess$run(sub, dict(x = x_))
 
   }

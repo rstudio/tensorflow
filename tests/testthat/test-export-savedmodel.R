@@ -3,7 +3,13 @@ source("utils.R")
 
 train_mnist_eager <- function() {
 
-  mnist <- tf$keras$datasets$mnist$load_data()
+  IPython <- IPython <- reticulate::import("IPython")
+  py_capture_output <- IPython$utils$capture$capture_output
+
+  with(py_capture_output(), {
+    mnist <- tf$keras$datasets$mnist$load_data()
+  })
+
   x_train <- mnist[[1]][[1]] / 255
   y_train <- mnist[[1]][[2]] %>% as.matrix()
 
@@ -37,30 +43,47 @@ train_mnist_eager <- function() {
     loss = "sparse_categorical_crossentropy"
   )
 
-  model$fit(x_train[1:10, , ], y_train[1:10, ], epochs = 1L)
+  model$fit(x_train[1:10, , ], y_train[1:10, ], epochs = 1L, verbose = 0)
   model
 
 }
 
 train_mnist_graph <- function(sess) {
 
-  datasets <- tf$contrib$learn$datasets
-  mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
+  IPython <- IPython <- reticulate::import("IPython")
+  py_capture_output <- IPython$utils$capture$capture_output
 
-  x <- tf$placeholder(tf$float32, shape(NULL, 784L))
+  with(py_capture_output(), {
+    datasets <- tf$contrib$learn$datasets
+    mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
+  })
+
+  if (tf_version() >= "1.14")
+    placeholder <- tf$compat$v1$placeholder
+  else
+    placeholder <- tf$placeholder
+
+  x <- placeholder(tf$float32, shape(NULL, 784L))
 
   W <- tf$Variable(tf$zeros(shape(784L, 10L)))
   b <- tf$Variable(tf$zeros(shape(10L)))
 
   y <- tf$nn$softmax(tf$matmul(x, W) + b)
 
-  y_ <- tf$placeholder(tf$float32, shape(NULL, 10L))
-  cross_entropy <- tf$reduce_mean(-tf$reduce_sum(y_ * tf$log(y), reduction_indices = 1L))
+  y_ <- placeholder(tf$float32, shape(NULL, 10L))
+  cross_entropy <- tf$reduce_mean(-tf$reduce_sum(y_ * log(y), reduction_indices = 1L))
 
-  optimizer <- tf$train$GradientDescentOptimizer(0.5)
+  if (tf_version() >= "1.14")
+    optimizer <- tf$compat$v1$train$GradientDescentOptimizer(0.5)
+  else
+    optimizer <- tf$train$GradientDescentOptimizer(0.5)
+
   train_step <- optimizer$minimize(cross_entropy)
 
-  init <- tf$global_variables_initializer()
+  if (tf_version() >= "1.14")
+    init <- tf$compat$v1$global_variables_initializer()
+  else
+    init <- tf$global_variables_initializer()
 
   sess$run(init)
 
@@ -92,7 +115,11 @@ test_that("export_savedmodel() works with MNIST", {
 
   } else {
 
-    sess <- tf$Session()
+    if (tf_version() >= "1.14")
+      sess <- tf$compat$v1$Session()
+    else
+      sess <- tf$Session()
+
     tensors <- train_mnist_graph(sess)
 
     export_savedmodel(
