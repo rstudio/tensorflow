@@ -4,7 +4,12 @@ grab <- function(x) {
     as.array(x)
   } else {
     if (is.null(.SESS))
-      .SESS <<- tf$Session()
+
+      if (tf_version() >= "1.14")
+        .SESS <<- tf$compat$v1$Session()
+      else
+        .SESS <<- tf$Session()
+
     .SESS$run(x)
   }
 }

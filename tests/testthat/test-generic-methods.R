@@ -56,7 +56,13 @@ test_generic <- function(name, fun, x, y = NULL) {
     }
 
     if (!tf$executing_eagerly() && inherits(out_tf, "tensorflow.tensor")) {
-      sess <- tf$Session()
+
+      if (tf_version() >= "1.14")
+        sess <- tf$compat$v1$Session()
+      else
+        sess <- tf$Session()
+
+
       out_tf <- sess$run(out_tf)
     }
 
