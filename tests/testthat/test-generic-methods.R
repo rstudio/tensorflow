@@ -45,6 +45,7 @@ test_that("sinpi dispatches correctly", {
 test_generic <- function(name, fun, x, y = NULL) {
   test_that(paste("Generic", name, "works"), {
 
+    skip_if_no_tensorflow()
 
     if (is.null(y)) {
       out_r <- fun(x)
