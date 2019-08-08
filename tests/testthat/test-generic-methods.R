@@ -67,7 +67,7 @@ test_generic <- function(name, fun, x, y = NULL) {
     }
 
     if (inherits(out_tf, "python.builtin.object"))
-      out_tf <- reticulate::py_to_r(out_tf)
+      out_tf <- out_tf$numpy()
 
     expect_equal(out_tf, out_r)
   })

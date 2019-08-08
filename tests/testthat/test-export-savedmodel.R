@@ -43,7 +43,7 @@ train_mnist_eager <- function() {
     loss = "sparse_categorical_crossentropy"
   )
 
-  model$fit(x_train[1:10, , ], y_train[1:10, ], epochs = 1L)
+  model$fit(x_train[1:10, , ], y_train[1:10, ], epochs = 1L, verbose = 0)
   model
 
 }
