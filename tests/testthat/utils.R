@@ -1,3 +1,5 @@
+Sys.setenv(TF_CPP_MIN_LOG_LEVEL = 1)
+
 .SESS <- NULL
 grab <- function(x) {
   if(tf$executing_eagerly()) {
@@ -18,3 +20,4 @@ skip_if_no_tensorflow <- function() {
   if (!reticulate::py_module_available("tensorflow"))
     skip("TensorFlow not available for testing")
 }
+

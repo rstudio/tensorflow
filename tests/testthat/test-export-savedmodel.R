@@ -3,7 +3,13 @@ source("utils.R")
 
 train_mnist_eager <- function() {
 
-  mnist <- tf$keras$datasets$mnist$load_data()
+  IPython <- IPython <- reticulate::import("IPython")
+  py_capture_output <- IPython$utils$capture$capture_output
+
+  with(py_capture_output(), {
+    mnist <- tf$keras$datasets$mnist$load_data()
+  })
+
   x_train <- mnist[[1]][[1]] / 255
   y_train <- mnist[[1]][[2]] %>% as.matrix()
 
@@ -44,8 +50,13 @@ train_mnist_eager <- function() {
 
 train_mnist_graph <- function(sess) {
 
-  datasets <- tf$contrib$learn$datasets
-  mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
+  IPython <- IPython <- reticulate::import("IPython")
+  py_capture_output <- IPython$utils$capture$capture_output
+
+  with(py_capture_output(), {
+    datasets <- tf$contrib$learn$datasets
+    mnist <- datasets$mnist$read_data_sets("MNIST-data", one_hot = TRUE)
+  })
 
   if (tf_version() >= "1.14")
     placeholder <- tf$compat$v1$placeholder
