@@ -23,8 +23,9 @@ cache:
 # Adapt as necessary starting from here
 
 build_script:
-  - C:\Miniconda3-x64\Scripts\conda create -y --name r-tensorflow tensorflow=%TF_VERSION% numpy python=3.6.8
   - travis-tool.sh install_deps
+  - R CMD INSTALL .
+  - R -e "tensorflow::install_tensorflow(version = Sys.getenv('TF_VERSION'), extra_packages = 'IPython')"
 
 test_script:
   - travis-tool.sh run_tests
