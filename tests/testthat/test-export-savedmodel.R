@@ -33,8 +33,7 @@ train_mnist_eager <- function() {
   # not needed if this is only entered for TF2 (vs. for eager execution in general)
   if (reticulate::py_has_attr(tf, "keras")) {
     optimizer <- tf$keras$optimizers$Adam()
-  }
-  else {
+  } else {
     optimizer <- tf$train$AdamOptimizer()
   }
 
@@ -43,7 +42,7 @@ train_mnist_eager <- function() {
     loss = "sparse_categorical_crossentropy"
   )
 
-  model$fit(x_train[1:10, , ], y_train[1:10, ], epochs = 1L, verbose = 0)
+  model$fit(x_train[1:10, , ], y_train[1:10, ,drop=FALSE], epochs = 1L, verbose = 0L)
   model
 
 }
