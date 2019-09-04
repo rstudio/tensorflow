@@ -1,53 +1,6 @@
 context("Save")
 source("utils.R")
 
-train_mnist_eager <- function() {
-
-  IPython <- IPython <- reticulate::import("IPython")
-  py_capture_output <- IPython$utils$capture$capture_output
-
-  with(py_capture_output(), {
-    mnist <- tf$keras$datasets$mnist$load_data()
-  })
-
-  x_train <- mnist[[1]][[1]] / 255
-  y_train <- mnist[[1]][[2]] %>% as.matrix()
-
-  model <- tf$keras$Sequential(
-    list(
-      tf$keras$layers$Reshape(
-        target_shape = c(28L, 28L, 1L),
-        input_shape = c(28L, 28L)
-      ),
-      tf$keras$layers$Conv2D(8L, 5L, padding = "same", activation = tf$nn$relu),
-      tf$keras$layers$MaxPooling2D(c(2, 2), c(2, 2), padding = "same"),
-      tf$keras$layers$Conv2D(16L, 5L, padding = "same", activation = tf$nn$relu),
-      tf$keras$layers$MaxPooling2D(c(2, 2), c(2, 2), padding = "same"),
-      tf$keras$layers$Flatten(),
-      tf$keras$layers$Dense(32L, activation = tf$nn$relu),
-      tf$keras$layers$Dropout(0.4),
-      tf$keras$layers$Dense(10L)
-    )
-  )
-
-  # not needed if this is only entered for TF2 (vs. for eager execution in general)
-  if (reticulate::py_has_attr(tf, "keras")) {
-    optimizer <- tf$keras$optimizers$Adam()
-  }
-  else {
-    optimizer <- tf$train$AdamOptimizer()
-  }
-
-  model$compile(
-    optimizer = optimizer,
-    loss = "sparse_categorical_crossentropy"
-  )
-
-  model$fit(x_train[1:10, , ], y_train[1:10, ], epochs = 1L, verbose = 0)
-  model
-
-}
-
 train_mnist_graph <- function(sess) {
 
   IPython <- IPython <- reticulate::import("IPython")
@@ -106,29 +59,24 @@ train_mnist_graph <- function(sess) {
 test_that("export_savedmodel() works with MNIST", {
   skip_if_no_tensorflow()
 
+  if (tf$executing_eagerly())
+    skip("Don't have sessions to export when running eager.")
+
   temp_path <- tempfile()
 
-  if (tf$executing_eagerly()) {
+  if (tf_version() >= "1.14")
+    sess <- tf$compat$v1$Session()
+  else
+    sess <- tf$Session()
 
-    model <- train_mnist_eager()
-    tf$saved_model$save(model, temp_path)
+  tensors <- train_mnist_graph(sess)
 
-  } else {
-
-    if (tf_version() >= "1.14")
-      sess <- tf$compat$v1$Session()
-    else
-      sess <- tf$Session()
-
-    tensors <- train_mnist_graph(sess)
-
-    export_savedmodel(
-      sess,
-      temp_path,
-      inputs = list(images = tensors$input),
-      outputs = list(scores = tensors$output)
-    )
-  }
+  export_savedmodel(
+    sess,
+    temp_path,
+    inputs = list(images = tensors$input),
+    outputs = list(scores = tensors$output)
+  )
 
   expect_true(file.exists(file.path(temp_path, "saved_model.pb")))
 
