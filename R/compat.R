@@ -5,9 +5,7 @@
 #' with previous versions. For instance, this is useful to run TensorFlow 1.x
 #' code when using TensorFlow 2.x.
 #'
-#' @inheritParams reticulate py_set_seed
-#'
-#' @param version The version to activate.
+#' @param version The version to activate. Must be `"v1"` or `"v2"`
 #'
 #' @examples
 #' \dontrun{
@@ -16,16 +14,12 @@
 #' }
 #'
 #' @export
-use_compat <- function(version = c("v1")) {
-  if (identical(tf_version(), NULL) || tf_version() < "2.0") return()
+use_compat <- function(version = c("v1", "v2")) {
+  if (identical(tf_version(), NULL)) return()
 
-  # validate method
   version <- match.arg(version)
 
   tf2 <- tf
-
-  # disable eager execution to match v1 default
-  tf2$compat$v1$disable_eager_execution()
 
   unlock <- get("unlockBinding")
   lock <- get("lockBinding")
