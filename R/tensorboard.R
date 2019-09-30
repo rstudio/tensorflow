@@ -139,19 +139,31 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
   }
 }
 
+
+tensorboard_version <- function() {
+  if (is.null(ver <- .globals$tensorboard_version)) {
+    ver <- package_version(system("tensorboard --version_tb", intern = TRUE))
+    .globals$tensorboard_version <- ver
+  }
+  ver
+}
+
+
 launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interval, purge_orphaned_data) {
 
-  # check for names and provide defaults
-  names <- names(log_dir)
-  if (is.null(names))
-    names <- basename(log_dir)
+  if (tensorboard_version() < "2.0") {
+    # check for names and provide defaults
+    names <- names(log_dir)
+    if (is.null(names))
+      names <- basename(log_dir)
 
-  # concatenate names if we have them
-  if (!is.null(names))
-    log_dir <- paste0(names, ":", log_dir)
+    # concatenate names if we have them
+    if (!is.null(names))
+      log_dir <- paste0(names, ":", log_dir)
 
-  # build log_dir
-  log_dir <- paste(log_dir, collapse = ",")
+    # build log_dir
+    log_dir <- paste(log_dir, collapse = ",")
+  }
 
   # start the process
   p <- processx::process$new("tensorboard",
