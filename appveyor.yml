@@ -4,7 +4,7 @@ environment:
   global:
     USE_RTOOLS: true
   matrix:
-    - TF_VERSION: 2.0.0rc2
+    - TF_VERSION: 2.0.0
     - TF_VERSION: 1.14.0
     - TF_VERSION: 1.13.1
     - TF_VERSION: 1.12.0
