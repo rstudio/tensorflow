@@ -1,4 +1,16 @@
-## Development version
+## TensorFlow 2.0.0 (CRAN)
+
+- Upgraded default installed version to 2.0.0.
+
+- Tensorboard log directory path fixes (#360).
+
+- Allow for `v1` and `v2` compat (#358).
+
+- `install_tensorflow` now does not installs `tfprobability`, `tfhub` and other
+ related packages.
+
+
+## TensorFlow 1.14.1 (CRAN)
 
 - Upgraded default installed version to 1.14.0
 
