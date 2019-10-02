@@ -4,10 +4,10 @@
 \alias{use_compat}
 \title{Use Compatibility}
 \usage{
-use_compat(version = c("v1"))
+use_compat(version = c("v1", "v2"))
 }
 \arguments{
-\item{version}{The version to activate.}
+\item{version}{The version to activate. Must be \code{"v1"} or \code{"v2"}}
 }
 \description{
 Enables TensorFlow to run under a different API version for compatibility

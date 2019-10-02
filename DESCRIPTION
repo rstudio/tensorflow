@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 1.14.0.9000
+Version: 2.0.0
 Authors@R: c(
   person("Daniel", "Falbel", role = c("ctb", "cph", "cre"), email = "daniel@rstudio.com"),
   person("JJ", "Allaire", role = c("aut", "cph")),
@@ -48,5 +48,3 @@ Imports:
 Roxygen: list(markdown = TRUE)
 Suggests: testthat, keras, tfestimators
 RoxygenNote: 6.1.1
-Remotes:
-    rstudio/reticulate
