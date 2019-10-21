@@ -77,6 +77,9 @@ as.array.python.builtin.EagerTensor <- function(x, ...) {
 #' @export
 as.array.tensorflow.python.framework.ops.EagerTensor <- as.array.python.builtin.EagerTensor
 
+#' @export
+as.array.tensorflow.python.ops.variables.Variable <- as.array.python.builtin.EagerTensor
+
 
 #' @export
 as.matrix.python.builtin.EagerTensor <- function(x, ...) {
@@ -95,6 +98,10 @@ as.matrix.python.builtin.EagerTensor <- function(x, ...) {
 as.matrix.tensorflow.python.framework.ops.EagerTensor <- as.matrix.python.builtin.EagerTensor
 
 #' @export
+as.matrix.tensorflow.python.ops.variables.Variable <- as.matrix.python.builtin.EagerTensor
+
+
+#' @export
 as.integer.python.builtin.EagerTensor <- function(x, ...) {
   if (py_is_null_xptr(x))
     NULL
@@ -105,6 +112,8 @@ as.integer.python.builtin.EagerTensor <- function(x, ...) {
 #' @export
 as.integer.tensorflow.python.framework.ops.EagerTensor <- as.integer.python.builtin.EagerTensor
 
+#' @export
+as.integer.tensorflow.python.ops.variables.Variable <- as.integer.python.builtin.EagerTensor
 
 
 #' @export
@@ -118,6 +127,9 @@ as.numeric.python.builtin.EagerTensor <- function(x, ...) {
 #' @export
 as.numeric.tensorflow.python.framework.ops.EagerTensor <- as.numeric.python.builtin.EagerTensor
 
+#' @export
+as.numeric.tensorflow.python.ops.variables.Variable <- as.numeric.python.builtin.EagerTensor
+
 
 #' @export
 as.double.python.builtin.EagerTensor <- function(x, ...) {
@@ -130,6 +142,9 @@ as.double.python.builtin.EagerTensor <- function(x, ...) {
 #' @export
 as.double.tensorflow.python.framework.ops.EagerTensor <- as.double.python.builtin.EagerTensor
 
+#' @export
+as.double.tensorflow.python.ops.variables.Variable <- as.double.python.builtin.EagerTensor
+
 
 #' @export
 as.logical.python.builtin.EagerTensor <- function(x, ...) {
@@ -141,6 +156,9 @@ as.logical.python.builtin.EagerTensor <- function(x, ...) {
 
 #' @export
 as.logical.tensorflow.python.framework.ops.EagerTensor <- as.logical.python.builtin.EagerTensor
+
+#' @export
+as.logical.tensorflow.python.ops.variables.Variable <- as.logical.python.builtin.EagerTensor
 
 
 #' Creates a callable TensorFlow graph from an R function.
