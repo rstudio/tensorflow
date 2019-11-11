@@ -97,7 +97,8 @@ tf_v2 <- function() {
   # provide a common base S3 class for tensors
   reticulate::register_class_filter(function(classes) {
     if (any(c("tensorflow.python.ops.variables.Variable",
-              "tensorflow.python.framework.ops.Tensor")
+              "tensorflow.python.framework.ops.Tensor",
+              "tensorflow.python.ops.ragged.ragged_tensor.RaggedTensor")
             %in%
             classes)) {
       c("tensorflow.tensor", classes)

@@ -28,7 +28,12 @@
   if (py_is_null_xptr(x))
     NULL
   else {
-    shape <- x$get_shape()
+
+    if (inherits(x, "tensorflow.python.ops.ragged.ragged_tensor.RaggedTensor"))
+      shape <- x$shape
+    else
+      shape <- x$get_shape()
+
     if (!is.null(shape$ndims))
       shape$as_list()
     else
