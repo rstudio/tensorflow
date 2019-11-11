@@ -9,9 +9,11 @@
 #'   that since this command runs without privilege the "system" method is
 #'   available only on Windows.
 #'
-#' @param version TensorFlow version to install. Specify "default" to install
-#'   the CPU version of the latest release. Specify "gpu" to install the GPU
-#'   version of the latest release.
+#' @param version TensorFlow version to install. Up to and including TensorFlow 2.0,
+#'   specify "default" to install the CPU version of the latest release;
+#'   specify "gpu" to install the GPU version of the latest release.
+#'   Starting from TensorFlow 2.1, by default a version is installed that works
+#'   on both GPU- and CPU-only systems. Specify "cpu" to install a CPU-only version.
 #'
 #'   You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
 #'   appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").
@@ -86,7 +88,7 @@ parse_tensorflow_version <- function(version) {
 
   ver <- list(
     version = default_version,
-    gpu = FALSE,
+    gpu = NULL,
     package = NULL
   )
 
@@ -106,6 +108,20 @@ parse_tensorflow_version <- function(version) {
     split <- strsplit(version, "-")[[1]]
     ver$version <- split[[1]]
     ver$gpu <- TRUE
+
+    # default cpu version
+  } else if (version == "cpu") {
+
+    ver$gpu <- FALSE
+    ver$package <- paste0("tensorflow-cpu==", ver$version)
+
+    # cpu qualifier provided
+  } else if (grepl("-cpu$", version)) {
+
+    split <- strsplit(version, "-")[[1]]
+    ver$version <- split[[1]]
+    ver$gpu <- FALSE
+
 
     # full path to whl.
   } else if (grepl("^.*\\.whl$", version)) {
@@ -130,18 +146,23 @@ parse_tensorflow_version <- function(version) {
 
     if (ver$version == "nightly") {
 
-      if (ver$gpu) {
+      if (is.null(ver$gpu)) {
+        ver$package <- "tf-nightly"
+      }
+      else if (ver$gpu) {
         ver$package <- "tf-nightly-gpu"
       } else {
-        ver$package <- "tf-nightly"
+        ver$package <- "tf-nightly-cpu"
       }
 
     } else {
 
-      if (ver$gpu) {
-        ver$package <- paste0("tensorflow-gpu==", ver$version)
-      } else {
+      if (is.null(ver$gpu)) {
         ver$package <- paste0("tensorflow==", ver$version)
+      } else if (ver$gpu) {
+        ver$package <- paste0("tensorflow-gpu==", ver$version)
+      } else  {
+        ver$package <- paste0("tensorflow-cpu==", ver$version)
       }
 
     }
