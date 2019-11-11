@@ -27,7 +27,7 @@ cache:
 build_script:
   - travis-tool.sh install_deps
   - R CMD INSTALL .
-  - R -e "tensorflow::install_tensorflow(version = Sys.getenv('TF_VERSION'), extra_packages = 'IPython')"
+  - R -e "tensorflow::install_tensorflow(version = Sys.getenv('TF_VERSION'), extra_packages = 'IPython', method = 'conda')"
 
 test_script:
   - travis-tool.sh run_tests
