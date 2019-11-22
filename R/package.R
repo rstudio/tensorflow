@@ -42,7 +42,7 @@ tf_v2 <- function() {
   # but insist on printing warnings (level 2) and errors (level 3)
   cpp_log_opt <- getOption("tensorflow.core.cpp_min_log_level")
   if (!is.null(cpp_log_opt))
-    Sys.setenv(TF_CPP_MIN_LOG_LEVEL = max(min(cpp_log_opt, 1), 0))
+    Sys.setenv(TF_CPP_MIN_LOG_LEVEL = max(min(cpp_log_opt, 3), 0))
 
   # delay load tensorflow
   tf <<- import("tensorflow", delay_load = list(
