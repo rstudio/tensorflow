@@ -13,6 +13,6 @@ by the current \R process are used.}
 }
 \description{
 Parse command line arguments of the form \code{--key=value} and
-\code{--key value}. The values are assumed to be valid \code{yaml} and
+\verb{--key value}. The values are assumed to be valid \code{yaml} and
 will be converted using \code{\link[=yaml.load]{yaml.load()}}.
 }
