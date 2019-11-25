@@ -13,3 +13,8 @@ shape <- function(...) {
       NULL
   })
 }
+
+#' @export
+py_to_r.tensorflow.python.framework.tensor_shape.TensorShape <- function(x) {
+  reticulate::py_to_r(x$as_list())
+}
