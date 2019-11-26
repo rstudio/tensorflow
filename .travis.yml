@@ -37,6 +37,7 @@ matrix:
     - name: "TensorFlow (release version) with reticulate master"
       env:
         - TENSORFLOW_VERSION="1.14"
+        - TENSORFLOW_TEST_EXAMPLES=""
       r_github_packages:
         - rstudio/reticulate
     - name: "TensorFlow (nightly) with reticulate master"

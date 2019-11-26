@@ -4,10 +4,16 @@
 \alias{install_tensorflow}
 \title{Install TensorFlow and its dependencies}
 \usage{
-install_tensorflow(method = c("auto", "virtualenv", "conda"),
-  conda = "auto", version = "default", envname = NULL,
-  extra_packages = NULL, restart_session = TRUE,
-  conda_python_version = "3.6", ...)
+install_tensorflow(
+  method = c("auto", "virtualenv", "conda"),
+  conda = "auto",
+  version = "default",
+  envname = NULL,
+  extra_packages = NULL,
+  restart_session = TRUE,
+  conda_python_version = "3.6",
+  ...
+)
 }
 \arguments{
 \item{method}{Installation method. By default, "auto" automatically finds a
@@ -20,9 +26,11 @@ available only on Windows.}
 \item{conda}{Path to conda executable (or "auto" to find conda using the
 PATH and other conventional install locations).}
 
-\item{version}{TensorFlow version to install. Specify "default" to install
-the CPU version of the latest release. Specify "gpu" to install the GPU
-version of the latest release.
+\item{version}{TensorFlow version to install. Up to and including TensorFlow 2.0,
+specify "default" to install the CPU version of the latest release;
+specify "gpu" to install the GPU version of the latest release.
+Starting from TensorFlow 2.1, by default a version is installed that works
+on both GPU- and CPU-only systems. Specify "cpu" to install a CPU-only version.
 
 You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
 appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").

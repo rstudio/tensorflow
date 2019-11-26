@@ -4,8 +4,12 @@
 \alias{use_session_with_seed}
 \title{Use a session with a random seed}
 \usage{
-use_session_with_seed(seed, disable_gpu = TRUE,
-  disable_parallel_cpu = TRUE, quiet = FALSE)
+use_session_with_seed(
+  seed,
+  disable_gpu = TRUE,
+  disable_parallel_cpu = TRUE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{seed}{A single value, interpreted as an integer}
