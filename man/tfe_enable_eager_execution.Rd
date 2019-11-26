@@ -4,8 +4,10 @@
 \alias{tfe_enable_eager_execution}
 \title{Enables, for the rest of the lifetime of this program, eager execution.}
 \usage{
-tfe_enable_eager_execution(config = NULL, device_policy = c("explicit",
-  "warn", "silent"))
+tfe_enable_eager_execution(
+  config = NULL,
+  device_policy = c("explicit", "warn", "silent")
+)
 }
 \arguments{
 \item{config}{(Optional) A \code{tf$ConfigProto()} protocol buffer with

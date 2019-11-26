@@ -4,15 +4,17 @@
 \alias{tf_extract_opts}
 \title{Tensor extract options}
 \usage{
-tf_extract_opts(style = getOption("tensorflow.extract.style"), ...,
+tf_extract_opts(
+  style = getOption("tensorflow.extract.style"),
+  ...,
   one_based = getOption("tensorflow.extract.one_based", TRUE),
   inclusive_stop = getOption("tensorflow.extract.inclusive_stop", TRUE),
-  disallow_out_of_bounds = getOption("tensorflow.extract.dissallow_out_of_bounds",
-  TRUE),
+  disallow_out_of_bounds = getOption("tensorflow.extract.dissallow_out_of_bounds", TRUE),
   warn_tensors_passed_asis = getOption("tensorflow.extract.warn_tensors_passed_asis",
-  TRUE),
+    TRUE),
   warn_negatives_pythonic = getOption("tensorflow.extract.warn_negatives_pythonic",
-  TRUE))
+    TRUE)
+)
 }
 \arguments{
 \item{style}{one of \code{NULL} (the default) \code{"R"} or \code{"python"}. If supplied,
@@ -41,7 +43,7 @@ non-standard (python-style) interpretation}
 }
 \value{
 an object with class "tf_extract_opts", suitable for passing to
-\code{[.tensorflow.tensor()}
+\verb{[.tensorflow.tensor()}
 }
 \description{
 Tensor extract options

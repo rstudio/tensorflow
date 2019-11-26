@@ -4,8 +4,11 @@
 \alias{parse_flags}
 \title{Parse Configuration Flags for a TensorFlow Application}
 \usage{
-parse_flags(config = Sys.getenv("R_CONFIG_ACTIVE", unset = "default"),
-  file = "flags.yml", arguments = commandArgs(TRUE))
+parse_flags(
+  config = Sys.getenv("R_CONFIG_ACTIVE", unset = "default"),
+  file = "flags.yml",
+  arguments = commandArgs(TRUE)
+)
 }
 \arguments{
 \item{config}{The configuration to use. Defaults to the
@@ -31,7 +34,7 @@ set through the command line.
 \dontrun{
 # examine an example configuration file provided by tensorflow
 file <- system.file("examples/config/flags.yml", package = "tensorflow")
-cat(readLines(file), sep = "\\n")
+cat(readLines(file), sep = "\n")
 
 # read the default configuration
 FLAGS <- tensorflow::parse_flags("default", file = file)

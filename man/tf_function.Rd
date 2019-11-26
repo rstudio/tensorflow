@@ -4,8 +4,12 @@
 \alias{tf_function}
 \title{Creates a callable TensorFlow graph from an R function.}
 \usage{
-tf_function(f, input_signature = NULL, autograph = FALSE,
-  experimental_autograph_options = NULL)
+tf_function(
+  f,
+  input_signature = NULL,
+  autograph = FALSE,
+  experimental_autograph_options = NULL
+)
 }
 \arguments{
 \item{f}{the function to be compiled}
