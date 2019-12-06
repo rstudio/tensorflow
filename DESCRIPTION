@@ -48,9 +48,9 @@ Imports:
 Roxygen: list(markdown = TRUE)
 Suggests: testthat, keras, tfestimators
 RoxygenNote: 7.0.1
-reticulate@R:
+Config/reticulate:
   list(
     packages = list(
-      list(package = "tensorflow", version = "2.0.0", pip = TRUE)
+      list(package = "tensorflow", pip = TRUE)
     )
   )
