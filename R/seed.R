@@ -50,6 +50,9 @@ use_session_with_seed <- function(seed,
                                   disable_parallel_cpu = TRUE,
                                   quiet = FALSE) {
 
+  if (tf_version() >= "2.0")
+    tf <- tf$compat$v1
+
   # cast seed to integer
   seed <- as.integer(seed)
 
