@@ -74,5 +74,5 @@ addons:
 before_script:
   - python3 -m pip install --upgrade --ignore-installed --user travis virtualenv
   - R CMD INSTALL .
-  - R -e 'tensorflow::install_tensorflow(version = Sys.getenv("TENSORFLOW_VERSION"), extra_packages="IPython")'
+  - R -e 'Sys.setenv(PIP_QUIET=1);tensorflow::install_tensorflow(version = Sys.getenv("TENSORFLOW_VERSION"), extra_packages="IPython")'
   - R -e 'tensorflow::tf_config()'
