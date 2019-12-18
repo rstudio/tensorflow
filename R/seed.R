@@ -6,7 +6,6 @@
 #' and TensorFlow. GPU computations and CPU parallelism will also be disabled by
 #' default.
 #'
-#' @inheritParams reticulate py_set_seed
 #'
 #' @param seed A single value, interpreted as an integer
 #' @param disable_gpu `TRUE` to disable GPU execution (see *Parallelism* below).
