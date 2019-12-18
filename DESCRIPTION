@@ -46,9 +46,9 @@ Imports:
     yaml,
     rstudioapi (>= 0.7)
 Roxygen: list(markdown = TRUE)
-Suggests: testthat, keras, tfestimators
+Suggests: testthat, keras, tfestimators, callr
 RoxygenNote: 7.0.1
-reticulate@R:
+Config/reticulate:
   list(
     packages = list(
       list(package = "tensorflow", pip = TRUE)

@@ -25,9 +25,8 @@ install_tensorflow()
 You can confirm that the installation succeeded with:
 
 ```r
-sess = tf$Session()
-hello <- tf$constant('Hello, TensorFlow!')
-sess$run(hello)
+hello <- tf$constant("Hello")
+print(hello)
 ```
 
 This will provide you with a default installation of TensorFlow suitable for getting started with the tensorflow R package. See the [article on installation](https://tensorflow.rstudio.com/installation.html) to learn about more advanced options, including installing a version of TensorFlow that takes advantage of Nvidia GPUs if you have the correct CUDA libraries installed.
