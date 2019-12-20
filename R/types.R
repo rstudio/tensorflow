@@ -24,12 +24,14 @@ tensor_shape_to_list <- function(x) {
 
 #' @export
 `[.tensorflow.python.framework.tensor_shape.TensorShape` <- function(x, i) {
+  stopifnot(i>0)
   l <- tensor_shape_to_list(x)
   l[i]
 }
 
 #' @export
 `[[.tensorflow.python.framework.tensor_shape.TensorShape` <- function(x, i) {
+  stopifnot(i>0)
   l <- tensor_shape_to_list(x)
   l[[i]]
 }
