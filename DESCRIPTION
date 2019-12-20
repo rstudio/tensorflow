@@ -46,7 +46,11 @@ Imports:
     yaml,
     rstudioapi (>= 0.7)
 Roxygen: list(markdown = TRUE)
-Suggests: testthat, keras, tfestimators, callr
+Suggests: 
+    testthat (>= 2.1.0),
+    keras,
+    tfestimators,
+    callr
 RoxygenNote: 7.0.1
 Config/reticulate:
   list(

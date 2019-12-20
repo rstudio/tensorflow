@@ -14,7 +14,22 @@ shape <- function(...) {
   })
 }
 
+tensor_shape_to_list <- function(x) {
+  l <- x$as_list()
+  if (inherits(l, "python.builtin.object")) {
+    l <- reticulate::py_to_r(l)
+  }
+  l <- as.list(l)
+}
+
 #' @export
-py_to_r.tensorflow.python.framework.tensor_shape.TensorShape <- function(x) {
-  x$as_list()
+`[.tensorflow.python.framework.tensor_shape.TensorShape` <- function(x, i) {
+  l <- tensor_shape_to_list(x)
+  l[i]
+}
+
+#' @export
+`[[.tensorflow.python.framework.tensor_shape.TensorShape` <- function(x, i) {
+  l <- tensor_shape_to_list(x)
+  l[[i]]
 }
