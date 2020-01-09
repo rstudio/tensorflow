@@ -19,11 +19,11 @@ matrix:
       env:
         - TENSORFLOW_VERSION="default"
         - TENSORFLOW_EAGER="TRUE"
-    - name: "Tensorflow (2.0.0)"
+    - name: "TensorFlow (2.0.0)"
       env:
         - TENSORFLOW_VERSION="2.0.0"
         - TENSORFLOW_TEST_EXAMPLES=""
-    - name: "Tensorflow (1.14)"
+    - name: "TensorFlow (1.14)"
       env:
         - TENSORFLOW_VERSION="1.14"
         - TENSORFLOW_TEST_EXAMPLES=""
