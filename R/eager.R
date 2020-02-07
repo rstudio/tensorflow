@@ -35,7 +35,10 @@
 #' @export
 tfe_enable_eager_execution <- function(
   config = NULL, device_policy = c("explicit", "warn", "silent")) {
-
+  # if eager execution is already running it will throw an error
+  if (tf$executing_eagerly()) {
+    stop('Tensorflow eager execution is already running')
+  }
   # alias eager mode (error if not available in this version of tf)
   contrib <- tf$contrib
   if (py_has_attr(contrib, "eager")) {
