@@ -418,9 +418,12 @@ test_that("all_dims()", {
   x3.t <- tf$constant(x3.r)
   x4.t <- tf$constant(x4.r)
 
-  expect_equal(grab( x1.t[all_dims()] ), x1.r[])
-
   options(tensorflow.extract.one_based = TRUE)
+
+  expect_equal(grab( x1.t[all_dims()]     ),  x1.r[]  )
+  expect_equal(grab( x1.t[1, all_dims()]  ),  x1.r[1] )
+  expect_equal(grab( x1.t[all_dims(), 1]  ),  x1.r[1] )
+
   # as.array() because tf returns 1d arrays, not bare atomic vectors
   expect_equal(grab( x2.t[all_dims()]    ), as.array( x2.r[,]  ))
   expect_equal(grab( x2.t[1, all_dims()]  ), as.array( x2.r[1,] ))
