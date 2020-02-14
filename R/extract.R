@@ -102,7 +102,7 @@
 
     if (length(dropNULL(dots)) != py_len(x$shape)) {  # NULL == tf$newaxis
       is_ellipsis <- vapply(dots, is_py_ellipsis, FALSE)
-      if(length(dropNULL(dots)) > py_len(x$shape))
+      if(length(dropNULL(dots[!is_ellipsis])) > py_len(x$shape))
         stop( "Incorrect number of dimensions supplied. ", py_len(x$shape),
           " required, but received ", length(dropNULL(dots)))
       else if (!any(is_ellipsis)) warning(
