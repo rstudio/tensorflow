@@ -66,6 +66,7 @@ addons:
       python3-pip
       python3-virtualenv
       python3-venv
+      python3-setuptools
 
 before_script:
   - python3 -m pip install --upgrade --ignore-installed --user travis virtualenv
