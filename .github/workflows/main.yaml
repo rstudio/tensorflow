@@ -46,6 +46,7 @@ jobs:
         run: |
           Rscript -e "remotes::install_local()"
           Rscript -e "tensorflow::install_tensorflow(version = Sys.getenv('TF_VERSION'))"
+          Rscript -e "reticulate::py_install('IPython')"
       - name: Check
         continue-on-error: ${{ matrix.allow_failure }}
         run: Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
