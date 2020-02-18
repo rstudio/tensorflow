@@ -16,3 +16,4 @@ testenv
 MNIST-data
 ^appveyor\.yml$
 ^CRAN-RELEASE$
+^\.github.*$

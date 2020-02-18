@@ -1,0 +1,52 @@
+on: [push, pull_request]
+
+name: R-CMD-check
+
+jobs:
+  R-CMD-check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['windows-latest', 'macOS-latest', 'ubuntu-16.04']
+        tf: ['1.14.0', '1.15.2', '2.0.1', '2.1.0', 'nightly']
+        include:
+          - os: ubuntu-16.04
+            cran: https://demo.rstudiopm.com/all/__linux__/xenial/latest
+          - tf: nightly
+            allow_failure: true
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os }} (TF ${{ matrix.tf }})
+    env:
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+      TF_VERSION: ${{ matrix.tf }}
+      PIP_NO_WARN_SCRIPT_LOCATION: false
+      RETICULATE_AUTOCONFIGURE: 'FALSE'
+      CRAN: ${{ matrix.cran }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: r-lib/actions/setup-r@master
+      - uses: r-lib/actions/setup-pandoc@master
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        env:
+          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        run: |
+          Rscript -e "install.packages('remotes')" -e "remotes::install_github('r-hub/sysreqs')"
+          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
+          sudo -s eval "$sysreqs"
+      - name: Install dependencies
+        run: Rscript -e "install.packages('remotes')" -e "remotes::install_deps(dependencies = TRUE)" -e "remotes::install_cran('rcmdcheck')"
+      - name: Install Python
+        run: |
+          Rscript -e "remotes::install_github('rstudio/reticulate')"
+          Rscript -e "reticulate::install_miniconda()"
+          Rscript -e "reticulate::conda_create('r-reticulate', packages = 'python==3.6.9')"
+      - name: Install TensorFlow
+        run: |
+          Rscript -e "remotes::install_local()"
+          Rscript -e "tensorflow::install_tensorflow(version = Sys.getenv('TF_VERSION'))"
+          Rscript -e "reticulate::py_install('IPython', pip = TRUE)"
+      - name: Check
+        continue-on-error: ${{ matrix.allow_failure == 'true'}}
+        run: Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
