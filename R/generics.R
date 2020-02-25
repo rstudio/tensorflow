@@ -45,8 +45,10 @@
 "length.tensorflow.tensor" <- function(x) {
   if (py_is_null_xptr(x))
     length(NULL)
+  else if(identical(dx <- dim(x), list()))
+    1L
   else
-    Reduce(`*`, dim(x))
+    Reduce(`*`, dx)
 }
 
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/InternalMethods.html
@@ -227,6 +229,11 @@
   log(x, base = 10)
 }
 
+#' @export
+#' @method log1p tensorflow.tensor
+log1p.tensorflow.tensor <- function(x) {
+  tf$math$log1p(x)
+}
 
 #' @export
 "cos.tensorflow.tensor" <- function(x) {
