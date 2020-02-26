@@ -20,11 +20,8 @@ library(tensorflow)
 hello <- tf$constant('Hello, TensorFlow!')
 zeros <- tf$Variable(tf$zeros(shape(1L)))
 
-sess <- tf$Session()
-sess$run(tf$global_variables_initializer())
-
-sess$run(hello)
-sess$run(zeros)
+tf$print(hello)
+tf$print(zeros)
 }
 }
 \keyword{datasets}
