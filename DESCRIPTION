@@ -51,7 +51,7 @@ Suggests:
     keras,
     tfestimators,
     callr
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
 Config/reticulate:
   list(
     packages = list(
