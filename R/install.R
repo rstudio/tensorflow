@@ -84,7 +84,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
 
 parse_tensorflow_version <- function(version) {
 
-  default_version <- "2.0.0"
+  default_version <- "2.1.0"
 
   ver <- list(
     version = default_version,
