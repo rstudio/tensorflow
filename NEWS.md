@@ -1,3 +1,9 @@
+## TensorFlow 2.2.0 (CRAN)
+
+- Bugfix with `all_dims` (#398)
+
+- Indexing for TensorShape & `py_to_r` conversion (#379, #388)
+
 ## TensorFlow 2.0.0 (CRAN)
 
 - Upgraded default installed version to 2.0.0.
