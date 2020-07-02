@@ -59,4 +59,4 @@ Config/reticulate:
     )
   )
 Remotes:
-    rstudio/keras#1080
+    rstudio/keras
