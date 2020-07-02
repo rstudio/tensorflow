@@ -1,3 +1,7 @@
+## TensorFlow (Unreleased)
+
+- Fixed error with `use_session_with_seed` (#428)
+
 ## TensorFlow 2.2.0 (CRAN)
 
 - Bugfix with `all_dims` (#398)
