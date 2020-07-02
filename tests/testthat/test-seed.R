@@ -1,5 +1,4 @@
 test_that("use_session_with_seed works", {
-  skip("depending on keras fix")
   skip_if_no_tensorflow()
 
   f <- function() {
