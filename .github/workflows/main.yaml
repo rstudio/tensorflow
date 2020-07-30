@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['windows-latest', 'macOS-latest', 'ubuntu-16.04']
-        tf: ['1.14.0', '1.15.2', '2.0.1', '2.1.0', '2.2.0', 'nightly']
+        tf: ['1.15.2', '2.0.1', '2.1.0', '2.2.0', '2.3.0', 'nightly']
         include:
           - os: ubuntu-16.04
             cran: https://demo.rstudiopm.com/all/__linux__/xenial/latest
