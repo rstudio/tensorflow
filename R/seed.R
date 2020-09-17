@@ -70,7 +70,7 @@ use_session_with_seed <- function(seed,
 
   # disable CUDA if requested
   if (disable_gpu) {
-    Sys.setenv(CUDA_VISIBLE_DEVICES = "")
+    Sys.setenv(CUDA_VISIBLE_DEVICES = "-1")
     disabled <- c(disabled, "GPU")
   }
 
