@@ -4,7 +4,9 @@
 \name{tf}
 \alias{tf}
 \title{Main TensorFlow module}
-\format{TensorFlow module}
+\format{
+TensorFlow module
+}
 \usage{
 tf
 }
