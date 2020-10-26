@@ -6,7 +6,6 @@
 #' and TensorFlow. GPU computations and CPU parallelism will also be disabled by
 #' default.
 #'
-#' @inheritParams reticulate py_set_seed
 #'
 #' @param seed A single value, interpreted as an integer
 #' @param disable_gpu `TRUE` to disable GPU execution (see *Parallelism* below).
@@ -50,8 +49,15 @@ use_session_with_seed <- function(seed,
                                   disable_parallel_cpu = TRUE,
                                   quiet = FALSE) {
 
-  if (tf_version() >= "2.0")
+
+  msg <- "use_session_with_seed will be deprecated in the future. use set_random_seed instead."
+  if (tf_version() >= "2.0") {
     tf <- tf$compat$v1
+    warning(msg)
+  }
+
+  if (tf_version() >= "2.3")
+    stop(msg)
 
   # cast seed to integer
   seed <- as.integer(seed)
@@ -122,4 +128,51 @@ use_session_with_seed <- function(seed,
 
   # return  session invisibly
   invisible(sess)
+}
+
+#' Set random seed for TensorFlow
+#'
+#' Sets all random seeds needed to make TensorFlow code reproducible.
+#'
+#' @details
+#'
+#' This function should be used instead of [use_session_with_seed()] if
+#' you are using TensorFlow >= 2.0, as the concept of `session` doesn't
+#' really make sense anymore.
+#'
+#' This functions sets:
+#'
+#' - The R random seed with [set.seed()].
+#' - The python and Numpy seeds via ([reticulate::py_set_seed()]).
+#' - The TensorFlow seed with (`tf$random$set_seed()`)
+#'
+#' It also optionally disables the GPU execution as this is a potential
+#' source of non-reproducibility.
+#'
+#' @param seed A single value, interpreted as an integer
+#' @param disable_gpu `TRUE` to disable GPU execution (see *Parallelism* below).
+#'
+#' @export
+set_random_seed <- function(seed, disable_gpu = TRUE) {
+
+  if (tf_version() < "2.0")
+    stop("set_random_seed only works for TF >= 2.0")
+
+  # cast seed to integer
+  seed <- as.integer(seed)
+
+  # set R random seed
+  set.seed(seed)
+
+  # set Python/NumPy random seed
+  py_set_seed(seed)
+
+  # set tensorflow random seed
+  tensorflow::tf$random$set_seed(seed)
+
+  if (disable_gpu) {
+    Sys.setenv(CUDA_VISIBLE_DEVICES = "-1")
+  }
+
+  invisible(NULL)
 }
