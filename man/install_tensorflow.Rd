@@ -11,7 +11,7 @@ install_tensorflow(
   envname = NULL,
   extra_packages = NULL,
   restart_session = TRUE,
-  conda_python_version = "3.6",
+  conda_python_version = "3.8",
   ...
 )
 }
@@ -49,8 +49,8 @@ only occur within RStudio).}
 \item{conda_python_version}{the python version installed in the created conda
 environment. Python 3.6 is installed by default.}
 
-\item{...}{other arguments passed to \code{\link[reticulate:conda_install]{reticulate::conda_install()}} or
-\code{\link[reticulate:virtualenv_install]{reticulate::virtualenv_install()}}.}
+\item{...}{other arguments passed to \code{\link[reticulate:conda-tools]{reticulate::conda_install()}} or
+\code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}.}
 }
 \description{
 Install TensorFlow and its dependencies
