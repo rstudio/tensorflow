@@ -44,7 +44,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                envname = NULL,
                                extra_packages = NULL,
                                restart_session = TRUE,
-                               conda_python_version = "3.6",
+                               conda_python_version = "3.7",
                                ...) {
 
   # verify 64-bit
@@ -84,7 +84,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
 
 parse_tensorflow_version <- function(version) {
 
-  default_version <- "2.2.0"
+  default_version <- "2.4"
 
   ver <- list(
     version = default_version,
