@@ -2,6 +2,7 @@
 
 - Fixed error with `use_session_with_seed` (#428)
 - Added a new `set_random_seed` function that makes more sense for TensorFlow >= 2.0 (#442)
+- Updated the default version of TensorFlow to 2.4 as well as the default Python to 3.7
 
 ## TensorFlow 2.2.0 (CRAN)
 
