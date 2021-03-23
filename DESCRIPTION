@@ -58,5 +58,3 @@ Config/reticulate:
       list(package = "tensorflow", pip = TRUE)
     )
   )
-Remotes:
-    rstudio/keras
