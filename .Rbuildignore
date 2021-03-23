@@ -17,3 +17,4 @@ MNIST-data
 ^appveyor\.yml$
 ^CRAN-RELEASE$
 ^\.github.*$
+^cran-comments\.md$
