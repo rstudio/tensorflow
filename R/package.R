@@ -212,7 +212,7 @@ tf_gpu_configured <- function(verbose=TRUE) {
 
 # Build error message for TensorFlow configuration errors
 tf_config_error_message <- function() {
-  message <- "Installation of TensorFlow not found."
+  message <- "Valid installation of TensorFlow not found."
   config <- py_config()
   if (!is.null(config)) {
     if (length(config$python_versions) > 0) {
@@ -223,6 +223,20 @@ tf_config_error_message <- function() {
       message <- paste0(message, python_versions, sep = "\n")
     }
   }
+
+  python_error <- tryCatch({
+    import("tensorflow")
+    list(message = NULL)
+  },
+  error = function(e) {
+    on.exit(py_clear_last_error())
+    py_last_error()
+  })
+
+  message <- paste0(message,
+                    "\nPython exception encountered:\n ",
+                    python_error$message, "\n")
+
   message <- paste0(message,
                     "\nYou can install TensorFlow using the install_tensorflow() function.\n")
   message
