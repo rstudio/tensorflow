@@ -4,32 +4,30 @@
 \alias{tf_function}
 \title{Creates a callable TensorFlow graph from an R function.}
 \usage{
-tf_function(
-  f,
-  input_signature = NULL,
-  autograph = FALSE,
-  experimental_autograph_options = NULL
-)
+tf_function(f, input_signature = NULL, autograph = FALSE, ...)
 }
 \arguments{
 \item{f}{the function to be compiled}
 
-\item{input_signature}{A possibly nested sequence of \code{tf$TensorSpec} objects specifying the shapes
-and dtypes of the tensors that will be supplied to this function.
-If \code{NULL}, a separate function is instantiated for each inferred input signature.
-If \code{input_signature} is specified, every input to \code{f} must be a tensor.}
+\item{input_signature}{A possibly nested sequence of \code{tf$TensorSpec} objects
+specifying the shapes and dtypes of the tensors that will be supplied to
+this function. If \code{NULL}, a separate function is instantiated for each
+inferred input signature. If \code{input_signature} is specified, every input to
+\code{f} must be a tensor.}
 
-\item{autograph}{Whether autograph should be applied on \code{f} before tracing a graph.
-This allows for dynamic control flow (if's, loops etc.) in the traced graph.
-See https://www.tensorflow.org/guide/autograph for more information.
-Note: We set the default to \code{FALSE} until this functionality is available from R.}
+\item{autograph}{Whether autograph should be applied on \code{f} before tracing a
+graph. This allows for dynamic control flow (if's, loops etc.) in the
+traced graph. See https://www.tensorflow.org/guide/autograph for more
+information. Note: We set the default to \code{FALSE} until this functionality
+is available from R.}
 
-\item{experimental_autograph_options}{Experimental knobs (in the form of a tuple of
-\code{tf$autograph$Feature} values) to control behavior when autograph = TRUE.}
+\item{...}{additional arguments passed on to \code{tf.function} (vary based on
+Tensorflow version). See
+https://www.tensorflow.org/api_docs/python/tf/function for details.}
 }
 \description{
-\code{tf_function} constructs a callable that executes a TensorFlow graph created by tracing the
-TensorFlow operations in \code{f}.
-This allows the TensorFlow runtime to apply optimizations and exploit parallelism in the
-computation defined by \code{f}.
+\code{tf_function} constructs a callable that executes a TensorFlow graph created
+by tracing the TensorFlow operations in \code{f}. This allows the TensorFlow
+runtime to apply optimizations and exploit parallelism in the computation
+defined by \code{f}.
 }
