@@ -1,10 +1,5 @@
 context("generic methods")
 
-source("utils.R")
-
-as_tensor <- function(...) tf$convert_to_tensor(...)
-
-expect_near <- function(..., tol = 1e-5) expect_equal(..., tolerance = tol)
 
 test_that("log with supplied base works", {
 

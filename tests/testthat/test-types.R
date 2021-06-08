@@ -1,4 +1,3 @@
-source("utils.R")
 
 test_that("TensorShapes are converted to lists", {
 
