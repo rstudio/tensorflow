@@ -59,7 +59,7 @@
 
 #' @export
 "+.tensorflow.tensor" <- function(a, b) {
-  tf$add(a, b)
+  if (missing(b)) a else tf$add(a, b)
 }
 
 #' @export
@@ -205,6 +205,12 @@
 #' @export
 "exp.tensorflow.tensor" <- function(x) {
   tf$exp(x)
+}
+
+
+#' @export
+expm1.tensorflow.tensor <- function(x) {
+  tf$math$expm1(x)
 }
 
 

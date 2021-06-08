@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- Added support for expm1 S3 generic.
+- Improved error message in `tf_config()` on unsuccessful installation.
 # tensorflow 2.4.0
 
 - Fixed error with `use_session_with_seed` (#428)

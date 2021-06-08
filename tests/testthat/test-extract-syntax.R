@@ -1,6 +1,5 @@
 context("extract syntax")
 
-source("utils.R")
 
 null_out_all_extract_opts <- function() {
   opts <- options()

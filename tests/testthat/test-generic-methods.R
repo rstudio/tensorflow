@@ -1,10 +1,5 @@
 context("generic methods")
 
-source("utils.R")
-
-as_tensor <- function(...) tf$convert_to_tensor(...)
-
-expect_near <- function(..., tol = 1e-5) expect_equal(..., tolerance = tol)
 
 test_that("log with supplied base works", {
 
@@ -13,13 +8,13 @@ test_that("log with supplied base works", {
   r <- array(as.double(1:20))
   t <- as_tensor(r, dtype = tf$float32)
 
-  expect_near(r, grab(   log( as_tensor(exp(r)))))
-  expect_near(r, grab(log2(  as_tensor(2 ^ r)) ))
-  expect_near(r, grab(log10( as_tensor(10 ^ r)) ))
+  expect_near(r, grab(log(as_tensor(exp(r)))))
+  expect_near(r, grab(log2(as_tensor(2 ^ r))))
+  expect_near(r, grab(log10(as_tensor(10 ^ r))))
 
-  expect_near(r, grab(   log( exp(t))))
-  expect_near(r, grab(  log2(  2 ^ t )))
-  expect_near(r, grab( log10( 10 ^ t )))
+  expect_near(r, grab(log(exp(t))))
+  expect_near(r, grab(log2(2 ^ t)))
+  expect_near(r, grab(log10(10 ^ t)))
 
   # log() dispatches correctly without trying to change base
   expect_identical(grab(tf$math$log(t)), grab(log(t)))
@@ -29,180 +24,117 @@ test_that("log with supplied base works", {
 
 })
 
-test_that("sinpi dispatches correctly", {
 
-  skip_if_no_tensorflow()
 
-  r <- array(seq(0, 4, length.out = 100))
-  t <- as_tensor(r, dtype = tf$float32)
-
-  expect_near(sinpi(r), grab( sinpi(t) ))
-  expect_near(cospi(r), grab( cospi(t) ))
-  expect_near(tanpi(r), grab( tanpi(t) ))
-
-})
-
-test_generic <- function(name, fun, x, y = NULL) {
+test_generic <- function(name, ..., namespace = "base") {
   test_that(paste("Generic", name, "works"), {
-
     skip_if_no_tensorflow()
+    fn <- get(name, envir = asNamespace(namespace),
+              mode = 'function')
 
-    if (is.null(y)) {
-      out_r <- fun(x)
-      out_tf <- fun(tf$constant(x))
-    } else {
-      out_r <- fun(x, y)
-      out_tf <- fun(tf$constant(x), tf$constant(y))
+    suppress_warning_NaNs_produced({
+      out_r <- do.call(fn, list(...))
+    })
+
+    if(length(list(...)) == 1) {
+      out_tf <- grab(fn(tf$constant(..1)))
+      expect_equal(out_tf, out_r)
+      return()
     }
 
-    if (!tf$executing_eagerly() && inherits(out_tf, "tensorflow.tensor")) {
-
-      if (tf_version() >= "1.14")
-        sess <- tf$compat$v1$Session()
-      else
-        sess <- tf$Session()
-
-
-      out_tf <- sess$run(out_tf)
+    if(length(list(...)) == 2) {
+      expect_equal(out_r, grab(fn(tf$constant(..1), ..2)))
+      expect_equal(out_r, grab(fn(..1, tf$constant(..2))))
+      expect_equal(out_r, grab(fn(tf$constant(..1), tf$constant(..2))))
+      return()
     }
 
-    if (inherits(out_tf, "python.builtin.object"))
-      out_tf <- out_tf$numpy()
+    stop("bad test call, only unary and binary S3 generics supported")
 
-    expect_equal(out_tf, out_r)
   })
 }
 
-tensor_generics <- list(
-  dim,
-  length
-)
+# --------- binary operators ----------------
 
-for (fun in tensor_generics) {
-  test_generic(deparse(fun), fun, array(1000, dim = c(1,2,3)))
-  test_generic(deparse(fun), fun, array(1000, dim = c(1)))
-  test_generic(deparse(fun), fun, matrix(1:100))
+binary_arith_generics <- c("+", "-", "*", "/", "^", "%%", "%/%")
+binary_compr_generics <- c("==", "!=", "<", "<=", ">", ">=")
+
+
+for (fn in c(binary_arith_generics, binary_compr_generics)) {
+  test_generic(fn, rarr(1,2,3), rarr(1,2,3))
 }
 
 
-test_that("lenght works", {
-  skip_if_no_tensorflow()
-  expect_identical(length(1L), length(tf$constant(1L)))
-})
+binary_logic_generics <- c("&", "|")
+
+x <- lapply(expand.grid(e1 = c(TRUE, FALSE), e2 = c(TRUE, FALSE)),
+            as.array)
+
+for (fn in binary_logic_generics)
+  test_generic(fn, x$e1, x$e2)
 
 
-logical_generics <- list(
-  `==`,
-  `!=`,
-  `<`,
-  `<=`,
-  `>`,
-  `>=`
-)
+# ---------- unary operators ---------------
+unary_logic_generics <- c("!")
 
-for (fun in logical_generics) {
-  test_generic(
-    deparse(fun), fun,
-    x = array(runif(1000), dim = c(1,2,3)),
-    y = array(runif(1000), dim = c(1,2,3))
-  )
+for (fn in unary_logic_generics)
+  test_generic(fn, x$e1)
 
-  test_generic(
-    deparse(fun), fun,
-    x = array(1, dim = c(1,2,3)),
-    y = array(1, dim = c(1,2,3))
-  )
-}
 
-bool_operators <- list(
-  `&`,
-  `|`
-)
+unary_shape_generics <- c("dim", "length")
 
-for (fun in bool_operators) {
-  test_generic(deparse(fun), fun, TRUE, FALSE)
-  test_generic(deparse(fun), fun, TRUE, FALSE)
-}
-
-test_generic("!", `!`, TRUE)
-test_generic("!", `!`, FALSE)
-
-complex_generics <- list(
-  Re,
-  Im,
-  Conj,
-  Arg,
-  Mod
-)
-
-for (fun in complex_generics) {
-  test_generic(deparse(fun), fun, 1 + 2i)
-}
-
-binary_generics <- list(
-  `+`,
-  `-`,
-  `*`,
-  `/`,
-  `%/%`,
-  `%%`,
-  `^`
-)
-
-for (fun in binary_generics) {
-  test_generic(
-    deparse(fun), fun,
-    x = array(runif(1000), dim = c(1,2,3)),
-    y = array(runif(1000), dim = c(1,2,3))
-  )
-
-  test_generic(
-    deparse(fun), fun,
-    x = array(1, dim = c(1,2,3)),
-    y = array(1, dim = c(1,2,3))
-  )
-}
-
-generics <- list(
-  abs,
-  sign,
-  sqrt,
-  floor,
-  ceiling,
-  round,
-  exp,
-  log,
-  log1p,
-  log2,
-  log10,
-  cos,
-  sin,
-  tan,
-  sinpi,
-  cospi,
-  tanpi,
-  acos,
-  asin,
-  atan,
-  lgamma,
-  digamma
-)
-
-for (fun in generics) {
-  test_generic(
-    deparse(fun), fun,
-    x = array(runif(1000), dim = c(1,2,3))
-  )
-
-  test_generic(
-    deparse(fun), fun,
-    x = array(1, dim = c(1,2,3))
-  )
+for (fn in unary_shape_generics) {
+  test_generic(fn, arr(1))
+  test_generic(fn, arr(1, 2))
+  test_generic(fn, arr(1, 2, 3))
+  test_generic(fn, arr(3))
 }
 
 
 
+unary_math_generics <- c(
+
+  "-",
+  "+",
+
+  "abs",
+  "sign",
+  "sqrt",
+  "floor",
+  "ceiling",
+  "round",
+
+  "log",
+  "log1p",
+  "log2",
+  "log10",
+
+  "exp",
+  "expm1",
+
+  "cos",
+  "sin",
+  "tan",
+
+  "sinpi",
+  "cospi",
+  "tanpi",
+
+  "acos",
+  "asin",
+  "atan",
+
+  "lgamma",
+  "digamma"
+)
+
+for (fn in c(unary_math_generics)) {
+  test_generic(fn, arr(20))
+  test_generic(fn, rarr(20))
+}
 
 
+unary_complex_generics <- c("Re", "Im", "Conj", "Arg", "Mod")
 
-
+for (fn in unary_complex_generics)
+  test_generic(fn, 1 + 2i)

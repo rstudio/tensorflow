@@ -1,5 +1,4 @@
 context("Save")
-source("utils.R")
 
 train_mnist_graph <- function(sess) {
 
