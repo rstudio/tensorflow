@@ -209,6 +209,12 @@
 
 
 #' @export
+expm1.tensorflow.tensor <- function(x) {
+  tf$math$expm1(x)
+}
+
+
+#' @export
 "log.tensorflow.tensor" <- function(x, base = exp(1)) {
   if (is_tensor(base) || base != exp(1)) {
     base <- tf$convert_to_tensor(base, x$dtype)
