@@ -1,5 +1,6 @@
 # tensorflow (development version)
 
+- Tensorflow defaults to version 2.5
 - Added support for expm1 S3 generic.
 - Improved error message in `tf_config()` on unsuccessful installation.
 # tensorflow 2.4.0
