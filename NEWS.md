@@ -1,5 +1,6 @@
 # tensorflow (development version)
 
+- Added S3 generic `as_tensor`.
 - Added support for additional arguments in `tf_function()` (e.g., `jit_compile`) 
 - `tfe_enable_eager_execution` is deprecated. Eager mode has been the default since TF version 2.0.
 - Tensorflow defaults to version 2.5
