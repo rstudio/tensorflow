@@ -35,7 +35,6 @@ URL: https://github.com/rstudio/tensorflow
 BugReports: https://github.com/rstudio/tensorflow/issues
 SystemRequirements: TensorFlow (https://www.tensorflow.org/)
 Encoding: UTF-8
-LazyData: true
 Depends: R (>= 3.1)
 Imports:
     config,
