@@ -1,9 +1,9 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 2.4.0.9100
+Version: 2.5.0
 Authors@R: c(
-  person("Daniel", "Falbel", role = c("ctb", "cph", "cre"), email = "daniel@rstudio.com"),
+  person("Daniel", "Falbel", role = c("ctb", "cph"), email = "daniel@rstudio.com"),
   person("JJ", "Allaire", role = c("aut", "cph")),
   person(family = "RStudio", role = c("cph", "fnd")),
   person("Yuan", "Tang", role = c("aut", "cph"),
@@ -13,7 +13,8 @@ Authors@R: c(
          email = "edd@debian.org"),
   person("Nick", "Golding", role = c("ctb", "cph"),
          email = "nick.golding.research@gmail.com"),
-  person("Tomasz", "Kalinowski", role = c("ctb", "cph")),
+  person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"), 
+         email = "tomasz.kalinowski@rstudio.com"),
   person(family = "Google Inc.", role = c("ctb", "cph"),
          comment = "Examples and Tutorials")
   )
@@ -34,7 +35,6 @@ URL: https://github.com/rstudio/tensorflow
 BugReports: https://github.com/rstudio/tensorflow/issues
 SystemRequirements: TensorFlow (https://www.tensorflow.org/)
 Encoding: UTF-8
-LazyData: true
 Depends: R (>= 3.1)
 Imports:
     config,
