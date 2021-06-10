@@ -31,8 +31,6 @@ arr <- function(..., mode = "double", gen = seq_len)
 set.seed(42)
 rarr <- function(...) arr(..., gen=runif)
 
-as_tensor <- function(...) tf$convert_to_tensor(...)
-
 expect_near <- function(..., tol = 1e-5) expect_equal(..., tolerance = tol)
 
 

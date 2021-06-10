@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- Added S3 generic `as_tensor()`.
+
 # tensorflow 2.5.0
 
 - Updated default Tensorflow version to 2.5.
