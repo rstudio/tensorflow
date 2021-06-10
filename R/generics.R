@@ -336,3 +336,59 @@ switch_fun_if_tf <- function(x, y, version = "1.14") {
   else
     y
 }
+
+
+
+#' as_tensor
+#'
+#' Coerce objects to tensorflow tensors (potentially of a specific dtype). The
+#' provided default methods will call
+#' [`tf.convert_to_tensor`](https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor)
+#' and [`tf.cast`](https://www.tensorflow.org/api_docs/python/tf/cast) as
+#' appropriate.
+#'
+#' @param x object to convert
+#' @param dtype `NULL`, a tensorflow dtype (`tf$int32`), or something coercible
+#'   to one (e.g. a string `"int32"`)
+#' @param ..., ignored
+#' @param name `NULL` or a string. Useful for debugging in graph mode, ignored
+#'   while in eager mode.
+#'
+#' @return a tensorflow tensor
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' as_tensor(42, "int32")
+#' as_tensor(as_tensor(42))
+#' }
+as_tensor <- function(x, dtype = NULL, ..., name = NULL) UseMethod("as_tensor")
+
+#' @rdname as_tensor
+#' @export
+as_tensor.default <- function(x, dtype = NULL, ..., name = NULL) {
+  x <- tf$convert_to_tensor(x, dtype_hint = dtype, name = name)
+  if (is.null(dtype))
+    x
+  else
+    tf$cast(x, dtype, name = name)
+}
+
+#' @rdname as_tensor
+#' @export
+as_tensor.double <- function(x, dtype = NULL, ..., name = NULL) {
+  if (!is.null(dtype)) {
+    dtype <- tf$as_dtype(dtype)
+    if (dtype$is_integer) {
+      # tf.cast() overflows quietly, at least R raises a warning (and produces NA)
+      if (dtype$max <= .Machine$integer.max)
+        storage.mode(x) <- "integer"
+
+      if (anyNA(x))
+        stop("converting R numerics with NA values to integer dtypes not supported")
+    }
+  }
+
+  NextMethod()
+}

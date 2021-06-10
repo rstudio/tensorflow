@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['windows-latest', 'macOS-latest', 'ubuntu-16.04']
-        tf: ['2.1.3', '2.2.2', '2.3.2', '2.4.1', '2.5.0' 'nightly']
+        tf: ['2.1.3', '2.2.2', '2.3.2', '2.4.1', '2.5.0', 'nightly']
         include:
           - os: ubuntu-16.04
             cran: https://demo.rstudiopm.com/all/__linux__/xenial/latest

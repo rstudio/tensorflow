@@ -1,10 +1,14 @@
 # tensorflow (development version)
 
 - Changed default in `tf_function()` to `autograph=TRUE`.
-- Added support for additional arguments in `tf_function()` (e.g., `jit_compile`) 
+- Added S3 generic `as_tensor()`.
+
+# tensorflow 2.5.0
+
+- Updated default Tensorflow version to 2.5.
+- Added support for additional arguments in `tf_function()` (e.g., `jit_compile`)
+- Added support for `expm1` S3 generic.
 - `tfe_enable_eager_execution` is deprecated. Eager mode has been the default since TF version 2.0.
-- Tensorflow defaults to version 2.5
-- Added support for expm1 S3 generic.
 - Improved error message in `tf_config()` on unsuccessful installation.
 
 # tensorflow 2.4.0
