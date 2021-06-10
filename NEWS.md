@@ -1,5 +1,6 @@
 # tensorflow (development version)
 
+- Changed default in `tf_function()` to `autograph=TRUE`.
 - Added S3 generic `as_tensor()`.
 
 # tensorflow 2.5.0

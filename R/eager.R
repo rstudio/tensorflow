@@ -102,31 +102,44 @@ as.logical.tensorflow.python.ops.variables.Variable <- as.logical.python.builtin
 #' runtime to apply optimizations and exploit parallelism in the computation
 #' defined by `f`.
 #'
+#' A guide to getting started with
+#' [`tf.function`](https://www.tensorflow.org/api_docs/python/tf/function) can
+#' be found [here](https://www.tensorflow.org/guide/function).
+#'
 #' @param f the function to be compiled
 #' @param input_signature A possibly nested sequence of `tf$TensorSpec` objects
 #'   specifying the shapes and dtypes of the tensors that will be supplied to
 #'   this function. If `NULL`, a separate function is instantiated for each
 #'   inferred input signature. If `input_signature` is specified, every input to
 #'   `f` must be a tensor.
-#' @param autograph Whether autograph should be applied on `f` before tracing a
-#'   graph. This allows for dynamic control flow (if's, loops etc.) in the
-#'   traced graph. See https://www.tensorflow.org/guide/autograph for more
-#'   information. Note: We set the default to `FALSE` until this functionality
-#'   is available from R.
+#' @param autograph TRUE or FALSE. If TRUE (the default), you can use tensors in
+#'   R control flow expressions `if`, `while`, `for` and `break` and they will
+#'   be traced into the tensorflow graph. A guide to getting started and
+#'   additional details can be found:
+#'   [here](https://t-kalinowski.github.io/tfautograph/)
 #' @param ... additional arguments passed on to `tf.function` (vary based on
 #'   Tensorflow version). See
-#'   https://www.tensorflow.org/api_docs/python/tf/function for details.
+#'   [here](https://www.tensorflow.org/api_docs/python/tf/function#args_1) for
+#'   details.
 #'
 #' @export
 tf_function <- function(f,
                         input_signature = NULL,
-                        autograph = FALSE, # default will change to TRUE in TF 2.6
+                        autograph = TRUE,
                         ...) {
+  if (!is.function(f))
+    stop("`f` must be an R function")
 
-  if(!isFALSE(autograph)) stop("Autograph functionality is not (yet) supported from R.")
+  if (!(isTRUE(autograph) || isFALSE(autograph)))
+    stop("`autograph` must be TRUE or FALSE")
 
-  args <- list(py_func(f), input_signature, autograph, ...)
+  if (autograph) {
+    # Can't register tfautograph in Imports yet due to circular dependency
+    if(!requireNamespace("tfautograph", quietly=TRUE))
+      stop('"tfautograph" package required if autograph=TRUE. Please run install.packages("tfautograph")')
+    f <- tfautograph::autograph(f)
+  }
 
+  args <- list(py_func(f), input_signature, FALSE, ...)
   do.call(tf$`function`, args)
 }
-

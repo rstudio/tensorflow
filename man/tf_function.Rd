@@ -4,7 +4,7 @@
 \alias{tf_function}
 \title{Creates a callable TensorFlow graph from an R function.}
 \usage{
-tf_function(f, input_signature = NULL, autograph = FALSE, ...)
+tf_function(f, input_signature = NULL, autograph = TRUE, ...)
 }
 \arguments{
 \item{f}{the function to be compiled}
@@ -15,19 +15,25 @@ this function. If \code{NULL}, a separate function is instantiated for each
 inferred input signature. If \code{input_signature} is specified, every input to
 \code{f} must be a tensor.}
 
-\item{autograph}{Whether autograph should be applied on \code{f} before tracing a
-graph. This allows for dynamic control flow (if's, loops etc.) in the
-traced graph. See https://www.tensorflow.org/guide/autograph for more
-information. Note: We set the default to \code{FALSE} until this functionality
-is available from R.}
+\item{autograph}{TRUE or FALSE. If TRUE (the default), you can use tensors in
+R control flow expressions \code{if}, \code{while}, \code{for} and \code{break} and they will
+be traced into the tensorflow graph. A guide to getting started and
+additional details can be found:
+\href{https://t-kalinowski.github.io/tfautograph/}{here}}
 
 \item{...}{additional arguments passed on to \code{tf.function} (vary based on
 Tensorflow version). See
-https://www.tensorflow.org/api_docs/python/tf/function for details.}
+\href{https://www.tensorflow.org/api_docs/python/tf/function#args_1}{here} for
+details.}
 }
 \description{
 \code{tf_function} constructs a callable that executes a TensorFlow graph created
 by tracing the TensorFlow operations in \code{f}. This allows the TensorFlow
 runtime to apply optimizations and exploit parallelism in the computation
 defined by \code{f}.
+}
+\details{
+A guide to getting started with
+\href{https://www.tensorflow.org/api_docs/python/tf/function}{\code{tf.function}} can
+be found \href{https://www.tensorflow.org/guide/function}{here}.
 }
