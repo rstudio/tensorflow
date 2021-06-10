@@ -33,7 +33,7 @@ runtime to apply optimizations and exploit parallelism in the computation
 defined by \code{f}.
 }
 \details{
-An guide to getting started with
+A guide to getting started with
 \href{https://www.tensorflow.org/api_docs/python/tf/function}{\code{tf.function}} can
 be found \href{https://www.tensorflow.org/guide/function}{here}.
 }

@@ -102,7 +102,7 @@ as.logical.tensorflow.python.ops.variables.Variable <- as.logical.python.builtin
 #' runtime to apply optimizations and exploit parallelism in the computation
 #' defined by `f`.
 #'
-#' An guide to getting started with
+#' A guide to getting started with
 #' [`tf.function`](https://www.tensorflow.org/api_docs/python/tf/function) can
 #' be found [here](https://www.tensorflow.org/guide/function).
 #'
@@ -117,7 +117,6 @@ as.logical.tensorflow.python.ops.variables.Variable <- as.logical.python.builtin
 #'   be traced into the tensorflow graph. A guide to getting started and
 #'   additional details can be found:
 #'   [here](https://t-kalinowski.github.io/tfautograph/)
-#'
 #' @param ... additional arguments passed on to `tf.function` (vary based on
 #'   Tensorflow version). See
 #'   [here](https://www.tensorflow.org/api_docs/python/tf/function#args_1) for
