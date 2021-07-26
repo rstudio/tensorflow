@@ -1,7 +1,28 @@
 # tensorflow (development version)
 
 - Changed default in `tf_function()` to `autograph=TRUE`.
+
 - Added S3 generic `as_tensor()`.
+
+- tensorflow now imports package:tfautograph
+
+- tensorflow no longer imports package:jsonlite
+
+- Refactored `install_tensorflow()`.
+  - Potentially breaking change: numeric versions supplied without a patchlevel now automatically pull the latest patch release.
+    (e.g. `install_tensorflow(version="2.4")` will install `"2.4.2"`. Previously it would install "2.4.0")
+
+- Removed "Config/reticulate" declaration from DESCRIPTION.
+  - Setting `RETICULATE_AUTOCONFIGURE=FALSE` environment variable when using non-default tensorflow installations (e.g., 'tensorflow-cpu') no longer required.
+  - Users will have to call `install_tensorflow()` for automatic installation.
+
+- Refactored automated tests to closer match the default installation procedure
+  and compute environment of most user.
+
+- Expanded Ci test coverage to include R devel, oldrel and 3.6.
+
+- Fixed an issue where extra packages with version constraints like
+  `install_tensorflow(extra_packages = "Pillow<8.3")` were not quoted properly.
 
 # tensorflow 2.5.0
 
@@ -45,5 +66,3 @@
 - added option to silence TF CPP info output
 
 - `tf_gpu_configured` function to check if GPU was correctly
-
-

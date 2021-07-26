@@ -2,7 +2,7 @@
 % Please edit documentation in R/install.R
 \name{install_tensorflow_extras}
 \alias{install_tensorflow_extras}
-\title{Install additional Python packages alongside TensorFlow}
+\title{(Defunct) Install additional Python packages alongside TensorFlow}
 \usage{
 install_tensorflow_extras(packages, conda = "auto")
 }
@@ -15,5 +15,5 @@ installed within a conda environment.}
 }
 \description{
 This function is deprecated. Use the \code{extra_packages} argument to
-\code{install_tensorflow()} to install additional packages.
+\code{install_tensorflow()} or \code{reticulate::py_install()} to install additional packages.
 }
