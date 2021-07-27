@@ -1,11 +1,15 @@
 test_that("as_tensor works", {
 
-  test_is_tensor <- function(x, dtype) {
-    expect_s3_class(x, "tensorflow.tensor")
+  test_is_tensor <- function(x, dtype=NULL) {
+    expect("tensorflow.tensor" %in% class(x),
+           paste("Wrong S3 class, expected 'tensorflow.tensor', actual", class(x)))
+
+    failure_message <- sprintf(
+      "wrong type attributes. expected '%s', encountered '%s'", dtype, x$dtype)
     if(is.character(dtype))
-      expect_true(x$dtype[[dtype]])
+      expect(x$dtype[[dtype]], failure_message)
     else if(!is.null(dtype))
-      expect_true(x$dtype == tf$as_dtype(dtype))
+      expect(x$dtype == tf$as_dtype(dtype), failure_message)
   }
 
   test_is_tensor(as_tensor(3), 'is_floating')

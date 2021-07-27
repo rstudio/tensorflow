@@ -2,59 +2,124 @@ on:
   push:
     branches:
       - master
+      - main
   pull_request:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '21 3 * * MON'
 
 name: R-CMD-check
 
+defaults:
+  run:
+    shell: Rscript {0}
+
 jobs:
   R-CMD-check:
+    name: ${{ matrix.os }}, tf-${{ matrix.tf }}, R-${{ matrix.r}}
     strategy:
       fail-fast: false
       matrix:
-        os: ['windows-latest', 'macOS-latest', 'ubuntu-16.04']
-        tf: ['2.1.3', '2.2.2', '2.3.2', '2.4.1', '2.5.0', 'nightly']
         include:
-          - os: ubuntu-16.04
-            cran: https://demo.rstudiopm.com/all/__linux__/xenial/latest
-          - tf: nightly
-            allow_failure: true
+          - {os: 'ubuntu-20.04'  , tf: 'default', r: 'release'}
+          - {os: 'windows-latest', tf: 'default', r: 'release'}
+          - {os: 'macOS-latest'  , tf: 'default', r: 'release'}
+
+          - {os: 'ubuntu-20.04'  , tf: 'default', r: 'oldrel'}
+          - {os: 'windows-latest', tf: 'default', r: 'oldrel'}
+          - {os: 'macOS-latest'  , tf: 'default', r: 'oldrel'}
+
+          - {os: 'ubuntu-20.04', tf: 'default', r: '3.6'} # default R in ubuntu-20.04
+
+          # - {os: 'ubuntu-20.04'  , tf: 'release', r: 'release'}
+          # - {os: 'windows-latest', tf: 'release', r: 'release'}
+          # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
+
+          # - {os: 'ubuntu-20.04', tf: '2.5', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: '2.4', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: '2.3', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: '2.2', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: '2.1', r: 'release'}
+
+          # these are allowed to fail
+          - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
+          - {os: 'ubuntu-20.04', tf: '2.6.0rc1', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: 'nightly' , r: 'release'}
+
     runs-on: ${{ matrix.os }}
-    name: ${{ matrix.os }} (TF ${{ matrix.tf }})
+    continue-on-error: ${{ matrix.tf == 'nightly' || contains(matrix.tf, 'rc') || matrix.r == 'devel' }}
     env:
-      R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
-      TF_VERSION: ${{ matrix.tf }}
-      PIP_NO_WARN_SCRIPT_LOCATION: false
-      RETICULATE_AUTOCONFIGURE: 'FALSE'
-      CRAN: ${{ matrix.cran }}
+      R_REMOTES_NO_ERRORS_FROM_WARNINGS: 'true'
+      R_COMPILE_AND_INSTALL_PACKAGES: 'never'
 
     steps:
-      - uses: actions/checkout@v1
-      - uses: r-lib/actions/setup-r@master
-      - uses: r-lib/actions/setup-pandoc@master
+      - name: Configure RSPM
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          RSPM="https://packagemanager.rstudio.com/all/__linux__/$(lsb_release -cs)/latest"
+          echo "RSPM=$RSPM" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        id: setup-r
+        with:
+          r-version: ${{ matrix.r }}
+          Ncpus: '2L'
+          crayon.enabled: 'TRUE'
+
+      - uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Get Date
+        id: get-date
+        shell: bash
+        run: |
+          echo "::set-output name=year-week::$(date -u "+%Y-%U")"
+          echo "::set-output name=date::$(date -u "+%F")"
+
+      - name: Restore R package cache
+        uses: actions/cache@v2
+        id: r-package-cache
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}
+
+      - name: Install remotes
+        if: steps.r-package-cache.outputs.cache-hit != 'true'
+        run: install.packages("remotes")
+
       - name: Install system dependencies
         if: runner.os == 'Linux'
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        shell: bash
         run: |
-          Rscript -e "install.packages('remotes')" -e "remotes::install_github('r-hub/sysreqs')"
-          sysreqs=$(Rscript -e "cat(sysreqs::sysreq_commands('DESCRIPTION'))")
-          sudo -s eval "$sysreqs"
-      - name: Install dependencies
-        run: Rscript -e "install.packages('remotes')" -e "remotes::install_deps(dependencies = TRUE)" -e "remotes::install_cran('rcmdcheck')"
+          . /etc/os-release
+          while read -r cmd
+          do
+            echo "$cmd"
+            sudo $cmd
+          done < <(Rscript -e "writeLines(remotes::system_requirements('$ID-$VERSION_ID'))")
+
+      - name: Install package + deps
+        run: remotes::install_local(dependencies = TRUE, force = TRUE)
+
       - name: Install Miniconda
-        run: |
-          Rscript -e "remotes::install_github('rstudio/reticulate')"
-          Rscript -e "reticulate::install_miniconda()"
-      - if: runner.os == 'macOS'
-        run: echo "options(reticulate.conda_binary = reticulate:::miniconda_conda())" >> .Rprofile
+        run: reticulate::install_miniconda()
+
       - name: Install TensorFlow
-        run: |
-          Rscript -e "reticulate::conda_create('r-reticulate', packages = c('python==3.6.9'))"
-          Rscript -e "remotes::install_local()"
-          Rscript -e "tensorflow::install_tensorflow(version = Sys.getenv('TF_VERSION'))"
-          Rscript -e "reticulate::py_install('IPython', pip = TRUE)"
+        run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}-cpu')
+
+      - name: Install rcmdcheck
+        run: remotes::install_cran("rcmdcheck")
+
       - name: Check
-        continue-on-error: ${{ matrix.allow_failure == 'true'}}
-        run: Rscript -e "rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')"
+        run: rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')
+
+      - name: Show testthat output
+        if: always()
+        shell: bash
+        run: find check -name 'testthat.Rout*' -exec cat '{}' \; || true
+
+      - name: Don't use tar from old Rtools to store the cache
+        if: ${{ runner.os == 'Windows' && startsWith(steps.install-r.outputs.installed-r-version, '3') }}
+        shell: bash
+        run: echo "C:/Program Files/Git/usr/bin" >> $GITHUB_PATH

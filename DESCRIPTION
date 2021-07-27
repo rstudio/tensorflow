@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 2.5.0.9000
+Version: 2.5.0.9001
 Authors@R: c(
   person("Daniel", "Falbel", role = c("ctb", "cph"), email = "daniel@rstudio.com"),
   person("JJ", "Allaire", role = c("aut", "cph")),
@@ -13,20 +13,20 @@ Authors@R: c(
          email = "edd@debian.org"),
   person("Nick", "Golding", role = c("ctb", "cph"),
          email = "nick.golding.research@gmail.com"),
-  person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"), 
+  person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"),
          email = "tomasz.kalinowski@rstudio.com"),
   person(family = "Google Inc.", role = c("ctb", "cph"),
          comment = "Examples and Tutorials")
   )
-Description: Interface to 'TensorFlow' <https://www.tensorflow.org/>, 
+Description: Interface to 'TensorFlow' <https://www.tensorflow.org/>,
   an open source software library for numerical computation using data
-  flow graphs. Nodes in the graph represent mathematical operations, 
-  while the graph edges represent the multidimensional data arrays 
+  flow graphs. Nodes in the graph represent mathematical operations,
+  while the graph edges represent the multidimensional data arrays
   (tensors) communicated between them. The flexible architecture allows
-  you to deploy computation to one or more 'CPUs' or 'GPUs' in a desktop, 
+  you to deploy computation to one or more 'CPUs' or 'GPUs' in a desktop,
   server, or mobile device with a single 'API'. 'TensorFlow' was originally
-  developed by researchers and engineers working on the Google Brain Team 
-  within Google's Machine Intelligence research organization for the 
+  developed by researchers and engineers working on the Google Brain Team
+  within Google's Machine Intelligence research organization for the
   purposes of conducting machine learning and deep neural networks research,
   but the system is general enough to be applicable in a wide variety
   of other domains as well.
@@ -38,24 +38,17 @@ Encoding: UTF-8
 Depends: R (>= 3.1)
 Imports:
     config,
-    jsonlite (>= 1.2),
     processx,
     reticulate (>= 1.10),
     tfruns (>= 1.0),
     utils,
     yaml,
+    tfautograph (>= 0.3),
     rstudioapi (>= 0.7)
 Roxygen: list(markdown = TRUE)
-Suggests: 
+Suggests:
     testthat (>= 2.1.0),
     keras,
-    tfautograph,
     tfestimators,
     callr
 RoxygenNote: 7.1.1
-Config/reticulate:
-  list(
-    packages = list(
-      list(package = "tensorflow", pip = TRUE)
-    )
-  )

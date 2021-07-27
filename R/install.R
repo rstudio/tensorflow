@@ -1,27 +1,68 @@
 #' Install TensorFlow and its dependencies
 #'
-#' @inheritParams reticulate::conda_list
+#' `install_tensorflow()` installs just the tensorflow python package and it's
+#' direct dependencies. For a more complete installation that includes
+#' additional optional dependencies, use `keras::install_keras()`.
 #'
-#' @param method Installation method. By default, "auto" automatically finds a
-#'   method that will work in the local environment. Change the default to force
-#'   a specific installation method. Note that the "virtualenv" method is not
-#'   available on Windows (as this isn't supported by TensorFlow). Note also
-#'   that since this command runs without privilege the "system" method is
-#'   available only on Windows.
+#' @details You may be prompted you if you want it to download and install
+#'   miniconda if reticulate did not find a non-system installation of python.
+#'   Miniconda is the recommended installation method for most users, as it
+#'   ensures that the R python installation is isolated from other python
+#'   installations. All python packages will by default be installed into a
+#'   self-contained conda or venv environment named "r-reticulate". Note that
+#'   "conda" is the only supported method on Windows.
 #'
-#' @param version TensorFlow version to install. Up to and including TensorFlow 2.0,
-#'   specify "default" to install the CPU version of the latest release;
-#'   specify "gpu" to install the GPU version of the latest release.
-#'   Starting from TensorFlow 2.1, by default a version is installed that works
-#'   on both GPU- and CPU-only systems. Specify "cpu" to install a CPU-only version.
+#' @section Custom Installation: `install_tensorflow()` or
+#'   `keras::install_keras()` isn't required to use tensorflow with the
+#'   package. If you manually configure a python environment with the required
+#'   dependencies, you can tell R to use it by pointing reticulate at it,
+#'   commonly by setting an environment variable:
 #'
-#'   You can also provide a full major.minor.patch specification (e.g. "1.1.0"),
-#'   appending "-gpu" if you want the GPU version (e.g. "1.1.0-gpu").
+#'   ``` Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python") ```
 #'
-#'   Alternatively, you can provide the full URL to an installer binary (e.g.
-#'   for a nightly binary).
+#' @section Apple Silicon: Tensorflow on Apple Silicon is not officially
+#'   supported by the tensorflow maintainers. It is known that there can be
+#'   issues running the official Tensorflow package under Rosetta as well.
+#'   Fortunately, for the time being Apple has published a version of Tensorflow
+#'   compatible with M1 macs. Installation instructions can be found at:
+#'   \url{https://developer.apple.com/metal/tensorflow-plugin/}. Please note
+#'   that this is an experimental build of both python and tensorflow. After
+#'   following the instructions provided by Apple, you can advise reticulate to
+#'   use the that python installation by placing the following in your
+#'   `.Renviron` file:
 #'
-#' @param envname Name of Python environment to install within
+#'   ``` RETICULATE_PYTHON = ""~/tensorflow-metal/bin/python"" ```
+#'
+#' @section Additional Packages:
+#'
+#'   If you wish to add additional PyPI packages to your Keras / TensorFlow
+#'   environment you can either specify the packages in the `extra_packages`
+#'   argument of `install_tensorflow()` or `install_keras()`, or
+#'   alternatively install them into an existing environment using the
+#'   [reticulate::py_install()] function. Note that `install_keras()`
+#'   includes a set of additional python packages by default, see
+#'   `?keras::install_keras` for details.
+#'
+#' @md
+#'
+#' @inheritParams reticulate::py_install
+#' @param version TensorFlow version to install. Valid values include:
+#'
+#'   +  `"default"` installs  `r default_version`
+#'
+#'   + `"release"` installs the latest release version of tensorflow (which may
+#'   be incompatible with the current version of the R package)
+#'
+#'   + A version specification like `"2.4"` or `"2.4.0"`. Note that if the patch
+#'   version is not supplied, the latest patch release is installed (e.g.,
+#'   `"2.4"` today installs version "2.4.2")
+#'
+#'   + `nightly` for the latest available nightly build.
+#'
+#'   + To any specification, you can append "-cpu" to install the cpu version
+#'   only of the package (e.g., `"2.4-cpu"`)
+#'
+#'   + The full URL or path to a installer binary or python *.whl file.
 #'
 #' @param extra_packages Additional Python packages to install along with
 #'   TensorFlow.
@@ -29,13 +70,14 @@
 #' @param restart_session Restart R session after installing (note this will
 #'   only occur within RStudio).
 #'
-#' @param conda_python_version the python version installed in the created conda
-#'   environment. Python 3.6 is installed by default.
+#' @param python_version,conda_python_version the python version installed in
+#'   the created conda environment. Ignored when attempting to install with a
+#'   Python virtual environment.
 #'
 #' @param ... other arguments passed to [reticulate::conda_install()] or
-#'   [reticulate::virtualenv_install()].
+#'   [reticulate::virtualenv_install()], depending on the `method` used.
 #'
-#' @importFrom jsonlite fromJSON
+#' @seealso keras::install_keras()
 #'
 #' @export
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
@@ -45,7 +87,8 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                extra_packages = NULL,
                                restart_session = TRUE,
                                conda_python_version = "3.7",
-                               ...) {
+                               ...,
+                               python_version = conda_python_version) {
 
   # verify 64-bit
   if (.Machine$sizeof.pointer != 8) {
@@ -55,128 +98,106 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
 
   method <- match.arg(method)
 
-  # unroll version
-  ver <- parse_tensorflow_version(version)
+  # some special handling for windows
+  if (is_windows()) {
 
-  version <- ver$version
-  gpu <- ver$gpu
-  package <- ver$package
+    # conda is the only supported method on windows
+    method <- "conda"
 
-  extra_packages <- unique(extra_packages)
+    # confirm we actually have conda - let reticulate prompt miniconda installation
+    have_conda <- !is.null(tryCatch(conda_binary(conda), error = function(e) NULL))
+    if (!have_conda) {
+      stop("Tensorflow installation failed (no conda binary found)\n\n",
+           "Install Miniconda by running `reticulate::install_miniconda()` or ",
+           "install Anaconda for Python 3.x (https://www.anaconda.com/download/#windows) ",
+           "before installing Tensorflow.\n",
+           call. = FALSE)
+    }
+
+    # avoid DLL in use errors
+    if (py_available()) {
+      stop("You should call install_keras() only in a fresh ",
+           "R session that has not yet initialized Keras and TensorFlow (this is ",
+           "to avoid DLL in use errors during installation)")
+    }
+  }
+
+  packages <- unique(c(
+    parse_tensorflow_version(version),
+    as.character(extra_packages)
+  ))
+
+  # don't double quote if packages were shell quoted already
+  # TODO: patch quoting in reticulate::pip_install, or maybe py_install()
+  packages <- shQuote(gsub("[\"']", "", packages))
+
+  # message("Installing the python pip packages :\n",
+          # paste("  -", packages, collapse = "\n"))
 
   reticulate::py_install(
-    packages       = c(package, extra_packages),
+    packages       = packages,
     envname        = envname,
     method         = method,
     conda          = conda,
-    python_version = conda_python_version,
+    python_version = python_version,
     pip            = TRUE,
     ...
   )
 
   cat("\nInstallation complete.\n\n")
 
-  if (restart_session && rstudioapi::hasFun("restartSession"))
+  if (restart_session &&
+      requireNamespace("rstudioapi", quietly = TRUE) &&
+      rstudioapi::hasFun("restartSession"))
     rstudioapi::restartSession()
 
   invisible(NULL)
 }
 
+
+default_version <- numeric_version("2.5")
+
 parse_tensorflow_version <- function(version) {
+  # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'
 
-  default_version <- "2.5"
+  if(is.null(version) || is.na(version) || version %in% c("", "release"))
+    return("tensorflow")
 
-  ver <- list(
-    version = default_version,
-    gpu = NULL,
-    package = NULL
-  )
+  version <- as.character(version) # if numeric_version()
 
-  if (version == "default") {
+  # full path to whl.
+  if (grepl("^.*\\.whl$", version))
+    return(normalizePath(version))
 
-    ver$package <- paste0("tensorflow==", ver$version)
-
-    # default gpu version
-  } else if (version == "gpu") {
-
-    ver$gpu <- TRUE
-    ver$package <- paste0("tensorflow-gpu==", ver$version)
-
-    # gpu qualifier provided
-  } else if (grepl("-gpu$", version)) {
-
-    split <- strsplit(version, "-")[[1]]
-    ver$version <- split[[1]]
-    ver$gpu <- TRUE
-
-    # default cpu version
-  } else if (version == "cpu") {
-
-    ver$gpu <- FALSE
-    ver$package <- paste0("tensorflow-cpu==", ver$version)
-
-    # cpu qualifier provided
-  } else if (grepl("-cpu$", version)) {
-
-    split <- strsplit(version, "-")[[1]]
-    ver$version <- split[[1]]
-    ver$gpu <- FALSE
-
-
-    # full path to whl.
-  } else if (grepl("^.*\\.whl$", version)) {
-
-    ver$gpu <- NA
-    ver$version <- NA
-
-    if (grepl("^http", version))
-      ver$package <- version
-    else
-      ver$package <- normalizePath(version)
-
-    # another version
-  } else {
-
-    ver$version <- version
-
+  if (grepl("nightly", version)) {
+    if(!startsWith(version, "tf-"))
+      version <- paste0("tf-", version)
+    return(version)
   }
 
-  # find the right package for nightly and other versions
-  if (is.null(ver$package)) {
+  package <- "tensorflow"
+  if(grepl(".*(cpu|gpu)$", version)) {
+    # append {-cpu,-gpu} suffix to package
+    package <- sprintf("%s-%s", package, sub(".*-(cpu|gpu)$", "\\1", version))
 
-    if (ver$version == "nightly") {
-
-      if (is.null(ver$gpu)) {
-        ver$package <- "tf-nightly"
-      }
-      else if (ver$gpu) {
-        ver$package <- "tf-nightly-gpu"
-      } else {
-        ver$package <- "tf-nightly-cpu"
-      }
-
-    } else {
-
-      if (is.null(ver$gpu)) {
-        ver$package <- paste0("tensorflow==", ver$version)
-      } else if (ver$gpu) {
-        ver$package <- paste0("tensorflow-gpu==", ver$version)
-      } else  {
-        ver$package <- paste0("tensorflow-cpu==", ver$version)
-      }
-
-    }
-
+    # strip -?{cpu,gpu} suffix from version
+    version <- sub("(.*?)-?([cg]pu)$", "\\1", version)
   }
 
-  ver
+  if(version %in% c("default", ""))
+    version <- default_version
+
+  if(!grepl("[><=]", version))
+    version <- sprintf("==%s.*", version)
+
+  paste0(package, version)
 }
 
 
-#' Install additional Python packages alongside TensorFlow
+#' (Defunct) Install additional Python packages alongside TensorFlow
 #'
 #' This function is deprecated. Use the `extra_packages` argument to
-#' `install_tensorflow()` to install additional packages.
+#' `install_tensorflow()` or `reticulate::py_install()` to install additional packages.
 #'
 #' @param packages Python packages to install
 #' @param conda Path to conda executable (or "auto" to find conda using the PATH
@@ -185,7 +206,7 @@ parse_tensorflow_version <- function(version) {
 #'
 #' @export
 install_tensorflow_extras <- function(packages, conda = "auto") {
-  message("Extra packages not installed (this function is deprecated). \n",
-          "Use the extra_packages argument to install_tensorflow() to ",
+     stop("Extra packages not installed (this function is deprecated). \n",
+          "Use the extra_packages argument to install_tensorflow() or reticulate::py_install() to ",
           "install additional packages.")
 }
