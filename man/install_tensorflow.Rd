@@ -74,8 +74,8 @@ self-contained conda or venv environment named "r-reticulate". Note that
 }
 \section{Custom Installation}{
  \code{install_tensorflow()} or
-\code{keras::install_keras()} isn't required to use tensorflow with the
-package. If you manually configure a python environment with the required
+\code{keras::install_keras()} isn't required to use tensorflow with the package.
+If you manually configure a python environment with the required
 dependencies, you can tell R to use it by pointing reticulate at it,
 commonly by setting an environment variable:
 
@@ -86,15 +86,15 @@ commonly by setting an environment variable:
  Tensorflow on Apple Silicon is not officially
 supported by the tensorflow maintainers. It is known that there can be
 issues running the official Tensorflow package under Rosetta as well.
-Fortunately, for the time being Apple has published a version of Tensorflow
-compatible with M1 macs. Installation instructions can be found at:
-\url{https://developer.apple.com/metal/tensorflow-plugin/}. Please note
+Fortunately, for the time being Apple has published a custom version of
+Tensorflow compatible with M1 macs. Installation instructions can be found
+at: \url{https://developer.apple.com/metal/tensorflow-plugin/}. Please note
 that this is an experimental build of both python and tensorflow. After
 following the instructions provided by Apple, you can advise reticulate to
-use the that python installation by placing the following in your
+use that python installation by placing the following in your
 \code{.Renviron} file:
 
-\verb{RETICULATE_PYTHON = ""~/tensorflow-metal/bin/python""}
+\code{RETICULATE_PYTHON = "~/miniforge3/bin/python"}
 }
 
 \section{Additional Packages}{
@@ -102,11 +102,11 @@ use the that python installation by placing the following in your
 
 If you wish to add additional PyPI packages to your Keras / TensorFlow
 environment you can either specify the packages in the \code{extra_packages}
-argument of \code{install_tensorflow()} or \code{install_keras()}, or
-alternatively install them into an existing environment using the
-\code{\link[reticulate:py_install]{reticulate::py_install()}} function. Note that \code{install_keras()}
-includes a set of additional python packages by default, see
-\code{?keras::install_keras} for details.
+argument of \code{install_tensorflow()} or \code{install_keras()}, or alternatively
+install them into an existing environment using the
+\code{\link[reticulate:py_install]{reticulate::py_install()}} function. Note that \code{install_keras()} includes a
+set of additional python packages by default, see \code{?keras::install_keras}
+for details.
 }
 
 \seealso{
