@@ -155,7 +155,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
 }
 
 
-default_version <- numeric_version("2.5")
+default_version <- numeric_version("2.6")
 
 parse_tensorflow_version <- function(version) {
   # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'

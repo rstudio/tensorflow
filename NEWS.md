@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- Updated default Tensorflow version to 2.6.
+
 - Changed default in `tf_function()` to `autograph=TRUE`.
 
 - Added S3 generic `as_tensor()`.
@@ -23,6 +25,10 @@
 
 - Fixed an issue where extra packages with version constraints like
   `install_tensorflow(extra_packages = "Pillow<8.3")` were not quoted properly.
+  
+- Fixed an issue where valid tensor-like objects supplied to 
+  `base` in `log(x, base)` would raise an error.
+
 
 # tensorflow 2.5.0
 
