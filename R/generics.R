@@ -216,23 +216,24 @@ expm1.tensorflow.tensor <- function(x) {
 
 #' @export
 "log.tensorflow.tensor" <- function(x, base = exp(1)) {
-  if (is_tensor(base) || base != exp(1)) {
+  if (missing(base) || identical(base, exp(1)))
+    tf$math$log(x)
+  else {
     base <- tf$convert_to_tensor(base, x$dtype)
     tf$math$log(x) / tf$math$log(base)
-  } else
-    tf$math$log(x)
+  }
 }
 
 #' @export
 #' @method log2 tensorflow.tensor
 "log2.tensorflow.tensor" <- function(x) {
-  log(x, base = 2)
+  log.tensorflow.tensor(x, base = 2)
 }
 
 #' @export
 #' @method log10 tensorflow.tensor
 "log10.tensorflow.tensor" <- function(x) {
-  log(x, base = 10)
+  log.tensorflow.tensor(x, base = 10)
 }
 
 #' @export
