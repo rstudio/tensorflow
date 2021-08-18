@@ -220,7 +220,8 @@ expm1.tensorflow.tensor <- function(x) {
     tf$math$log(x)
   else {
     base <- tf$convert_to_tensor(base, x$dtype)
-    tf$math$log(x) / tf$math$log(base)
+    tf$truediv(tf$math$log(x),
+               tf$math$log(base))
   }
 }
 
@@ -263,19 +264,19 @@ log1p.tensorflow.tensor <- function(x) {
 #' @export
 #' @method sinpi tensorflow.tensor
 "sinpi.tensorflow.tensor" <- function(x) {
-  tf$sin(tf$constant(pi, dtype = x$dtype) * x)
+  tf$sin(tf$multiply(x, tf$constant(pi, x$dtype)))
 }
 
 #' @export
 #' @method cospi tensorflow.tensor
 "cospi.tensorflow.tensor" <- function(x) {
-  tf$cos(tf$constant(pi, x$dtype) * x)
+  tf$cos(tf$multiply(x, tf$constant(pi, x$dtype)))
 }
 
 #' @export
 #' @method tanpi tensorflow.tensor
 "tanpi.tensorflow.tensor" <- function(x) {
-  tf$tan(tf$constant(pi, x$dtype) * x)
+  tf$tan(tf$multiply(x, tf$constant(pi, x$dtype)))
 }
 
 #' @export
