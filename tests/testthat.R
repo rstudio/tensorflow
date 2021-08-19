@@ -1,4 +1,5 @@
 library(testthat)
 library(tensorflow)
 
-test_check("tensorflow")
+if (identical(Sys.getenv("NOT_CRAN"), "true"))
+  test_check("tensorflow")
