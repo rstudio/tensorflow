@@ -1,14 +1,16 @@
 # tensorflow (development version)
 
+# tensorflow 2.6.0
+
 - Updated default Tensorflow version to 2.6.
 
 - Changed default in `tf_function()` to `autograph=TRUE`.
 
 - Added S3 generic `as_tensor()`.
 
-- tensorflow now imports package:tfautograph
+- tfautograph added to Imports 
 
-- tensorflow no longer imports package:jsonlite
+- jsonlite removed from Imports, tfestimators removed from Suggests
 
 - Refactored `install_tensorflow()`.
   - Potentially breaking change: numeric versions supplied without a patchlevel now automatically pull the latest patch release.
@@ -21,13 +23,13 @@
 - Refactored automated tests to closer match the default installation procedure
   and compute environment of most user.
 
-- Expanded Ci test coverage to include R devel, oldrel and 3.6.
+- Expanded CI test coverage to include R devel, oldrel and 3.6.
 
 - Fixed an issue where extra packages with version constraints like
   `install_tensorflow(extra_packages = "Pillow<8.3")` were not quoted properly.
   
 - Fixed an issue where valid tensor-like objects supplied to 
-  `base` in `log(x, base)` would raise an error.
+  `log(x, base)`, `cospi()`, `tanpi()`, and `sinpi()` would raise an error.
 
 
 # tensorflow 2.5.0
