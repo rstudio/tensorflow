@@ -85,6 +85,8 @@ tf_v2 <- function() {
       # workaround to silence crash-causing deprecation warnings
       tryCatch(tf$python$util$deprecation$silence()$`__enter__`(),
                error = function(e) NULL)
+
+      message("Loaded Tensorflow version ", tf$version$VERSION)
     }
     ,
 

@@ -16,6 +16,11 @@
   `as.list`, `as.integer`, `as.numeric`, `as.double`, `py_str`
   (joining previous generics `[` and `[[`).
   See `?shape` for extended examples.
+  
+- A message with the Tensorflow version is now shown when the
+  python module is loaded, e.g: "Loaded Tensorflow version 2.6.0"
+
+
 # tensorflow 2.6.0
 
 - Updated default Tensorflow version to 2.6.
