@@ -32,8 +32,6 @@ dim.tensorflow.tensor <- function(x) {
   else
     as.integer(x)
 }
-# scalar: integer(0)
-# undefined: NULL
 
 
 
