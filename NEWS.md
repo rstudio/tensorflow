@@ -1,5 +1,16 @@
 # tensorflow (development version)
 
+- Breaking change: 
+  - `shape()` now returns a `tf.TensorShape()` object
+    (Previously an R-list of `NULL`s or integers).
+  - `[` method for `tf.TensorShape()` objects also now returns a `tf.TensorShape()`.    
+    Use `[[`, `as.numeric`, `as.integer`, and/or `as.list` to convert to R objects.
+  
+- New S3 generics for `tf.TensorShape()`'s:  
+  `c`, `length`, `[<-`, `[[<-`, `merge`, `==`, `!=`, 
+  `as.list`, `as.integer`, `as.numeric`, `as.double`, `py_str`
+  (joining previous generics `[` and `[[`).
+  See `?shape` for extended examples.
 # tensorflow 2.6.0
 
 - Updated default Tensorflow version to 2.6.
