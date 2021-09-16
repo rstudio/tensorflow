@@ -35,7 +35,7 @@ URL: https://github.com/rstudio/tensorflow
 BugReports: https://github.com/rstudio/tensorflow/issues
 SystemRequirements: TensorFlow (https://www.tensorflow.org/)
 Encoding: UTF-8
-Depends: R (>= 3.1)
+Depends: R (>= 3.5)
 Imports:
     config,
     processx,
@@ -43,11 +43,11 @@ Imports:
     tfruns (>= 1.0),
     utils,
     yaml,
-    tfautograph (>= 0.3),
+    tfautograph (>= 0.3.1),
     rstudioapi (>= 0.7)
 Roxygen: list(markdown = TRUE)
 Suggests:
     testthat (>= 2.1.0),
     keras,
     callr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
