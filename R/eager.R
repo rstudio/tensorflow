@@ -140,6 +140,10 @@ tf_function <- function(f,
     f <- tfautograph::autograph(f)
   }
 
+
   args <- list(py_func(f), input_signature, FALSE, ...)
   do.call(tf$`function`, args)
 }
+
+# TODO: calling tf_function() with `f` missing should return
+# a decorator with args partially pre-specified

@@ -243,5 +243,3 @@ tf_config_error_message <- function() {
                     "\nYou can install TensorFlow using the install_tensorflow() function.\n")
   message
 }
-
-
