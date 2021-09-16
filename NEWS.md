@@ -5,6 +5,11 @@
     (Previously an R-list of `NULL`s or integers).
   - `[` method for `tf.TensorShape()` objects also now returns a `tf.TensorShape()`.    
     Use `[[`, `as.numeric`, `as.integer`, and/or `as.list` to convert to R objects.
+  - `length()` method for `tensorflow.tensor` now returns `NA_integer_` for 
+    tensors with not fully defined shapes. (previously a zero length integer vector).
+  - `dim()` method for `tensorflow.tensor` now returns an R integer vector 
+    with `NA` for dimensions that are undefined. 
+    (previously an R list with `NULL` for undefined dimension)
   
 - New S3 generics for `tf.TensorShape()`'s:  
   `c`, `length`, `[<-`, `[[<-`, `merge`, `==`, `!=`, 

@@ -90,6 +90,29 @@ for (fn in unary_shape_generics) {
   test_generic(fn, arr(3))
 }
 
+expect_identical(dim(as_tensor(arr(3, 3))), c(3L, 3L))
+
+f <- tf_function(function(x) {
+  expect_identical(dim(x), NA_integer_)
+  expect_identical(length(x), NA_integer_)
+  x+1
+}, input_signature = list(tf$TensorSpec(shape(NA))))
+f(as_tensor(array(3), "float32"))
+
+f <- tf_function(function(x) {
+  expect_identical(dim(x), c(NA_integer_, 1L, NA_integer_))
+  expect_identical(length(x), NA_integer_)
+  x+1
+}, input_signature = list(tf$TensorSpec(shape(NA, 1, NA))))
+f(as_tensor(array(3, dim = c(1,1,1)), "float32"))
+
+
+f <- tf_function(function(x) {
+  expect_identical(dim(x), NULL)
+  expect_identical(length(x), NA_integer_)
+  x+1
+}, input_signature = list(tf$TensorSpec(shape(dims = NULL))))
+f(as_tensor(array(3, dim = c(1,1,1)), "float32"))
 
 
 unary_math_generics <- c(
