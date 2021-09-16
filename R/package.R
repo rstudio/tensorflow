@@ -86,7 +86,7 @@ tf_v2 <- function() {
       tryCatch(tf$python$util$deprecation$silence()$`__enter__`(),
                error = function(e) NULL)
 
-      message("Loaded Tensorflow version ", tf$version$VERSION)
+      packageStartupMessage("Loaded Tensorflow version ", tf$version$VERSION)
     }
     ,
 

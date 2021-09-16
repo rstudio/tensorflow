@@ -117,7 +117,7 @@ as_r_value <- function (x) {
 #dim(tensor) should return a numeric with NA's for NULLs
 
 #' @export
-as.list.tensorflow.python.framework.tensor_shape.TensorShape  <- function(x) {
+as.list.tensorflow.python.framework.tensor_shape.TensorShape  <- function(x, ...) {
   as.list(as_r_value(x$as_list())) # raises an exception for unknown rank
 }
 
