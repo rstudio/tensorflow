@@ -23,33 +23,23 @@
   names(flags)
 }
 
+
 #' @export
-"dim.tensorflow.tensor" <- function(x) {
-  if (py_is_null_xptr(x))
+dim.tensorflow.tensor <- function(x) {
+  x <- x$shape
+  if (is.na(length(x)))
     NULL
-  else {
-
-    if (inherits(x, "tensorflow.python.ops.ragged.ragged_tensor.RaggedTensor"))
-      shape <- x$shape
-    else
-      shape <- x$get_shape()
-
-    if (!is.null(shape$ndims))
-      shape$as_list()
-    else
-      NULL
-  }
+  else
+    as.integer(x)
 }
+
+
 
 #' @export
-"length.tensorflow.tensor" <- function(x) {
-  if (py_is_null_xptr(x))
-    length(NULL)
-  else if(identical(dx <- dim(x), list()))
-    1L
-  else
-    Reduce(`*`, dx)
+length.tensorflow.tensor <- function(x) {
+  x$shape$num_elements() %||% NA_integer_
 }
+
 
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/InternalMethods.html
 

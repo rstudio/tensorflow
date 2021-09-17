@@ -1,5 +1,7 @@
 test_that("as_tensor works", {
 
+  skip_if_no_tensorflow()
+
   test_is_tensor <- function(x, dtype=NULL) {
     expect("tensorflow.tensor" %in% class(x),
            paste("Wrong S3 class, expected 'tensorflow.tensor', actual", class(x)))

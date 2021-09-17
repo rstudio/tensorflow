@@ -85,6 +85,8 @@ tf_v2 <- function() {
       # workaround to silence crash-causing deprecation warnings
       tryCatch(tf$python$util$deprecation$silence()$`__enter__`(),
                error = function(e) NULL)
+
+      packageStartupMessage("Loaded Tensorflow version ", tf$version$VERSION)
     }
     ,
 
@@ -241,5 +243,3 @@ tf_config_error_message <- function() {
                     "\nYou can install TensorFlow using the install_tensorflow() function.\n")
   message
 }
-
-

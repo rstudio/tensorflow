@@ -1,5 +1,25 @@
 # tensorflow (development version)
 
+- Breaking change:
+  - `shape()` now returns a `tf.TensorShape()` object
+    (Previously an R-list of `NULL`s or integers).
+  - `[` method for `tf.TensorShape()` objects also now returns a `tf.TensorShape()`.
+    Use `[[`, `as.numeric`, `as.integer`, and/or `as.list` to convert to R objects.
+  - `length()` method for `tensorflow.tensor` now returns `NA_integer_` for
+    tensors with not fully defined shapes. (previously a zero length integer vector).
+  - `dim()` method for `tensorflow.tensor` now returns an R integer vector
+    with `NA` for dimensions that are undefined.
+    (previously an R list with `NULL` for undefined dimension)
+
+- New S3 generics for `tf.TensorShape()`'s:
+  `c`, `length`, `[<-`, `[[<-`, `merge`, `==`, `!=`,
+  `as.list`, `as.integer`, `as.numeric`, `as.double`, `py_str`
+  (joining previous generics `[` and `[[`).
+  See `?shape` for extended examples.
+
+- A message with the Tensorflow version is now shown when the
+  python module is loaded, e.g: "Loaded Tensorflow version 2.6.0"
+
 # tensorflow 2.6.0
 
 - Updated default Tensorflow version to 2.6.
@@ -8,7 +28,7 @@
 
 - Added S3 generic `as_tensor()`.
 
-- tfautograph added to Imports 
+- tfautograph added to Imports
 
 - jsonlite removed from Imports, tfestimators removed from Suggests
 
@@ -27,8 +47,8 @@
 
 - Fixed an issue where extra packages with version constraints like
   `install_tensorflow(extra_packages = "Pillow<8.3")` were not quoted properly.
-  
-- Fixed an issue where valid tensor-like objects supplied to 
+
+- Fixed an issue where valid tensor-like objects supplied to
   `log(x, base)`, `cospi()`, `tanpi()`, and `sinpi()` would raise an error.
 
 
