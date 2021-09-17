@@ -1,6 +1,6 @@
 #' Create a `tf.TensorShape` object
 #'
-#' @param ... Tensor dimensions as integers or `NULL` for an unknown dimensions. `NA` is a synonyms for `NULL`.
+#' @param ... Tensor dimensions as integers or `NULL` for an unknown dimensions. `NA` is a synonym for `NULL`.
 #' @param dims Tensor dimensions as a vector.
 #'
 #' @seealso <https://www.tensorflow.org/api_docs/python/tf/TensorShape>
@@ -114,7 +114,6 @@ as_r_value <- function (x) {
     x
 }
 
-#dim(tensor) should return a numeric with NA's for NULLs
 
 #' @export
 as.list.tensorflow.python.framework.tensor_shape.TensorShape  <- function(x, ...) {
@@ -138,7 +137,6 @@ as.numeric.tensorflow.python.framework.tensor_shape.TensorShape <- function(x, .
 #' @method as.double tensorflow.python.framework.tensor_shape.TensorShape
 as.double.tensorflow.python.framework.tensor_shape.TensorShape <-
 as.numeric.tensorflow.python.framework.tensor_shape.TensorShape
-
 
 
 #' @export
@@ -167,11 +165,6 @@ as.numeric.tensorflow.python.framework.tensor_shape.TensorShape
   shape(dims = x)
 }
 
-#' @export
-`c.tensorflow.python.framework.tensor_shape.TensorShape` <- function(...) {
-  x <- do.call(c, lapply(unname(list(...)), as.list))
-  shape(dims = x)
-}
 
 #' @export
 `c.tensorflow.python.framework.tensor_shape.TensorShape` <- function(...) {
@@ -180,6 +173,11 @@ as.numeric.tensorflow.python.framework.tensor_shape.TensorShape
     x <- x$concatenate(as_shape(other))
   x
 }
+
+# `c.tensorflow.python.framework.tensor_shape.TensorShape` <- function(...) {
+#   x <- do.call(c, lapply(unname(list(...)), as.list))
+#   shape(dims = x)
+# }
 
 # `+`() method as synonym for c(a, b)?
 
@@ -222,31 +220,7 @@ py_str.tensorflow.python.framework.tensor_shape.TensorShape <-
 
 
 
-# Hi guys, I'm thinking of changing `tensorflow::shape()`
-# to return a (`tf.TensorShape()`)[https://www.tensorflow.org/api_docs/python/tf/TensorShape] instead of an R list of integers/NULLS.
-# I'm also adding a bunch of S3 methods to make it easier to work with (`[<-`, `[[<-`, `as.list`, `c`, `length`, and a better `py_str`)
-#
-# One tricky part is distinguishing these 3 concepts:
-# ````
-# tf.TensorShape([])     # scalar
-# tf.TensorShape([None]) # 1-D of unknown length
-# tf.TensorShape(None)   # unknown everything
-# ````
-# in R, I see potentially 4 usage's, but I'm undecided about which to map where
-# ````
-# # This must be:
-# shape(NULL)           # 1-D of unknown length
-#
-# # These are TBD: which will mean 'scalar' and which will mean 'unknown everything'?
-# shape()
-# shape(dims = NULL)
-# shape(,)
-
-# ````
-# I'll open this as a PR and tag @dflabel to review. This could be a breaking change in some edge cases, but generally I think it'll be minimal.  so I'm happy to maybe move  this into a new function if needed, but  and we can have a longer discussion publicly.
-
-
-# old shape def, retained in namespace it's needed for easy back compat
+# old shape def, retained in namespace in case it's needed for easy back compat
 .shape <- function(...) {
   values <- list(...)
   lapply(values, function(value) {
