@@ -71,6 +71,9 @@ ensures that the R python installation is isolated from other python
 installations. All python packages will by default be installed into a
 self-contained conda or venv environment named "r-reticulate". Note that
 "conda" is the only supported method on Windows.
+
+If you initially declined the miniconda installation prompt, you can later
+manually install miniconda by running \code{\link[reticulate:install_miniconda]{reticulate::install_miniconda()}}.
 }
 \section{Custom Installation}{
  \code{install_tensorflow()} or
@@ -91,8 +94,8 @@ Tensorflow compatible with M1 macs. Installation instructions can be found
 at: \url{https://developer.apple.com/metal/tensorflow-plugin/}. Please note
 that this is an experimental build of both python and tensorflow. After
 following the instructions provided by Apple, you can advise reticulate to
-use that python installation by placing the following in your
-\code{.Renviron} file:
+use that python installation by placing the following in your \code{.Renviron}
+file:
 
 \code{RETICULATE_PYTHON = "~/miniforge3/bin/python"}
 }

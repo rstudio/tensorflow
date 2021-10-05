@@ -12,6 +12,9 @@
 #'   self-contained conda or venv environment named "r-reticulate". Note that
 #'   "conda" is the only supported method on Windows.
 #'
+#'   If you initially declined the miniconda installation prompt, you can later
+#'   manually install miniconda by running [`reticulate::install_miniconda()`].
+#'
 #' @section Custom Installation: `install_tensorflow()` or
 #'   `keras::install_keras()` isn't required to use tensorflow with the package.
 #'   If you manually configure a python environment with the required
@@ -28,8 +31,8 @@
 #'   at: \url{https://developer.apple.com/metal/tensorflow-plugin/}. Please note
 #'   that this is an experimental build of both python and tensorflow. After
 #'   following the instructions provided by Apple, you can advise reticulate to
-#'   use that python installation by placing the following in your
-#'   `.Renviron` file:
+#'   use that python installation by placing the following in your `.Renviron`
+#'   file:
 #'
 #'   ``` RETICULATE_PYTHON = "~/miniforge3/bin/python" ```
 #'
