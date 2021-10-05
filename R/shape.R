@@ -54,8 +54,10 @@
 #'
 #' # != is mostly the inverse of ==, with one difference:
 #' # it raises an error when comparing a fully unknown shapes
-#' try(shape(dims = NULL) != shape(dims = NULL)) # ValueError: The inequality of unknown TensorShapes is undefined.
-#' try(shape(dims = NULL) != shape())            # ValueError: The inequality of unknown TensorShapes is undefined.
+#' try(shape(dims = NULL) != shape(dims = NULL))
+#' # ValueError: The inequality of unknown TensorShapes is undefined.
+#' try(shape(dims = NULL) != shape())
+#' # ValueError: The inequality of unknown TensorShapes is undefined.
 #'
 #'
 #' # --- extract or replace ---
@@ -93,8 +95,7 @@ shape <- function(..., dims = list(...)) {
         NULL
       else
         as.integer(d)
-    }
-    )
+    })
 
   tf$TensorShape(dims)
 }

@@ -7,7 +7,7 @@
 shape(..., dims = list(...))
 }
 \arguments{
-\item{...}{Tensor dimensions as integers or \code{NULL} for an unknown dimensions. \code{NA} is a synonyms for \code{NULL}.}
+\item{...}{Tensor dimensions as integers or \code{NULL} for an unknown dimensions. \code{NA} is a synonym for \code{NULL}.}
 
 \item{dims}{Tensor dimensions as a vector.}
 }
@@ -62,8 +62,10 @@ shape(dims = NULL) == shape(4)    # FALSE
 
 # != is mostly the inverse of ==, with one difference:
 # it raises an error when comparing a fully unknown shapes
-try(shape(dims = NULL) != shape(dims = NULL)) # ValueError: The inequality of unknown TensorShapes is undefined.
-try(shape(dims = NULL) != shape())            # ValueError: The inequality of unknown TensorShapes is undefined.
+try(shape(dims = NULL) != shape(dims = NULL))
+# ValueError: The inequality of unknown TensorShapes is undefined.
+try(shape(dims = NULL) != shape())
+# ValueError: The inequality of unknown TensorShapes is undefined.
 
 
 # --- extract or replace ---

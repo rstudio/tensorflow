@@ -86,7 +86,10 @@ tf_v2 <- function() {
       tryCatch(tf$python$util$deprecation$silence()$`__enter__`(),
                error = function(e) NULL)
 
-      packageStartupMessage("Loaded Tensorflow version ", tf$version$VERSION)
+      # TODO: move this into .onAttach, where you either emit immediately if
+      # already loaded otherwise register emit hook for reticulate
+      emit <- get("packageStartupMessage") # R CMD check
+      emit("Loaded Tensorflow version ", tf$version$VERSION)
     }
     ,
 
