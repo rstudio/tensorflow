@@ -31,7 +31,7 @@ jobs:
           - {os: 'ubuntu-20.04', tf: 'default', r: '3.6'} # default R in ubuntu-20.04
           - {os: 'ubuntu-20.04', tf: 'default', r: '3.5'} #
           - {os: 'ubuntu-20.04', tf: 'default', r: '3.4'} #
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.3'} # Oldest R available in Rstudio Marketplace offerings
+          # - {os: 'ubuntu-20.04', tf: 'default', r: '3.3'} # Oldest R available in RStudio Marketplace offerings; rcmdcheck not available
           # - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.2'} # rcmdcheck not available
           # - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.1'} # remotes not available
 
