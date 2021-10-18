@@ -52,7 +52,7 @@ test_that("multiplication works", {
   expect_identical(as.double(x),  c(NA, 3))
 
   x2 <- as_tensor(shape(NA, 3))
-  expect_identical(x2$numpy(), array(c(-1L, 3L)))
+  expect_equal(x2$numpy(), array(c(-1L, 3L)))
   expect_identical(x2$dtype$name, "int32")
   expect_identical(as.list(x2$shape), list(2L))
 
