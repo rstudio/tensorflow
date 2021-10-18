@@ -49,7 +49,11 @@ length.tensorflow.tensor <- function(x) {
 
 #' @export
 "+.tensorflow.tensor" <- function(a, b) {
-  if (missing(b)) a else tf$add(a, b)
+  if (missing(b)) a
+  else {
+    autocast_ab_to_tensors()
+    tf$add(a, b)
+  }
 }
 
 #' @export
@@ -60,6 +64,7 @@ length.tensorflow.tensor <- function(x) {
     else
       tf$neg(a)
   } else {
+    autocast_ab_to_tensors()
     if (py_has_attr(tf, "subtract"))
       tf$subtract(a, b)
     else
@@ -70,6 +75,7 @@ length.tensorflow.tensor <- function(x) {
 
 #' @export
 "*.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   if (py_has_attr(tf, "multiply"))
     tf$multiply(a, b)
   else
@@ -78,36 +84,42 @@ length.tensorflow.tensor <- function(x) {
 
 #' @export
 "/.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$truediv(a, b)
 }
 
 
 #' @export
 "%/%.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   switch_fun_if_tf(tf$floordiv, tf$math$floordiv)(a, b)
 }
 
 
 #' @export
 "%%.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   switch_fun_if_tf(tf$mod, tf$math$mod)(a, b)
 }
 
 
 #' @export
 "^.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$pow(a, b)
 }
 
 
 #' @export
 "&.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$logical_and(a, b)
 }
 
 
 #' @export
 "|.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$logical_or(a, b)
 }
 
@@ -120,36 +132,42 @@ length.tensorflow.tensor <- function(x) {
 
 #' @export
 "==.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$equal(a, b)
 }
 
 
 #' @export
 "!=.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$not_equal(a, b)
 }
 
 
 #' @export
 "<.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$less(a, b)
 }
 
 
 #' @export
 "<=.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$less_equal(a, b)
 }
 
 
 #' @export
 ">.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$greater(a, b)
 }
 
 
 #' @export
 ">=.tensorflow.tensor" <- function(a, b) {
+  autocast_ab_to_tensors()
   tf$greater_equal(a, b)
 }
 
@@ -328,6 +346,26 @@ switch_fun_if_tf <- function(x, y, version = "1.14") {
   else
     y
 }
+
+
+# autocast_to_tensors <- function(a, b) {
+#   eval.parent(substitute({
+#     if (!inherits(a, "tensorflow.tensor") && inherits(b, "tensorflow.tensor"))
+#       a <- as_tensor(a, b$dtype)
+#     else if (!inherits(b, "tensorflow.tensor") && inherits(a, "tensorflow.tensor"))
+#       b <- as_tensor(b, a$dtype)
+#   }, list(a = substitute(a), b = substitute(b))))
+# }
+
+
+# TODO: do something similar for KerasTensor
+autocast_ab_to_tensors <- function()
+  eval.parent(quote({
+    if (!inherits(a, "tensorflow.tensor") && inherits(b, "tensorflow.tensor"))
+      a <- as_tensor(a, b$dtype)
+    else if (!inherits(b, "tensorflow.tensor") && inherits(a, "tensorflow.tensor"))
+      b <- as_tensor(b, a$dtype)
+  }))
 
 
 

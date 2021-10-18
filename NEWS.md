@@ -16,7 +16,17 @@
   `as.list`, `as.integer`, `as.numeric`, `as.double`, `py_str`
   (joining previous generics `[` and `[[`).
   See `?shape` for extended examples.
-
+  
+- Ops S3 generics for `tensorflow.tensor`s that take two arguments now 
+  automatically cast a supplied non-tensor to the dtype of the supplied tensor 
+  that triggered the S3 dispatch. Casting is done via `as_tensor()`.
+  e.g., this now works:
+    as_tensor(5L) - 2     # now returns tf.Tensor(3, shape=(), dtype=int32)
+  previously it would raise an error:
+    TypeError: `x` and `y` must have the same dtype, got tf.int32 != tf.float32
+  Generics that now do autocasting:
+    +, -, *, /, %/%, %%, ^, &, |, ==, !=, <, <=, >, >= 
+    
 - A message with the Tensorflow version is now shown when the
   python module is loaded, e.g: "Loaded Tensorflow version 2.6.0"
 

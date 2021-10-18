@@ -62,6 +62,14 @@ binary_compr_generics <- c("==", "!=", "<", "<=", ">", ">=")
 
 for (fn in c(binary_arith_generics, binary_compr_generics)) {
   test_generic(fn, rarr(1,2,3), rarr(1,2,3))
+
+  # test automatic type casting
+  fn <- get(fn, envir = asNamespace("base"))
+  expect_equal(fn(5L, 3), grab(fn(as_tensor(5L), 3)))
+  expect_equal(fn(5L, 3), grab(fn(5L, as_tensor(3, "float64"))))
+
+  expect_equal(fn(5, 3L), grab(fn(5, as_tensor(3L))))
+  expect_equal(fn(5, 3L), grab(fn(as_tensor(5, "float64"), 3L)))
 }
 
 
@@ -69,9 +77,18 @@ binary_logic_generics <- c("&", "|")
 
 x <- lapply(expand.grid(e1 = c(TRUE, FALSE), e2 = c(TRUE, FALSE)),
             as.array)
+x$e1.num <- x$e2.num <- 1:4
+x$e1.num[!x$e1] <- 0L
+x$e2.num[!x$e2] <- 0
 
-for (fn in binary_logic_generics)
+for (fn in binary_logic_generics) {
   test_generic(fn, x$e1, x$e2)
+
+  # test automatic type casting
+  fn <- get(fn, envir = asNamespace("base"))
+  expect_equal(fn(x$e1.num, x$e2), grab(fn(x$e1.num, as_tensor(x$e2))))
+  expect_equal(fn(x$e1, x$e2.num), grab(fn(as_tensor(x$e1), x$e2.num)))
+}
 
 
 # ---------- unary operators ---------------
@@ -161,3 +178,5 @@ unary_complex_generics <- c("Re", "Im", "Conj", "Arg", "Mod")
 
 for (fn in unary_complex_generics)
   test_generic(fn, 1 + 2i)
+
+
