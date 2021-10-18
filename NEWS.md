@@ -12,7 +12,7 @@
     (previously an R list with `NULL` for undefined dimension)
 
 - New S3 generics for `tf.TensorShape()`'s:
-  `c`, `length`, `[<-`, `[[<-`, `merge`, `==`, `!=`,
+  `c`, `length`, `[<-`, `[[<-`, `merge`, `==`, `!=`, `as_tensor()`,
   `as.list`, `as.integer`, `as.numeric`, `as.double`, `py_str`
   (joining previous generics `[` and `[[`).
   See `?shape` for extended examples.

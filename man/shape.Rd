@@ -37,12 +37,27 @@ as.list(x)     # list(3L, 5L)
 as.integer(x)  # c(3L, 5L)
 as.numeric(x)  # c(3, 5)
 as.double(x)   # c(3, 5) # alias for as.numeric
+as_tensor(x)   # tf.Tensor([3 5], shape=(2,), dtype=int32)
 
-# coersion raises an error for unknown shape
+# convert partially undefined shapes
+x <- shape(NA, 3)
+as.list(x)     # list(NULL, 3L)
+as.integer(x)  # c(NA, 3L)
+as_tensor(x)   # tf.Tensor([-1  3], shape=(2,), dtype=int32) # `unspecified` dims default is -1
+
+# as_tensor() converts undefined dimensions to -1, which is useful for
+# tf functions that only accept tensors for shapes, e.g,
+tf$reshape(tf$zeros(shape(8)),
+           as_tensor(shape(NA, 4)))
+# tf.Tensor([[0. 0. 0. 0.]
+#            [0. 0. 0. 0.]], shape=(2, 4), dtype=float32)
+
+# converting fully unknown shapes raises an error
 try(as.list(shape(dims = NULL))) # ValueError: as_list() is not defined on an unknown TensorShape.
 # test for rank first if this a concern:
 as.list_or_null <- function(x) if(is.na(length(x))) NULL else as.list(x)
 as.list_or_null(shape(dims = NULL))
+
 
 # --- compare ---
 # Fully known shapes return TRUE if and only if each element is equal

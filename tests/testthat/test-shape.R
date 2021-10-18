@@ -46,6 +46,22 @@ test_that("multiplication works", {
   expect_identical(as.numeric(x), c(3, 5))
   expect_identical(as.double(x) , c(3, 5))
 
+  x <- shape(NA, 3)
+  expect_identical(as.list(x), list(NULL, 3L))
+  expect_identical(as.integer(x), c(NA, 3L))
+  expect_identical(as.double(x),  c(NA, 3))
+
+  x2 <- as_tensor(shape(NA, 3))
+  expect_identical(x2$numpy(), array(c(-1L, 3L)))
+  expect_identical(x2$dtype$name, "int32")
+  expect_identical(as.list(x2$shape), list(2L))
+
+  x <- shape(dims = NULL)
+  expect_error(as.list(x))
+  expect_error(as.numeric(x))
+  expect_error(as_tensor(x))
+
+
   # --- compare ---
   # Fully known shapes return TRUE if and only if each element is equal
   expect_true(shape(3, 4) == shape(3, 4)) # TRUE

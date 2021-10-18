@@ -29,12 +29,27 @@
 #' as.integer(x)  # c(3L, 5L)
 #' as.numeric(x)  # c(3, 5)
 #' as.double(x)   # c(3, 5) # alias for as.numeric
+#' as_tensor(x)   # tf.Tensor([3 5], shape=(2,), dtype=int32)
 #'
-#' # coersion raises an error for unknown shape
+#' # convert partially undefined shapes
+#' x <- shape(NA, 3)
+#' as.list(x)     # list(NULL, 3L)
+#' as.integer(x)  # c(NA, 3L)
+#' as_tensor(x)   # tf.Tensor([-1  3], shape=(2,), dtype=int32) # `unspecified` dims default is -1
+#'
+#' # as_tensor() converts undefined dimensions to -1, which is useful for
+#' # tf functions that only accept tensors for shapes, e.g,
+#' tf$reshape(tf$zeros(shape(8)),
+#'            as_tensor(shape(NA, 4)))
+#' # tf.Tensor([[0. 0. 0. 0.]
+#' #            [0. 0. 0. 0.]], shape=(2, 4), dtype=float32)
+#'
+#' # converting fully unknown shapes raises an error
 #' try(as.list(shape(dims = NULL))) # ValueError: as_list() is not defined on an unknown TensorShape.
 #' # test for rank first if this a concern:
 #' as.list_or_null <- function(x) if(is.na(length(x))) NULL else as.list(x)
 #' as.list_or_null(shape(dims = NULL))
+#'
 #'
 #' # --- compare ---
 #' # Fully known shapes return TRUE if and only if each element is equal
@@ -139,6 +154,17 @@ as.numeric.tensorflow.python.framework.tensor_shape.TensorShape <- function(x, .
 as.double.tensorflow.python.framework.tensor_shape.TensorShape <-
 as.numeric.tensorflow.python.framework.tensor_shape.TensorShape
 
+#' @export
+as_tensor.tensorflow.python.framework.tensor_shape.TensorShape <-
+function(x, dtype = NULL, ..., name = NULL) {
+  if(x$is_fully_defined())
+    return(NextMethod())
+
+  x <- as.integer.tensorflow.python.framework.tensor_shape.TensorShape(x)
+  x[is.na(x)] <- -1L
+  as_tensor.default(x, dtype, ..., name = name)
+}
+
 
 #' @export
 `[.tensorflow.python.framework.tensor_shape.TensorShape` <- function(x, i) {
@@ -180,8 +206,6 @@ as.numeric.tensorflow.python.framework.tensor_shape.TensorShape
 #   shape(dims = x)
 # }
 
-# `+`() method as synonym for c(a, b)?
-
 
 #' @export
 merge.tensorflow.python.framework.tensor_shape.TensorShape <- function(x, y, ...)
@@ -222,7 +246,7 @@ py_str.tensorflow.python.framework.tensor_shape.TensorShape <-
 
 
 # old shape def, retained in namespace in case it's needed for easy back compat
-.shape <- function(...) {
+shape_v1 <- function(...) {
   values <- list(...)
   lapply(values, function(value) {
     if (!is.null(value))
@@ -231,3 +255,27 @@ py_str.tensorflow.python.framework.tensor_shape.TensorShape <-
       NULL
   })
 }
+
+
+#' # as.integer(), as.numeric(), as.double(), as_tensor() can take an
+#' # optional argument `unspecified`
+#' # Defaults to `NA` for as.integer, as.double, as.numeric, and `-1L` for as_tensor()
+#' x <- shape(NULL, 3)
+#' as.integer(x)                    # c(NA, 3L)
+#' as.integer(x, unspecified = -1)  # c(-1L, 3L)
+#' as.integer(x, -1)                # c(-1L, 3L) # can be supplied unnamed to as.integer, as.double, as.numeric
+#' as_tensor(x)                     # tf.Tensor([-1  3], shape=(2,), dtype=int32) # `unspecified` default is -1
+#'
+
+# as.integer.tensorflow.python.framework.tensor_shape.TensorShape <-
+# function(x, unspecified = NA_integer_, ...) {
+#   unspecified <- as.integer(unspecified)
+#   vapply(as.list(as_r_value(x$as_list())),
+#          function(e) e %||% unspecified,
+#          0L)
+# }
+
+# as_tensor.tensorflow.python.framework.tensor_shape.TensorShape <-
+# function(x, dtype = NULL, ..., unspecified = -1L, name = NULL) {
+#   as_tensor(as.integer(x, unspecified = unspecified), dtype, ...)
+# }
