@@ -47,9 +47,9 @@ jobs:
           - {os: 'ubuntu-20.04', tf: '2.1', r: 'release'}
 
           # these are allowed to fail
-          - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
+          # - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
           - {os: 'ubuntu-20.04', tf: 'nightly' , r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.7.0rc0', r: 'release'}
+          - {os: 'ubuntu-20.04', tf: '2.7.0rc1', r: 'release'}
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.tf == 'nightly' || contains(matrix.tf, 'rc') || matrix.r == 'devel' }}
