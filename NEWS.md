@@ -21,9 +21,13 @@
   automatically cast a supplied non-tensor to the dtype of the supplied tensor 
   that triggered the S3 dispatch. Casting is done via `as_tensor()`.
   e.g., this now works:
+    ```
     as_tensor(5L) - 2     # now returns tf.Tensor(3, shape=(), dtype=int32)
+    ```
   previously it would raise an error:
+    ```
     TypeError: `x` and `y` must have the same dtype, got tf.int32 != tf.float32
+    ```
   Generics that now do autocasting:
     +, -, *, /, %/%, %%, ^, &, |, ==, !=, <, <=, >, >= 
     

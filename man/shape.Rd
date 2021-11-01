@@ -7,7 +7,8 @@
 shape(..., dims = list(...))
 }
 \arguments{
-\item{...}{Tensor dimensions as integers or \code{NULL} for an unknown dimensions. \code{NA} is a synonym for \code{NULL}.}
+\item{...}{Tensor dimensions as integers or \code{NULL} for an unknown
+dimensions. \code{NA} and \code{-1} are synonyms for \code{NULL}.}
 
 \item{dims}{Tensor dimensions as a vector.}
 }
@@ -43,7 +44,7 @@ as_tensor(x)   # tf.Tensor([3 5], shape=(2,), dtype=int32)
 x <- shape(NA, 3)
 as.list(x)     # list(NULL, 3L)
 as.integer(x)  # c(NA, 3L)
-as_tensor(x)   # tf.Tensor([-1  3], shape=(2,), dtype=int32) # `unspecified` dims default is -1
+as_tensor(x)   # tf.Tensor([-1  3], shape=(2,), dtype=int32) # unspecified dims default is -1
 
 # as_tensor() converts undefined dimensions to -1, which is useful for
 # tf functions that only accept tensors for shapes, e.g,

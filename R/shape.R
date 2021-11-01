@@ -1,6 +1,7 @@
 #' Create a `tf.TensorShape` object
 #'
-#' @param ... Tensor dimensions as integers or `NULL` for an unknown dimensions. `NA` is a synonym for `NULL`.
+#' @param ... Tensor dimensions as integers or `NULL` for an unknown
+#'   dimensions. `NA` and `-1` are synonyms for `NULL`.
 #' @param dims Tensor dimensions as a vector.
 #'
 #' @seealso <https://www.tensorflow.org/api_docs/python/tf/TensorShape>
@@ -35,7 +36,7 @@
 #' x <- shape(NA, 3)
 #' as.list(x)     # list(NULL, 3L)
 #' as.integer(x)  # c(NA, 3L)
-#' as_tensor(x)   # tf.Tensor([-1  3], shape=(2,), dtype=int32) # `unspecified` dims default is -1
+#' as_tensor(x)   # tf.Tensor([-1  3], shape=(2,), dtype=int32) # unspecified dims default is -1
 #'
 #' # as_tensor() converts undefined dimensions to -1, which is useful for
 #' # tf functions that only accept tensors for shapes, e.g,
@@ -104,13 +105,19 @@
 #' rm(x) # cleanup
 #' }
 shape <- function(..., dims = list(...)) {
-  if (!is.null(dims))
-    dims <- lapply(dims, function(d) {
-      if (is.null(d) || isTRUE(is.na(d)))
-        NULL
-      else
-        as.integer(d)
-    })
+  if (is.null(dims))
+    return(tf$TensorShape(NULL))
+
+  if(inherits(dims, "tensorflow.tensor") && tf$executing_eagerly())
+    dims <- as_r_value(dims$numpy())
+
+  dims <- lapply(dims, function(d) {
+    if (is.null(d) || isTRUE(is.na(d)) ||
+        (is.numeric(d) && isTRUE(d == -1L)))
+      NULL
+    else
+      as.integer(d)
+  })
 
   tf$TensorShape(dims)
 }

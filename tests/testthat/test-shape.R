@@ -61,6 +61,12 @@ test_that("multiplication works", {
   expect_error(as.numeric(x))
   expect_error(as_tensor(x))
 
+  x <- shape(NA, 3)
+  # as_tensor() converts undefined dims to -1
+  expect_identical(as.integer(as_tensor(x)), c(-1L, 3L))
+  # can round trips shape -> tensor -> shape
+  expect_tensor_shape(shape(dims = as_tensor(x)), list(NULL, 3L))
+
 
   # --- compare ---
   # Fully known shapes return TRUE if and only if each element is equal
