@@ -79,6 +79,7 @@
 #'
 #' @param ... other arguments passed to [reticulate::conda_install()] or
 #'   [reticulate::virtualenv_install()], depending on the `method` used.
+#'   Accepts `pip_ignore_installed=TRUE`.
 #'
 #' @seealso keras::install_keras()
 #'
@@ -131,7 +132,6 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
   ))
 
   # don't double quote if packages were shell quoted already
-  # TODO: patch quoting in reticulate::pip_install, or maybe py_install()
   packages <- shQuote(gsub("[\"']", "", packages))
 
   # message("Installing the python pip packages :\n",

@@ -52,7 +52,8 @@ TensorFlow.}
 only occur within RStudio).}
 
 \item{...}{other arguments passed to \code{\link[reticulate:conda-tools]{reticulate::conda_install()}} or
-\code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}, depending on the \code{method} used.}
+\code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}, depending on the \code{method} used.
+Accepts \code{pip_ignore_installed=TRUE}.}
 
 \item{python_version, conda_python_version}{the python version installed in
 the created conda environment. Ignored when attempting to install with a
