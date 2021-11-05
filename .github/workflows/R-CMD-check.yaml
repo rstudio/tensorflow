@@ -40,6 +40,7 @@ jobs:
           # - {os: 'windows-latest', tf: 'release', r: 'release'}
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
+          - {os: 'ubuntu-20.04', tf: '2.6', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.5', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.4', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.3', r: 'release'}
@@ -49,7 +50,7 @@ jobs:
           # these are allowed to fail
           # - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
           - {os: 'ubuntu-20.04', tf: 'nightly' , r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.7.0rc1', r: 'release'}
+          # - {os: 'ubuntu-20.04', tf: '2.7.0rc1', r: 'release'}
 
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.tf == 'nightly' || contains(matrix.tf, 'rc') || matrix.r == 'devel' }}
