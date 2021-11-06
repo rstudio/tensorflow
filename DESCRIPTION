@@ -39,7 +39,7 @@ Depends: R (>= 3.1)
 Imports:
     config,
     processx,
-    reticulate (>= 1.22-9000),
+    reticulate (> 1.22),
     tfruns (>= 1.0),
     utils,
     yaml,
