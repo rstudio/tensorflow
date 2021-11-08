@@ -83,8 +83,7 @@
 #'   with the prebuilt TensorFlow binaries.
 #'
 #' @param ... other arguments passed to [reticulate::conda_install()] or
-#'   [reticulate::virtualenv_install()], depending on the `method` used. Accepts
-#'   `pip_ignore_installed=TRUE`.
+#'   [reticulate::virtualenv_install()], depending on the `method` used.
 #'
 #' @seealso [`keras::install_keras()`]
 #'

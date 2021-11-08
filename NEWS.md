@@ -33,7 +33,7 @@
   Generics that now do autocasting:
     +, -, *, /, %/%, %%, ^, &, |, ==, !=, <, <=, >, >=
 
-- `install_tensorflow()` new argument with default to `pip_ignore_installed = TRUE`. 
+- `install_tensorflow()`: new argument with default `pip_ignore_installed = TRUE`. 
   This ensures that all Tensorflow dependencies like Numpy are installed by pip 
   rather than conda.
 
