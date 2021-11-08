@@ -57,9 +57,9 @@ only occur within RStudio).}
 \code{pip_ignore_installed=TRUE}.}
 
 \item{pip_ignore_installed}{Whether pip should ignore installed python
-packages and reinstall any already installed packages. This defaults to \code{TRUE},
-to ensure that TensorFlow dependencies like NumPy are compatible with
-the prebuilt TensorFlow binaries.}
+packages and reinstall all already installed python packages. This defaults
+to \code{TRUE}, to ensure that TensorFlow dependencies like NumPy are compatible
+with the prebuilt TensorFlow binaries.}
 
 \item{python_version, conda_python_version}{the python version installed in
 the created conda environment. Ignored when attempting to install with a
@@ -120,5 +120,5 @@ for details.
 }
 
 \seealso{
-keras::install_keras()
+\code{\link[keras:install_keras]{keras::install_keras()}}
 }

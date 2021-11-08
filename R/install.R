@@ -86,7 +86,7 @@
 #'   [reticulate::virtualenv_install()], depending on the `method` used. Accepts
 #'   `pip_ignore_installed=TRUE`.
 #'
-#' @seealso keras::install_keras()
+#' @seealso [`keras::install_keras()`]
 #'
 #' @export
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
