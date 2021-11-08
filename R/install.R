@@ -77,11 +77,15 @@
 #'   the created conda environment. Ignored when attempting to install with a
 #'   Python virtual environment.
 #'
+#' @param pip_ignore_installed Whether pip should ignore installed python
+#'   packages and reinstall all already installed python packages. This defaults
+#'   to `TRUE`, to ensure that TensorFlow dependencies like NumPy are compatible
+#'   with the prebuilt TensorFlow binaries.
+#'
 #' @param ... other arguments passed to [reticulate::conda_install()] or
 #'   [reticulate::virtualenv_install()], depending on the `method` used.
-#'   Accepts `pip_ignore_installed=TRUE`.
 #'
-#' @seealso keras::install_keras()
+#' @seealso [`keras::install_keras()`]
 #'
 #' @export
 install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
@@ -92,6 +96,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                restart_session = TRUE,
                                conda_python_version = "3.7",
                                ...,
+                               pip_ignore_installed = TRUE,
                                python_version = conda_python_version) {
 
   # verify 64-bit
@@ -144,6 +149,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
     conda          = conda,
     python_version = python_version,
     pip            = TRUE,
+    pip_ignore_installed = pip_ignore_installed,
     ...
   )
 
