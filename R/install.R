@@ -92,6 +92,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                restart_session = TRUE,
                                conda_python_version = "3.7",
                                ...,
+                               pip_ignore_installed = TRUE,
                                python_version = conda_python_version) {
 
   # verify 64-bit
@@ -144,6 +145,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
     conda          = conda,
     python_version = python_version,
     pip            = TRUE,
+    pip_ignore_installed = pip_ignore_installed,
     ...
   )
 

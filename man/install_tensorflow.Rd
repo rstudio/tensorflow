@@ -13,6 +13,7 @@ install_tensorflow(
   restart_session = TRUE,
   conda_python_version = "3.7",
   ...,
+  pip_ignore_installed = TRUE,
   python_version = conda_python_version
 )
 }
@@ -28,7 +29,7 @@ available on Windows.}
 
 \item{version}{TensorFlow version to install. Valid values include:
 \itemize{
-\item \code{"default"} installs  2.6
+\item \code{"default"} installs  2.7
 \item \code{"release"} installs the latest release version of tensorflow (which may
 be incompatible with the current version of the R package)
 \item A version specification like \code{"2.4"} or \code{"2.4.0"}. Note that if the patch
