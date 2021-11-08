@@ -33,6 +33,10 @@
   Generics that now do autocasting:
     +, -, *, /, %/%, %%, ^, &, |, ==, !=, <, <=, >, >=
 
+- `install_tensorflow()` new argument with default to `pip_ignore_installed = TRUE`. 
+  This ensures that all Tensorflow dependencies like Numpy are installed by pip 
+  rather than conda.
+
 - A message with the Tensorflow version is now shown when the
   python module is loaded, e.g: "Loaded Tensorflow version 2.6.0"
 
