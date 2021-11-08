@@ -77,9 +77,14 @@
 #'   the created conda environment. Ignored when attempting to install with a
 #'   Python virtual environment.
 #'
+#' @param pip_ignore_installed Whether pip should ignore installed python
+#'   packages and reinstall all already installed python packages. This defaults
+#'   to `TRUE`, to ensure that TensorFlow dependencies like NumPy are compatible
+#'   with the prebuilt TensorFlow binaries.
+#'
 #' @param ... other arguments passed to [reticulate::conda_install()] or
-#'   [reticulate::virtualenv_install()], depending on the `method` used.
-#'   Accepts `pip_ignore_installed=TRUE`.
+#'   [reticulate::virtualenv_install()], depending on the `method` used. Accepts
+#'   `pip_ignore_installed=TRUE`.
 #'
 #' @seealso keras::install_keras()
 #'
