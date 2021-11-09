@@ -53,8 +53,7 @@ TensorFlow.}
 only occur within RStudio).}
 
 \item{...}{other arguments passed to \code{\link[reticulate:conda-tools]{reticulate::conda_install()}} or
-\code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}, depending on the \code{method} used. Accepts
-\code{pip_ignore_installed=TRUE}.}
+\code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}, depending on the \code{method} used.}
 
 \item{pip_ignore_installed}{Whether pip should ignore installed python
 packages and reinstall all already installed python packages. This defaults
@@ -68,7 +67,7 @@ Python virtual environment.}
 \description{
 \code{install_tensorflow()} installs just the tensorflow python package and it's
 direct dependencies. For a more complete installation that includes
-additional optional dependencies, use \code{keras::install_keras()}.
+additional optional dependencies, use \code{\link[keras:install_keras]{keras::install_keras()}}.
 }
 \details{
 You may be prompted you if you want it to download and install

@@ -2,7 +2,7 @@
 #'
 #' `install_tensorflow()` installs just the tensorflow python package and it's
 #' direct dependencies. For a more complete installation that includes
-#' additional optional dependencies, use `keras::install_keras()`.
+#' additional optional dependencies, use [`keras::install_keras()`].
 #'
 #' @details You may be prompted you if you want it to download and install
 #'   miniconda if reticulate did not find a non-system installation of python.
@@ -49,6 +49,7 @@
 #' @md
 #'
 #' @inheritParams reticulate::py_install
+#'
 #' @param version TensorFlow version to install. Valid values include:
 #'
 #'   +  `"default"` installs  `r default_version`
@@ -82,8 +83,8 @@
 #'   to `TRUE`, to ensure that TensorFlow dependencies like NumPy are compatible
 #'   with the prebuilt TensorFlow binaries.
 #'
-#' @param ... other arguments passed to [reticulate::conda_install()] or
-#'   [reticulate::virtualenv_install()], depending on the `method` used.
+#' @param ... other arguments passed to [`reticulate::conda_install()`] or
+#'   [`reticulate::virtualenv_install()`], depending on the `method` used.
 #'
 #' @seealso [`keras::install_keras()`]
 #'
