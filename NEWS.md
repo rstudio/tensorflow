@@ -2,7 +2,7 @@
 
 - Default Tensorflow version installed by `install_tensorflow()` updated to 2.7
 
-- Breaking change:
+- Breaking changes:
   - `shape()` now returns a `tf.TensorShape()` object
     (Previously an R-list of `NULL`s or integers).
   - `[` method for `tf.TensorShape()` objects also now returns a `tf.TensorShape()`.
