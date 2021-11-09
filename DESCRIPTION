@@ -5,7 +5,7 @@ Version: 2.7.0.9000
 Authors@R: c(
   person("Daniel", "Falbel", role = c("ctb", "cph"), email = "daniel@rstudio.com"),
   person("JJ", "Allaire", role = c("aut", "cph")),
-  person(family = "RStudio", role = c("cph", "fnd")),
+  person("RStudio", role = c("cph", "fnd")),
   person("Yuan", "Tang", role = c("aut", "cph"),
          email = "terrytangyuan@gmail.com",
          comment = c(ORCID = "0000-0001-5243-233X")),
@@ -15,7 +15,7 @@ Authors@R: c(
          email = "nick.golding.research@gmail.com"),
   person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"),
          email = "tomasz.kalinowski@rstudio.com"),
-  person(family = "Google Inc.", role = c("ctb", "cph"),
+  person("Google Inc.", role = c("ctb", "cph"),
          comment = "Examples and Tutorials")
   )
 Description: Interface to 'TensorFlow' <https://www.tensorflow.org/>,
