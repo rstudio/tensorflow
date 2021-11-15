@@ -100,6 +100,12 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                pip_ignore_installed = TRUE,
                                python_version = conda_python_version) {
 
+  if(is_apple_silicon()) {
+    stop("Automatic installation on M1 Macs not supported yet.",
+         ' Please consult `?install_tensorflow` help section on "Apple silicon"',
+         " for alternatives.")
+  }
+
   # verify 64-bit
   if (.Machine$sizeof.pointer != 8) {
     stop("Unable to install TensorFlow on this platform.",

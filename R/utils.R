@@ -26,6 +26,10 @@ is_ubuntu <- function() {
   }
 }
 
+is_apple_silicon <- function() {
+  is_osx() && Sys.info()[["machine"]] == "arm64"
+}
+
 dir_exists <- function(x) {
   utils::file_test('-d', x)
 }
