@@ -227,6 +227,15 @@ length.tensorflow.python.framework.tensor_shape.TensorShape <- function(x) {
   as_r_value(x$rank) %||% NA_integer_
 }
 
+#' @export
+format.tensorflow.python.framework.tensor_shape.TensorShape <- function(x, ...) {
+  out <- as_r_value(x$`__str__`())
+  out <- gsub("None", "NULL", out, fixed = TRUE)
+  if(identical(x$rank, 1L))
+    out <- sub(",", "", out)
+  out
+}
+
 
 #' @export
 py_str.tensorflow.python.framework.tensor_shape.TensorShape <-
