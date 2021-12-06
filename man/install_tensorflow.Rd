@@ -87,24 +87,26 @@ manually install miniconda by running \code{\link[reticulate:install_miniconda]{
 \code{keras::install_keras()} isn't required to use tensorflow with the package.
 If you manually configure a python environment with the required
 dependencies, you can tell R to use it by pointing reticulate at it,
-commonly by setting an environment variable:
-
-\code{Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")}
+commonly by setting an environment variable:\preformatted{Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")
+}
 }
 
 \section{Apple Silicon}{
  Tensorflow on Apple Silicon is not officially
-supported by the tensorflow maintainers. It is known that there can be
-issues running the official Tensorflow package under Rosetta as well.
-Fortunately, for the time being Apple has published a custom version of
-Tensorflow compatible with M1 macs. Installation instructions can be found
-at: \url{https://developer.apple.com/metal/tensorflow-plugin/}. Please note
-that this is an experimental build of both python and tensorflow. After
-following the instructions provided by Apple, you can advise reticulate to
-use that python installation by placing the following in your \code{.Renviron}
-file:
-
-\code{RETICULATE_PYTHON = "~/miniforge3/bin/python"}
+supported by the Tensorflow maintainers. However Apple has published a
+custom version of Tensorflow compatible with Arm Macs.
+\code{install_tensorflow()} will install the special packages \code{tensorflow-macos}
+and \code{tensorflow-metal} on Arm Macs. See
+\url{https://developer.apple.com/metal/tensorflow-plugin/} for instructions
+on how to do the equivalent manually. Please note that this is an
+experimental build of both Python and Tensorflow, with known issues.
+In particular, certain operations will cause errors, but can often be
+remedied by pinning them to the CPU. For example:\if{html}{\out{<div class="sourceCode R">}}\preformatted{x <- array(runif(64*64), c(1, 64, 64))
+keras::layer_random_rotation(x, .5)  # Error:
+# No registered 'RngReadAndSkip' OpKernel for 'GPU' devices
+# Pin the operation to the CPU to avoid the error
+with(tf$device("CPU"), keras::layer_random_rotation(x, .5) ) # No Error
+}\if{html}{\out{</div>}}
 }
 
 \section{Additional Packages}{

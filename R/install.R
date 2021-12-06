@@ -21,20 +21,28 @@
 #'   dependencies, you can tell R to use it by pointing reticulate at it,
 #'   commonly by setting an environment variable:
 #'
-#'   ``` Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python") ```
+#'   ```
+#'   Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")
+#'   ```
 #'
 #' @section Apple Silicon: Tensorflow on Apple Silicon is not officially
-#'   supported by the tensorflow maintainers. It is known that there can be
-#'   issues running the official Tensorflow package under Rosetta as well.
-#'   Fortunately, for the time being Apple has published a custom version of
-#'   Tensorflow compatible with M1 macs. Installation instructions can be found
-#'   at: \url{https://developer.apple.com/metal/tensorflow-plugin/}. Please note
-#'   that this is an experimental build of both python and tensorflow. After
-#'   following the instructions provided by Apple, you can advise reticulate to
-#'   use that python installation by placing the following in your `.Renviron`
-#'   file:
+#'   supported by the Tensorflow maintainers. However Apple has published a
+#'   custom version of Tensorflow compatible with Arm Macs.
+#'   `install_tensorflow()` will install the special packages `tensorflow-macos`
+#'   and `tensorflow-metal` on Arm Macs. See
+#'   \url{https://developer.apple.com/metal/tensorflow-plugin/} for instructions
+#'   on how to do the equivalent manually. Please note that this is an
+#'   experimental build of both Python and Tensorflow, with known issues.
+#'   In particular, certain operations will cause errors, but can often be
+#'   remedied by pinning them to the CPU. For example:
 #'
-#'   ``` RETICULATE_PYTHON = "~/miniforge3/bin/python" ```
+#'   ```` R
+#'   x <- array(runif(64*64), c(1, 64, 64))
+#'   keras::layer_random_rotation(x, .5)  # Error:
+#'   # No registered 'RngReadAndSkip' OpKernel for 'GPU' devices
+#'   # Pin the operation to the CPU to avoid the error
+#'   with(tf$device("CPU"), keras::layer_random_rotation(x, .5) ) # No Error
+#'   ````
 #'
 #' @section Additional Packages:
 #'
