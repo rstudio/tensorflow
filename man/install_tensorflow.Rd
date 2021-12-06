@@ -11,7 +11,7 @@ install_tensorflow(
   envname = NULL,
   extra_packages = NULL,
   restart_session = TRUE,
-  conda_python_version = "3.7",
+  conda_python_version = "3.8",
   ...,
   pip_ignore_installed = TRUE,
   python_version = conda_python_version

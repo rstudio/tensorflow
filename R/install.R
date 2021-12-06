@@ -95,16 +95,24 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                envname = NULL,
                                extra_packages = NULL,
                                restart_session = TRUE,
-                               conda_python_version = "3.7",
+                               conda_python_version = "3.8",
                                ...,
                                pip_ignore_installed = TRUE,
                                python_version = conda_python_version) {
 
-  if(is_apple_silicon()) {
-    stop("Automatic installation on M1 Macs not supported yet.",
-         ' Please consult `?install_tensorflow` help section on "Apple silicon"',
-         " for alternatives.")
-  }
+  method <- match.arg(method)
+
+  if(is_mac_arm64())
+    return(install_tensorflow_mac_arm64(
+      method = method,
+      conda = conda,
+      version = version,
+      envname = envname,
+      extra_packages = extra_packages,
+      restart_session = restart_session,
+      python_version = python_version
+    ))
+
 
   # verify 64-bit
   if (.Machine$sizeof.pointer != 8) {
@@ -112,7 +120,6 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
          "Binary installation is only available for 64-bit platforms.")
   }
 
-  method <- match.arg(method)
 
   # some special handling for windows
   if (is_windows()) {
@@ -225,4 +232,70 @@ install_tensorflow_extras <- function(packages, conda = "auto") {
      stop("Extra packages not installed (this function is deprecated). \n",
           "Use the extra_packages argument to install_tensorflow() or reticulate::py_install() to ",
           "install additional packages.")
+}
+
+install_tensorflow_mac_arm64 <- function(method = c("auto", "virtualenv", "conda"),
+                                         conda = "auto",
+                                         version = "default",
+                                         envname = NULL,
+                                         extra_packages = NULL,
+                                         restart_session = TRUE,
+                                         python_version = NULL) {
+  stopifnot(is_mac_arm64())
+  method <- match.arg(method)
+
+  if(method == "virtualenv")
+    stop("Tensorflow on Arm Macs only supported in Conda Python.",
+         " Install Miniconda with `reticulate::install_miniconda()`")
+
+  have_conda <- !is.null(tryCatch(conda_binary(conda), error = function(e) NULL))
+  if (!have_conda) {
+    stop("Tensorflow installation failed (no conda binary found)\n\n",
+         "Install Miniconda by running `reticulate::install_miniconda()`",
+         "before installing Tensorflow.\n",
+         call. = FALSE)
+  }
+
+  if(!version %in% c("default", "release"))
+    warning(
+      "Only `version = 'default'` supported on Arm Macs at this time.",
+      "Request for Tensorflow version '", version, "' ignored.")
+
+  conda <- conda_binary(conda)
+
+  install <- function(pkg, ...) {
+    message("Installing: ", paste(pkg, collapse = ", "))
+    py_install(pkg, ...,  method = "conda", conda = conda,
+               envname = envname, python_version = python_version)
+  }
+
+  extra_packages <- setdiff(extra_packages, c("scipy", "requests", "h5py"))
+  # "scipy","requests", "h5py" # pinned versions pulled in by "tensorflow-deps" already
+  # "pyyaml" no longer needed
+
+  # split extra_packages into pre and post install lists
+  # dangerous to invoke conda after pip, so everything conda goes first,
+  # with official tensorflow-* packages going last so their pinned dependancy version wins.
+  # packages like h5py o Pillow not available via pip yet for arm mac
+  # and tensorflow-hub via conda pulls in the wrong dependencies, so must come from pip.
+  extra_packages_pip <- intersect(extra_packages, c("tensorflow-hub",
+                                                    "tensorflow-datasets"))
+  extra_packages_conda <- setdiff(extra_packages, extra_packages_pip)
+
+  if(length(extra_packages_conda))
+    install(extra_packages_conda) # keras passes: c("pandas", "Pillow")
+
+  install("tensorflow-deps", channel = c("apple", "conda-forge"))
+  install("tensorflow-macos", pip = TRUE)
+  install("tensorflow-metal", pip = TRUE)
+
+  if(length(extra_packages_pip))
+    install(extra_packages_pip, pip = TRUE)
+
+  if (restart_session &&
+      requireNamespace("rstudioapi", quietly = TRUE) &&
+      rstudioapi::hasFun("restartSession"))
+    rstudioapi::restartSession()
+
+  invisible()
 }

@@ -1,5 +1,14 @@
 # tensorflow (development version)
 
+- `install_tensorflow()` now provides experimental support for Arm Macs,
+  with the following restrictions:
+    - "conda" is the only supported installation method.
+    - requests for non-default or older tensorflow versions are not supported.
+
+- `install_tensorflow()` default conda_python_version changes from 3.7 to 3.8.
+
+- `tf.TensorShape()`'s gain a `format()` S3 method.
+
 # tensorflow 2.7.0
 
 - Default Tensorflow version installed by `install_tensorflow()` updated to 2.7
@@ -35,8 +44,8 @@
   Generics that now do autocasting:
     +, -, *, /, %/%, %%, ^, &, |, ==, !=, <, <=, >, >=
 
-- `install_tensorflow()`: new argument with default `pip_ignore_installed = TRUE`. 
-  This ensures that all Tensorflow dependencies like Numpy are installed by pip 
+- `install_tensorflow()`: new argument with default `pip_ignore_installed = TRUE`.
+  This ensures that all Tensorflow dependencies like Numpy are installed by pip
   rather than conda.
 
 - A message with the Tensorflow version is now shown when the

@@ -26,8 +26,11 @@ is_ubuntu <- function() {
   }
 }
 
-is_apple_silicon <- function() {
-  is_osx() && Sys.info()[["machine"]] == "arm64"
+
+is_mac_arm64 <- function() {
+  sys_info <- Sys.info()
+  sys_info[["sysname"]] == "Darwin" &&
+  sys_info[["machine"]] == "arm64"
 }
 
 dir_exists <- function(x) {
@@ -54,4 +57,3 @@ call_hook <- function(name, ...) {
   })
   response
 }
-
