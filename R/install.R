@@ -293,9 +293,18 @@ install_tensorflow_mac_arm64 <- function(method = c("auto", "virtualenv", "conda
   if(length(extra_packages_conda))
     install(extra_packages_conda) # keras passes: c("pandas", "Pillow")
 
-  install("tensorflow-deps", channel = c("apple", "conda-forge"))
-  install("tensorflow-macos", pip = TRUE)
-  install("tensorflow-metal", pip = TRUE)
+  os_ver <- numeric_version(gsub("macOS [a-zA-Z ]*([0-9.]+)", "\\1",
+                                 sessionInfo()$running, perl = TRUE))
+
+  if (os_ver < "12") {
+    install("tensorflow-deps==2.6", channel = c("apple", "conda-forge"))
+    install("tensorflow-macos==2.6.0", pip = TRUE)
+    install("tensorflow-metal==0.2.0", pip = TRUE)
+  } else {
+    install("tensorflow-deps", channel = c("apple", "conda-forge"))
+    install("tensorflow-macos", pip = TRUE)
+    install("tensorflow-metal", pip = TRUE)
+  }
 
   if(length(extra_packages_pip))
     install(extra_packages_pip, pip = TRUE)
