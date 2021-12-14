@@ -196,6 +196,9 @@ parse_tensorflow_version <- function(version) {
 
   version <- as.character(version) # if numeric_version()
 
+  if(version == "release-cpu")
+    return("tensorflow-cpu")
+
   # full path to whl.
   if (grepl("^.*\\.whl$", version))
     return(normalizePath(version))
