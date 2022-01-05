@@ -232,7 +232,7 @@ format.tensorflow.python.framework.tensor_shape.TensorShape <- function(x, ...) 
   out <- as_r_value(x$`__str__`())
   out <- gsub("None", "NULL", out, fixed = TRUE)
   if(identical(x$rank, 1L))
-    out <- sub(",", "", out)
+    out <- sub(",", "", out, fixed = TRUE)
   out
 }
 
