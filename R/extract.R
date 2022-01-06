@@ -388,6 +388,9 @@ as_valid_py__getitem__arg <- function(x, options) {
     return(do.call(py_slice, c(x, opts)))
   }
 
+  if(inherits(x, "python.builtin.slice"))
+    return(x)
+
   if(is.atomic(x) && (is.character(x) || anyNA(x) || any(is.infinite(x))))
     stop("NA, Inf, or character inputs not supported")
 
