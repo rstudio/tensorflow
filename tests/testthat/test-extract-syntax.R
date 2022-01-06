@@ -492,8 +492,12 @@ test_that("python-style strided slice", {
   expect_equal(grab( x.t[ `5:`          ,] ), x.r[ 5:20,])
   expect_equal(grab( x.t[ `5:NULL`      ,] ), x.r[ 5:20,])
   expect_equal(grab( x.t[  5:NULL       ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[  5:NA       ,] ), x.r[ 5:20,])
   expect_equal(grab( x.t[ `5:NULL:`     ,] ), x.r[ 5:20,])
   expect_equal(grab( x.t[  5:NULL:NULL  ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[  5:NA:NA  ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[  5:NA:NA_integer_  ,] ), x.r[ 5:20,])
+  expect_equal(grab( x.t[  5:NA_real_:NA  ,] ), x.r[ 5:20,])
   expect_equal(grab( x.t[ `5:NULL:NULL` ,] ), x.r[ 5:20,])
 
   expect_equal(grab( x.t[ `5::` ,] ), x.r[ 5:20,])
@@ -512,6 +516,7 @@ test_that("python-style strided slice", {
 
   expect_equal(grab( x.t[ `2:6:2`,]), x.r[ seq.int(2, 6, 2) ,])
   expect_equal(grab( x.t[  2:6:2 ,]), x.r[ seq.int(2, 6, 2) ,])
+
 
   # decreasing indexes work
   expect_equal(grab( x.t[ `6:2:-2`,]), x.r[ seq.int(6, 2, -2) ,])

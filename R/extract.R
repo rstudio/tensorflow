@@ -282,11 +282,24 @@ py_slice <-
     if(is.null(start) && is.null(stop) && is.null(step))
       return(builtin_slice(NULL))
 
+    NA_to_NULL <- function(x) {
+      if (identical(x, NA) ||
+          identical(x, NA_integer_) ||
+          identical(x, NA_real_))
+        NULL
+      else
+        x
+    }
+
+    start <- NA_to_NULL(start)
+    stop <- NA_to_NULL(stop)
+    step <- NA_to_NULL(step)
+
     check_vars(start, stop, step,
                .fun = function(x)
                  is.null(x) || is_scalar_integerish(x) || is_tensor(x),
                .friendly_description =
-                 "NULL (the default if missing), a scalar whole number, or a tensor"
+                 "NULL or NA (the default if missing), a scalar whole number, or a tensor"
     )
     check_is_TRUE_or_FALSE(one_based, inclusive_stop)
 
@@ -339,6 +352,7 @@ maybe_reparse_as_slice_spec_then_force <- function(..., .env) {
       if (is_colon_call(d)) {
 
         d <- as.list(d)[-1]
+
         if (is_colon_call(d[[1]] -> d1)) # step supplied
           d <- c(as.list(d1)[-1], d[-1])
 

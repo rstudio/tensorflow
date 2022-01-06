@@ -9,6 +9,9 @@
 
 - `tf.TensorShape()`'s gain a `format()` S3 method.
 
+- `[` method for slicing tensors now accepts `NA` as a synonym for a missing or `NULL` spec.
+  For example `x[NA:3]` is now valid, equivalent to `x[:3]` in Python.
+
 # tensorflow 2.7.0
 
 - Default Tensorflow version installed by `install_tensorflow()` updated to 2.7
