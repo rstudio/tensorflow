@@ -60,9 +60,11 @@ packages and reinstall all already installed python packages. This defaults
 to \code{TRUE}, to ensure that TensorFlow dependencies like NumPy are compatible
 with the prebuilt TensorFlow binaries.}
 
-\item{python_version, conda_python_version}{the python version installed in
-the created conda environment. Ignored when attempting to install with a
-Python virtual environment.}
+\item{python_version, conda_python_version}{Pass a string like "3.8" to
+request that conda install a specific Python version. This is ignored when
+attempting to install in a Python virtual environment. Note that the Python
+version must be compatible with the requested Tensorflow version, documented
+here: \url{https://www.tensorflow.org/install/pip#system-requirements}}
 }
 \description{
 \code{install_tensorflow()} installs just the tensorflow python package and it's
@@ -86,8 +88,8 @@ manually install miniconda by running \code{\link[reticulate:install_miniconda]{
 \code{keras::install_keras()} isn't required to use tensorflow with the package.
 If you manually configure a python environment with the required
 dependencies, you can tell R to use it by pointing reticulate at it,
-commonly by setting an environment variable:\preformatted{Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")
-}
+commonly by setting an environment variable:\if{html}{\out{<div class="sourceCode R">}}\preformatted{Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")
+}\if{html}{\out{</div>}}
 }
 
 \section{Apple Silicon}{
@@ -98,9 +100,9 @@ custom version of Tensorflow compatible with Arm Macs.
 and \code{tensorflow-metal} on Arm Macs. See
 \url{https://developer.apple.com/metal/tensorflow-plugin/} for instructions
 on how to do the equivalent manually. Please note that this is an
-experimental build of both Python and Tensorflow, with known issues.
-In particular, certain operations will cause errors, but can often be
-remedied by pinning them to the CPU. For example:\if{html}{\out{<div class="sourceCode R">}}\preformatted{x <- array(runif(64*64), c(1, 64, 64))
+experimental build of both Python and Tensorflow, with known issues. In
+particular, certain operations will cause errors, but can often be remedied
+by pinning them to the CPU. For example:\if{html}{\out{<div class="sourceCode R">}}\preformatted{x <- array(runif(64*64), c(1, 64, 64))
 keras::layer_random_rotation(x, .5)  # Error:
 # No registered 'RngReadAndSkip' OpKernel for 'GPU' devices
 # Pin the operation to the CPU to avoid the error

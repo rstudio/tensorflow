@@ -21,7 +21,7 @@
 #'   dependencies, you can tell R to use it by pointing reticulate at it,
 #'   commonly by setting an environment variable:
 #'
-#'   ```
+#'   ``` R
 #'   Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")
 #'   ```
 #'
@@ -32,9 +32,9 @@
 #'   and `tensorflow-metal` on Arm Macs. See
 #'   \url{https://developer.apple.com/metal/tensorflow-plugin/} for instructions
 #'   on how to do the equivalent manually. Please note that this is an
-#'   experimental build of both Python and Tensorflow, with known issues.
-#'   In particular, certain operations will cause errors, but can often be
-#'   remedied by pinning them to the CPU. For example:
+#'   experimental build of both Python and Tensorflow, with known issues. In
+#'   particular, certain operations will cause errors, but can often be remedied
+#'   by pinning them to the CPU. For example:
 #'
 #'   ```` R
 #'   x <- array(runif(64*64), c(1, 64, 64))
@@ -82,9 +82,11 @@
 #' @param restart_session Restart R session after installing (note this will
 #'   only occur within RStudio).
 #'
-#' @param python_version,conda_python_version the python version installed in
-#'   the created conda environment. Ignored when attempting to install with a
-#'   Python virtual environment.
+#' @param python_version,conda_python_version Pass a string like "3.8" to
+#'   request that conda install a specific Python version. This is ignored when
+#'   attempting to install in a Python virtual environment. Note that the Python
+#'   version must be compatible with the requested Tensorflow version, documented
+#'   here: <https://www.tensorflow.org/install/pip#system-requirements>
 #'
 #' @param pip_ignore_installed Whether pip should ignore installed python
 #'   packages and reinstall all already installed python packages. This defaults
