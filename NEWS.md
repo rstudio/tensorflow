@@ -5,7 +5,7 @@
     - "conda" is the only supported installation method.
     - requests for non-default or older tensorflow versions are not supported.
 
-- `install_tensorflow()` default conda_python_version changes from 3.7 to 3.8.
+- `install_tensorflow()` default conda_python_version changes from 3.7 to NULL.
 
 - `tf.TensorShape()`'s gain a `format()` S3 method.
 

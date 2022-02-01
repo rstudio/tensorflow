@@ -103,7 +103,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
                                envname = NULL,
                                extra_packages = NULL,
                                restart_session = TRUE,
-                               conda_python_version = "3.8",
+                               conda_python_version = NULL,
                                ...,
                                pip_ignore_installed = TRUE,
                                python_version = conda_python_version) {
