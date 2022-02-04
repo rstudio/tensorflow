@@ -8,7 +8,7 @@
 \usage{
 as_tensor(x, dtype = NULL, ..., name = NULL)
 
-\method{as_tensor}{default}(x, dtype = NULL, ..., name = NULL)
+\method{as_tensor}{default}(x, dtype = NULL, ..., shape = NULL, name = NULL)
 
 \method{as_tensor}{double}(x, dtype = NULL, ..., name = NULL)
 }
@@ -22,6 +22,12 @@ to one (e.g. a string \code{"int32"})}
 
 \item{name}{\code{NULL} or a string. Useful for debugging in graph mode, ignored
 while in eager mode.}
+
+\item{shape}{an integer vector, tensor, or \code{tf.TensorShape}. Can contain up
+to 1 unspecified dimension, encoded as a \code{-1} or \code{NA}. This will reshape
+\code{x} using row-major (C-style) semantics. It will prefer reshaping using
+non-graph operations if possible, but will dispatch to \code{tf$reshape()}
+otherwise.}
 }
 \value{
 a tensorflow tensor

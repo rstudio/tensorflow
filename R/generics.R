@@ -381,6 +381,11 @@ autocast_ab_to_tensors <- function()
 #' @param dtype `NULL`, a tensorflow dtype (`tf$int32`), or something coercible
 #'   to one (e.g. a string `"int32"`)
 #' @param ..., ignored
+#' @param shape an integer vector, tensor, or `tf.TensorShape`. Can contain up
+#'   to 1 unspecified dimension, encoded as a `-1` or `NA`. This will reshape
+#'   `x` using row-major (C-style) semantics. It will prefer reshaping using
+#'   non-graph operations if possible, but will dispatch to `tf$reshape()`
+#'   otherwise.
 #' @param name `NULL` or a string. Useful for debugging in graph mode, ignored
 #'   while in eager mode.
 #'
@@ -397,12 +402,32 @@ as_tensor <- function(x, dtype = NULL, ..., name = NULL) UseMethod("as_tensor")
 
 #' @rdname as_tensor
 #' @export
-as_tensor.default <- function(x, dtype = NULL, ..., name = NULL) {
+as_tensor.default <- function(x, dtype = NULL, ..., shape = NULL, name = NULL) {
+
+  if (!is.null(shape) && !is_tensor(shape)) {
+    shape <- as.integer.tensorflow.python.framework.tensor_shape.TensorShape(
+      tensorflow::shape(dims = shape))
+
+    if (any(unspecified <- is.na(shape)))
+      shape[unspecified] <- -1L
+
+    if(identical(dim(x), shape))
+      shape <- NULL
+    else if (is.array(x) || is.atomic(x) || inherits(x, "numpy.ndarray")) {
+      # prefer reshaping off the graph if possible
+      np <- import("numpy", convert = FALSE)
+      x <- np$reshape(x, shape, "C")
+      shape <- NULL
+    }
+  }
+
   x <- tf$convert_to_tensor(x, dtype_hint = dtype, name = name)
-  if (is.null(dtype))
-    x
-  else
-    tf$cast(x, dtype, name = name)
+  if (!is.null(dtype))
+    x <- tf$cast(x, dtype, name = name)
+  if(!is.null(shape))
+    x <- tf$reshape(x, shape, name = name)
+
+  x
 }
 
 #' @rdname as_tensor
@@ -422,3 +447,4 @@ as_tensor.double <- function(x, dtype = NULL, ..., name = NULL) {
 
   NextMethod()
 }
+

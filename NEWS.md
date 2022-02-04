@@ -1,5 +1,8 @@
 # tensorflow (development version)
 
+- `as_tensor()` gains a `shape` argument, can be used to shape or reshape the 
+  supplied object. Reshaping is done using row-major (C-style) semantics.
+
 - `install_tensorflow()` now provides experimental support for Arm Macs,
   with the following restrictions:
     - "conda" is the only supported installation method.
