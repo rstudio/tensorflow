@@ -26,8 +26,10 @@ while in eager mode.}
 \item{shape}{an integer vector, tensor, or \code{tf.TensorShape}. Can contain up
 to 1 unspecified dimension, encoded as a \code{-1} or \code{NA}. This will reshape
 \code{x} using row-major (C-style) semantics. It will prefer reshaping using
-non-graph operations if possible, but will dispatch to \code{tf$reshape()}
-otherwise.}
+non-graph operations if possible, but will otherwise invoke \code{tf$reshape()}.
+If \code{x} is a scalar and the requested \code{shape} is fully defined or a tensor,
+the value of \code{x} will be recycled to fill a tensor of the requested shape
+(it will dispatch to \code{tf$fill()}).}
 }
 \value{
 a tensorflow tensor

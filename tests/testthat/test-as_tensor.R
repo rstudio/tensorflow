@@ -48,8 +48,21 @@ test_that("as_tensor works", {
                list(3, 4),
                as_tensor(c(-1L, 4L)))
   for (shp in shps) {
-    x <- as_tensor(1:12, shape = c(-1, 4))
+    x <- as_tensor(1:12, shape = shp)
     expect_identical(dim(x), c(3L, 4L))
   }
+
+
+  # can call tf$fill() to expand scalars
+  expect_identical(
+    tf$convert_to_tensor(array(0, c(3,4)))$numpy(),
+    as_tensor(0, shape = c(3, 4))$numpy()
+  )
+
+  expect_identical(
+    tf$zeros(shape(3,4))$numpy(),
+    as_tensor(0, shape = c(3, 4))$numpy()
+  )
+
 
 })
