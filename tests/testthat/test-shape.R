@@ -1,4 +1,4 @@
-test_that("multiplication works", {
+test_that("shape() works", {
 
 
   skip_if_no_tensorflow()
