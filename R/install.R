@@ -299,7 +299,7 @@ install_tensorflow_mac_arm64 <- function(method = c("auto", "virtualenv", "conda
     install(extra_packages_conda) # keras passes: c("pandas", "Pillow")
 
   os_ver <- numeric_version(gsub("macOS [a-zA-Z ]*([0-9.]+)", "\\1",
-                                 sessionInfo()$running, perl = TRUE))
+                                 utils::sessionInfo()$running, perl = TRUE))
 
   if (os_ver < "12") {
     install("tensorflow-deps==2.6", channel = c("apple", "conda-forge"))

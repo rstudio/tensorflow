@@ -41,4 +41,28 @@ test_that("as_tensor works", {
   test_is_tensor(as_tensor(x, tf$int32), tf$int32)
   test_is_tensor(as_tensor(x, tf$int64), tf$int64)
 
+  shps <- list(c(-1, 4),
+               shape(-1, 4),
+               c(NA, 4),
+               list(NULL, 4),
+               list(3, 4),
+               as_tensor(c(-1L, 4L)))
+  for (shp in shps) {
+    x <- as_tensor(1:12, shape = shp)
+    expect_identical(dim(x), c(3L, 4L))
+  }
+
+
+  # can call tf$fill() to expand scalars
+  expect_identical(
+    tf$convert_to_tensor(array(0, c(3,4)))$numpy(),
+    as_tensor(0, shape = c(3, 4))$numpy()
+  )
+
+  expect_identical(
+    tf$zeros(shape(3,4))$numpy(),
+    as_tensor(0, shape = c(3, 4))$numpy()
+  )
+
+
 })

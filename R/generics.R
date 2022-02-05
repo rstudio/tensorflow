@@ -381,6 +381,13 @@ autocast_ab_to_tensors <- function()
 #' @param dtype `NULL`, a tensorflow dtype (`tf$int32`), or something coercible
 #'   to one (e.g. a string `"int32"`)
 #' @param ..., ignored
+#' @param shape an integer vector, tensor, or `tf.TensorShape`. Can contain up
+#'   to 1 unspecified dimension, encoded as a `-1` or `NA`. This will reshape
+#'   `x` using row-major (C-style) semantics. It will prefer reshaping using
+#'   non-graph operations if possible, but will otherwise invoke `tf$reshape()`.
+#'   If `x` is a scalar and the requested `shape` is fully defined or a tensor,
+#'   the value of `x` will be recycled to fill a tensor of the requested shape
+#'   (it will dispatch to `tf$fill()`).
 #' @param name `NULL` or a string. Useful for debugging in graph mode, ignored
 #'   while in eager mode.
 #'
@@ -397,12 +404,42 @@ as_tensor <- function(x, dtype = NULL, ..., name = NULL) UseMethod("as_tensor")
 
 #' @rdname as_tensor
 #' @export
-as_tensor.default <- function(x, dtype = NULL, ..., name = NULL) {
+as_tensor.default <- function(x, dtype = NULL, ..., shape = NULL, name = NULL) {
+
+  if (!is.null(shape) && !is_tensor(shape)) {
+    shape <- as.integer.tensorflow.python.framework.tensor_shape.TensorShape(
+      tensorflow::shape(dims = shape))
+
+    if (partially_defined_shape <- any(undefined <- is.na(shape)))
+      shape[undefined] <- -1L
+
+    # if x is scalar and (shape fully defined or a tensor): tf$fill()
+    # else if x is R atomic or np.ndarray: np$reshape()
+    # else: tf$reshape()
+
+    if(identical(dx <- dim(x), shape))
+      shape <- NULL
+    else if ((is.atomic(x) || inherits(x, "numpy.ndarray")) &&
+             !is_scalar(x)) {
+      # prefer reshaping off the graph if possible
+      np <- import("numpy", convert = FALSE)
+      x <- np$reshape(x, shape, "C")
+      shape <- NULL
+    }
+  }
+
   x <- tf$convert_to_tensor(x, dtype_hint = dtype, name = name)
-  if (is.null(dtype))
-    x
-  else
-    tf$cast(x, dtype, name = name)
+  if (!is.null(dtype))
+    x <- tf$cast(x, dtype, name = name)
+
+  if (!is.null(shape)) {
+    if (is_scalar(x) && (is_tensor(shape) || !partially_defined_shape))
+      x <- tf$fill(shape, tf$squeeze(x), name = name)
+    else
+      x <- tf$reshape(x, shape, name = name)
+  }
+
+  x
 }
 
 #' @rdname as_tensor
@@ -422,3 +459,4 @@ as_tensor.double <- function(x, dtype = NULL, ..., name = NULL) {
 
   NextMethod()
 }
+
