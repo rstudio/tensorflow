@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- Updated default Tensorflow version installed by `install_tensorflow()` to 2.8.
+
 - `as_tensor()` gains a `shape` argument, can be used to fill or reshape the supplied object.
   Scalars can be recycled to a tensor of arbitrary `shape`, otherwise 
   supplied objects are reshaped using row-major (C-style) semantics.

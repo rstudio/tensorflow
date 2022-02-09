@@ -39,11 +39,12 @@ jobs:
           # - {os: 'windows-latest', tf: 'release', r: 'release'}
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
+          - {os: 'ubuntu-20.04', tf: '2.7', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.6', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.5', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.4', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.3', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.2', r: 'release'}
+          # - {os: 'ubuntu-20.04', tf: '2.2', r: 'release'}
 
           # these are allowed to fail
           # - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
@@ -58,12 +59,6 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Configure RSPM
-        if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          RSPM="https://packagemanager.rstudio.com/all/__linux__/$(lsb_release -cs)/latest"
-          echo "RSPM=$RSPM" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
 
@@ -72,7 +67,7 @@ jobs:
         with:
           r-version: ${{ matrix.r }}
           Ncpus: '2L'
-          crayon.enabled: 'TRUE'
+          use-public-rspm: true
 
       - uses: r-lib/actions/setup-pandoc@v2
 
