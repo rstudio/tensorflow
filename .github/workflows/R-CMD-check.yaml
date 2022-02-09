@@ -48,7 +48,7 @@ jobs:
 
           # these are allowed to fail
           # - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
-          - {os: 'ubuntu-20.04', tf: 'nightly' , r: 'release'}
+          # - {os: 'ubuntu-20.04', tf: 'nightly' , r: 'release'}
           # - {os: 'ubuntu-20.04', tf: '2.7.0rc1', r: 'release'}
 
     runs-on: ${{ matrix.os }}
@@ -83,7 +83,7 @@ jobs:
         id: r-package-cache
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}
+          key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}-1
 
       - name: Install remotes
         if: steps.r-package-cache.outputs.cache-hit != 'true'

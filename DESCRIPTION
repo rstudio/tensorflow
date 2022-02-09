@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 2.7.0.9000
+Version: 2.8.0
 Authors@R: c(
   person("Daniel", "Falbel", role = c("ctb", "cph"), email = "daniel@rstudio.com"),
   person("JJ", "Allaire", role = c("aut", "cph")),
@@ -39,7 +39,7 @@ Depends: R (>= 3.1)
 Imports:
     config,
     processx,
-    reticulate (> 1.24),
+    reticulate (>= 1.24),
     tfruns (>= 1.0),
     utils,
     yaml,
@@ -51,5 +51,3 @@ Suggests:
     keras,
     callr
 RoxygenNote: 7.1.2
-Remotes:
-     rstudio/reticulate
