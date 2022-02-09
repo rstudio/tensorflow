@@ -18,3 +18,4 @@ MNIST-data
 ^CRAN-RELEASE$
 ^\.github.*$
 ^cran-comments\.md$
+^CRAN-SUBMISSION$
