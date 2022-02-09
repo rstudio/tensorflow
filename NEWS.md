@@ -1,4 +1,4 @@
-# tensorflow (development version)
+# tensorflow 2.8.0
 
 - Updated default Tensorflow version installed by `install_tensorflow()` to 2.8.
 
