@@ -83,7 +83,7 @@ jobs:
         id: r-package-cache
         with:
           path: ${{ env.R_LIBS_USER }}
-          key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}
+          key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}-1
 
       - name: Install remotes
         if: steps.r-package-cache.outputs.cache-hit != 'true'
