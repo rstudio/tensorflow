@@ -228,13 +228,20 @@ length.tensorflow.python.framework.tensor_shape.TensorShape <- function(x) {
 }
 
 #' @export
-format.tensorflow.python.framework.tensor_shape.TensorShape <- function(x, ...) {
-  out <- as_r_value(x$`__str__`())
-  out <- gsub("None", "NULL", out, fixed = TRUE)
-  if(identical(x$rank, 1L))
-    out <- sub(",", "", out, fixed = TRUE)
-  out
-}
+format.tensorflow.python.framework.tensor_shape.TensorShape <-
+  function(x, ...) {
+    if (identical(as_r_value(x$rank), NULL))
+      "(<unknown>)"
+    else
+      sprintf("(%s)", paste0(as.integer(x), collapse = ", "))
+  }
+
+#' @export
+print.tensorflow.python.framework.tensor_shape.TensorShape <-
+  function(x, ...) {
+    writeLines(import_builtins()$repr(x))
+    invisible(x)
+  }
 
 
 #' @export

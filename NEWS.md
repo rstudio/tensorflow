@@ -3,9 +3,9 @@
 - Updated default Tensorflow version installed by `install_tensorflow()` to 2.8.
 
 - `as_tensor()` gains a `shape` argument, can be used to fill or reshape the supplied object.
-  Scalars can be recycled to a tensor of arbitrary `shape`, otherwise 
+  Scalars can be recycled to a tensor of arbitrary `shape`, otherwise
   supplied objects are reshaped using row-major (C-style) semantics.
- 
+
 - `install_tensorflow()` now provides experimental support for Arm Macs,
   with the following restrictions:
     - "conda" is the only supported installation method.
@@ -13,7 +13,7 @@
 
 - `install_tensorflow()` default conda_python_version changes from 3.7 to NULL.
 
-- `tf.TensorShape()`'s gain a `format()` S3 method.
+- `tf.TensorShape()`'s gain `format()` and `print()` S3 methods.
 
 - `[` method for slicing tensors now accepts `NA` as a synonym for a missing or `NULL` spec.
   For example `x[NA:3]` is now valid, equivalent to `x[:3]` in Python.
