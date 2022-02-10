@@ -3,11 +3,8 @@
 #' @importFrom utils str
 #' @export
 "print.tensorflow.tensor" <- function(x, ...) {
-  if (py_is_null_xptr(x))
-    cat("<pointer: 0x0>\n")
-  else {
-    str(x, ...)
-  }
+  str(x, ...)
+  invisible(x)
 }
 
 #' @importFrom utils .DollarNames
