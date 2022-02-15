@@ -634,3 +634,36 @@ is_colon_call <- function(x)
 is_has_colon <- function(x) {
   is_colon_call(x) || (is.name(x) && grepl(":", as.character(x), fixed = TRUE))
 }
+
+
+#' @export
+`[<-.tensorflow.tensor` <- function(x, ..., value) {
+  # This method exists solely to give a more meaningful error message
+  # If the user attempts to assign a tensor
+  # without this method: Error in x[1, ] <- 0 : object of type 'environment' is not subsettable
+  # with this method: TypeError: 'tensorflow.python.framework.ops.EagerTensor' object does not support item assignment
+
+  dots <- eval(substitute(alist(...)))
+  here <- environment()
+  key <- lapply(seq_along(dots), function(i) {
+    if (is_missing(dots[[i]]))
+      builtin_slice(NULL)
+    else
+      eval(sprintf("..%i", i), here)
+  })
+
+  if (is_scalar(length(key)))
+    key <- key[[1L]]
+  else if (identical(length(key), 0L))
+    key <- builtin_slice(NULL)
+
+  cl <- sys.call()
+  tryCatch({
+    py_set_item(x, key, value) # this will raise an error
+
+  }, error = function(e) {
+    e$call <- cl
+    stop(e)
+  })
+  x
+}
