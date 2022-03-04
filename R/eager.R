@@ -3,7 +3,10 @@
 #' @export
 as.array.python.builtin.EagerTensor <- function(x, ...) {
   if (py_is_null_xptr(x))
-    NULL
+    return(NULL)
+  if(x$dtype$name == "string")
+    array(as.character(x, ...),
+          dim = if(length(dx <- dim(x))) dx else 1L)
   else
     x$numpy()
 }
@@ -18,14 +21,9 @@ as.array.tensorflow.python.ops.variables.Variable <- as.array.python.builtin.Eag
 #' @export
 as.matrix.python.builtin.EagerTensor <- function(x, ...) {
   if (py_is_null_xptr(x))
-    NULL
-  else {
-    a <- x$numpy()
-    if (length(dim(a)) == 2)
-      a
-    else
-      as.matrix(a)
-  }
+    return(NULL)
+
+  as.matrix(as.array(x, ...))
 }
 
 #' @export
@@ -94,6 +92,25 @@ as.logical.tensorflow.python.framework.ops.EagerTensor <- as.logical.python.buil
 #' @export
 as.logical.tensorflow.python.ops.variables.Variable <- as.logical.python.builtin.EagerTensor
 
+#' @export
+as.character.python.builtin.EagerTensor <- function(x, ...) {
+  out <- x$numpy()
+  # as.character() on python bytes dispatches to
+  # reticulate:::as.character.python.builtin.bytes, which calls
+  # x$decode(encoding = "utf-8", errors = "strict")
+  if(is.list(out))
+    vapply(out, as.character, "", ..., USE.NAMES = FALSE)
+  else
+    as.character(out, ...)
+}
+
+#' @export
+as.character.tensorflow.python.framework.ops.EagerTensor <-
+  as.character.python.builtin.EagerTensor
+
+#' @export
+as.character.tensorflow.python.ops.variables.Variable <-
+  as.character.python.builtin.EagerTensor
 
 #' Creates a callable TensorFlow graph from an R function.
 #'

@@ -1,6 +1,12 @@
 # tensorflow (development version)
 
-- tf.SparseTensor objects now inherit from "tensorflow.tensor"
+- New `as.character()` method for Tensors.
+
+- Tensors with dtype 'string' now converted to R character vectors by
+  `as.array()` and `as.matrix()`. (previously they converted python.builtin.bytes,
+  or an R list of python.builtin.bytes objects)
+
+- tf.SparseTensor objects now inherit from "tensorflow.tensor".
 
 # tensorflow 2.8.0
 

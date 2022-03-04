@@ -66,3 +66,20 @@ test_that("as_tensor works", {
 
 
 })
+
+
+test_that("conversion of tf.string dtype tensors", {
+
+  xx <- list(array("foo"),
+             array(c("foo", "bar", "baz")),
+             array(as.character(1:12), c(3, 4)),
+             array(as.character(1:12), c(2, 3, 2)))
+
+  for (x in xx)
+    expect_identical(x, as.array(as_tensor(x)))
+
+  for (x in xx)
+    expect_identical(as.character(x),
+                     as.character(as_tensor(x)))
+
+  })
