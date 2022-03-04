@@ -55,11 +55,11 @@ train_mnist_graph <- function(sess) {
   list(input = x, output = y)
 }
 
+# TODO: consider testing in a new R session with tf$compat$v1$disable_eager_execution()
+# skip("Don't have sessions to export when running eager.")
+if (!tf$executing_eagerly())
 test_that("export_savedmodel() works with MNIST", {
   skip_if_no_tensorflow()
-
-  if (tf$executing_eagerly())
-    skip("Don't have sessions to export when running eager.")
 
   temp_path <- tempfile()
 

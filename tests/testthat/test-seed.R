@@ -1,8 +1,8 @@
+# skip("use_session_with seed doesn't work with TF >= 2.3")
+if (tf_version() < "2.3")
 test_that("use_session_with_seed works", {
   skip_if_no_tensorflow()
 
-  if (tf_version() >= "2.3")
-    skip("use_session_with seed doesn't work with TF >= 2.3")
 
   f <- function() {
     library(keras)
