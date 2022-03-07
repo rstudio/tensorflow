@@ -8,6 +8,8 @@
   - `print()` now shows 1d shapes without a trailing commas.
   - `str()` method for tensors now returns only a single compact line;
     `str()` on a list of tensors now does something sensible.
+  - New methods:
+      all(), any(), sum(), prod(), min(), max(), mean(), range()
 
 
 - Tensors with dtype 'string' now convert to R character vectors by methods

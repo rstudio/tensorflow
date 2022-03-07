@@ -351,6 +351,108 @@ log1p.tensorflow.tensor <- function(x) {
 }
 
 
+
+new_tf_reduce_generic <- function(generic, callable) {
+  # all the reduce functions have the same signature:
+  #  input_tensor, axis=None, keepdims=False, name=None
+  #  need na.rm handling here because it's auto added to the call by the dispatch mechanism
+  callable <- substitute(callable)
+  generic <- substitute(generic)
+  sig <- alist(x = , ... = ,
+               axis = NULL, keepdims = FALSE, name = NULL,
+               na.rm = FALSE)
+  sig$name <- paste0("R/", deparse(substitute(generic)))
+
+  body <- substitute({
+    if (!isFALSE(na.rm))
+      warning("NA not supported by Tensors. `na.rm` argument ignored")
+
+    if (length(list(...))) {
+      if (!is.null(axis) || !isFALSE(keepdims))
+        stop("`axis` and `keepdims` can only be supplied when reducing only one tensor")
+      x <- list(x, ...)
+    }
+
+    if (is.list(x))
+      x <- tf$stack(lapply(x, generic),
+                    name = name)
+
+    callable(x, axis = as_axis(axis), keepdims = keepdims, name = name)
+  }, list(callable = callable, generic = generic))
+
+  as.function.default(c(sig, body), envir = parent.env(environment()))
+}
+
+
+
+as_axis <- function(axis) {
+  if(is.null(axis))
+    return(NULL)
+
+  if (length(axis) > 1)
+    return(tuple(lapply(axis, as_axis)))
+
+  axis <- as.integer(axis)
+  if(axis == 0L)
+    stop("`axis` argument is 1 based, received 0")
+
+  if(axis > 0L)
+    axis - 1L
+  else
+    axis
+}
+
+
+#' @export
+all.tensorflow.tensor <- new_tf_reduce_generic(all, tf$reduce_all)
+
+#' @export
+any.tensorflow.tensor <- new_tf_reduce_generic(any, tf$reduce_any)
+
+#' @export
+sum.tensorflow.tensor <- new_tf_reduce_generic(sum, tf$reduce_sum)
+
+#' @export
+prod.tensorflow.tensor <- new_tf_reduce_generic(prod, tf$reduce_prod)
+
+#' @export
+min.tensorflow.tensor <- new_tf_reduce_generic(min, tf$reduce_min)
+
+#' @export
+max.tensorflow.tensor <- new_tf_reduce_generic(max, tf$reduce_max)
+
+#' @export
+mean.tensorflow.tensor <-
+function (x, ..., axis = NULL, keepdims = FALSE, name = "R/mean") {
+  if (length(list(...))) {
+    dots <- list(...)
+    if(!is.null(dots$na.rm) || isFALSE(dots$na.rm)) {
+      warning("NA not supported by Tensors. `na.rm` argument ignored")
+      dots$na.rm <- NULL
+    }
+    if(!is.null(dots$trim) || dots$trim == 0) {
+      stop("`trim` argument not supported for Tensors.")
+      dots$trim <- NULL
+    }
+    if(length(dots))
+      stop("unrecognized arguments passed to mean() method for tensors")
+  }
+
+  tf$reduce_mean(x, axis = as_axis(axis), keepdims = keepdims, name = name)
+}
+
+#' @export
+range.tensorflow.tensor <-
+function(x, ..., axis = NULL, keepdims = FALSE, name = "R/range", na.rm = FALSE) {
+  if (!isFALSE(na.rm))
+    warning("NA not supported by Tensors. `na.rm` argument ignored")
+
+  lower <- min(x, ..., axis = axis, keepdims = keepdims, name = name)
+  upper <- max(x, ..., axis = axis, keepdims = keepdims, name = name)
+  tf$stack(list(lower, upper), name = name)
+}
+
+
 #' @export
 Re.tensorflow.tensor <- function(z) {
   switch_fun_if_tf(tf$real, tf$math$real)(z)
