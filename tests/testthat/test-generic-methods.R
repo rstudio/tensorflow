@@ -72,6 +72,8 @@ for (fn in c(binary_arith_generics, binary_compr_generics)) {
   expect_equal(fn(5, 3L), grab(fn(as_tensor(5, "float64"), 3L)))
 }
 
+expect_equal(as.numeric(as_tensor(3) ^ 2), 3^2)
+expect_equal(as.numeric(as_tensor(3, "float64") ^ .5), 3^.5)
 
 binary_logic_generics <- c("&", "|")
 
@@ -180,3 +182,36 @@ for (fn in unary_complex_generics)
   test_generic(fn, 1 + 2i)
 
 
+
+numeric_reduce_generics <-
+  list(sum, prod, min, max, mean, range)
+
+
+x <- arr(3, 4)
+xt <- as_tensor(x)
+
+for(fn in numeric_reduce_generics)
+  expect_equal(fn(x), as.numeric(fn(as_tensor(x))))
+
+for(fn in list(sum, prod, min, max, range)) # not  mean
+  expect_equal(fn(x, x), as.numeric(fn(as_tensor(x), as_tensor(x))))
+
+for(fn in list(sum, prod, min, max, mean)) { # not range
+  expect_equal(dim(fn(xt, axis = 1)), 4L)
+  expect_equal(dim(fn(xt, axis = 2)), 3L)
+  expect_equal(dim(fn(xt, axis = 1, keepdims = TRUE)), c(1L, 4L))
+  expect_equal(dim(fn(xt, axis = 2, keepdims = TRUE)), c(3L, 1L))
+}
+
+
+bool_reduce_generics <- list(all, any)
+for (fn in bool_reduce_generics) {
+  tt <- rep(TRUE, 5)
+  ff <- rep(FALSE, 5)
+  mx <- rep(c(TRUE, FALSE), 4)
+  for (x in list(tt, ff, mx)) {
+    expect_equal(fn(x), as.logical(fn(as_tensor(x))))
+    expect_equal(fn(x, x), as.logical(fn(as_tensor(x), as_tensor(x))))
+    expect_equal(fn(x, x), as.logical(fn(as_tensor(x), x)))
+  }
+}
