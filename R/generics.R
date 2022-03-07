@@ -2,8 +2,13 @@
 
 #' @importFrom utils str
 #' @export
-"print.tensorflow.tensor" <- function(x, ...) {
-  str(x, ...)
+print.tensorflow.tensor <- function(x, ...) {
+  s <- py_str(x, ...)
+  # strip the trailing comma in 1d vector shapes
+  # gsub for sparse tensors or similar packed structures
+  s <- gsub("shape=\\((None|[[:digit:]]+),\\), dtype=",
+            "shape=(\\1), dtype=", s)
+  writeLines(s)
   invisible(x)
 }
 
