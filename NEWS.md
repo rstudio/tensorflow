@@ -2,6 +2,13 @@
 
 - New `as.character()` method for Tensors.
 
+- as_tensor():
+  - atomic R integer vectors now convert to 'int32', not 'int64'
+  - casting between integer and floating dtypes is now done via
+   `tf.dtypes.saturate_cast()` instaed of `tf.cast()`.
+  - `shape` argument now accepts a tensor.
+  - fixed issue where expanding a scalar tensor to a nd-array with would raise an error.
+
 - Generics changes:
   - `^` will now invoke `tf.square()` or `tf.sqrt()` directly when appropriate
   - `|`, `&`, and `!` now cast arguments to 'bool' dtype.

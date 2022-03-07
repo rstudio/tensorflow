@@ -12,6 +12,7 @@ print.tensorflow.tensor <- function(x, ...) {
   invisible(x)
 }
 
+# TODO maybe: a nicer print for  print.tensorflow.python.framework.sparse_tensor.SparseTensor
 
 #' @export
 str.tensorflow.tensor <- function(object, ...) {
@@ -486,16 +487,6 @@ switch_fun_if_tf <- function(x, y, version = "1.14") {
 }
 
 
-# autocast_to_tensors <- function(a, b) {
-#   eval.parent(substitute({
-#     if (!inherits(a, "tensorflow.tensor") && inherits(b, "tensorflow.tensor"))
-#       a <- as_tensor(a, b$dtype)
-#     else if (!inherits(b, "tensorflow.tensor") && inherits(a, "tensorflow.tensor"))
-#       b <- as_tensor(b, a$dtype)
-#   }, list(a = substitute(a), b = substitute(b))))
-# }
-
-
 # TODO: do something similar for KerasTensor
 autocast_ab_to_tensors <- function()
   eval.parent(quote({
@@ -509,11 +500,12 @@ autocast_ab_to_tensors <- function()
 
 #' as_tensor
 #'
-#' Coerce objects to tensorflow tensors (potentially of a specific dtype). The
+#' Coerce objects to tensorflow tensors (potentially of a specific dtype or shape). The
 #' provided default methods will call
-#' [`tf.convert_to_tensor`](https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor)
-#' and [`tf.cast`](https://www.tensorflow.org/api_docs/python/tf/cast) as
-#' appropriate.
+#' [`tf.convert_to_tensor`](https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor). Depending on arguments supplied it may also call some combination of
+#'  - [`tf.dtypes.saturate_cast`](https://www.tensorflow.org/api_docs/python/tf/cast)
+#'  - tf.fill or tf.reshape
+#'  -
 #'
 #' @param x object to convert
 #' @param dtype `NULL`, a tensorflow dtype (`tf$int32`), or something coercible
@@ -561,16 +553,34 @@ as_tensor.default <- function(x, dtype = NULL, ..., shape = NULL, name = NULL) {
              !is_scalar(x)) {
       # prefer reshaping off the graph if possible
       np <- import("numpy", convert = FALSE)
-      x <- np$reshape(x, shape, "C")
+      x <- np$reshape(as.array(x), tuple(as.list(shape)), "C")
       shape <- NULL
     }
   }
 
-  x <- tf$convert_to_tensor(x, dtype_hint = dtype, name = name)
-  if (!is.null(dtype))
-    x <- tf$cast(x, dtype, name = name)
+  # dtype_hint() arg in convert_to_tensor() calls tf$constant(),
+  # can silently overflow e.g., tf$convert_to_tensor(-1L, "uint8") --> 255
+  x <- tf$convert_to_tensor(x, name = name)
+
+  if (!is.null(dtype)) {
+    dtype <- tf$as_dtype(dtype)
+
+    if((  dtype$is_floating ||   dtype$is_integer) &&
+       (x$dtype$is_floating || x$dtype$is_integer))
+      x <- tf$dtypes$saturate_cast(x, dtype, name = name)
+    else
+      x <- tf$cast(x, dtype, name = name)
+
+  }
 
   if (!is.null(shape)) {
+    # shape supplied to tf$fill and tf$reshape must be rank 1;
+    # expand dims rank if rank 0
+    if(is.numeric(shape))
+      shape <- as.list(shape)
+    else if (is_tensor(shape) && shape$shape$rank == 0)
+      shape <- tf$expand_dims(shape, axis = 0L, name = name)
+
     if (is_scalar(x) && (is_tensor(shape) || !partially_defined_shape))
       x <- tf$fill(shape, tf$squeeze(x), name = name)
     else
@@ -587,6 +597,9 @@ as_tensor.double <- function(x, dtype = NULL, ..., name = NULL) {
     dtype <- tf$as_dtype(dtype)
     if (dtype$is_integer) {
       # tf.cast() overflows quietly, at least R raises a warning (and produces NA)
+      # tf.dtypes.saturate_cast() is better, but still can be surprising.
+      # Users must opt in to saturate cast (or overflow cast)
+      # by casting in a separate call after converting to tensor.
       if (dtype$max <= .Machine$integer.max)
         storage.mode(x) <- "integer"
 
@@ -598,3 +611,9 @@ as_tensor.double <- function(x, dtype = NULL, ..., name = NULL) {
   NextMethod()
 }
 
+
+
+if(getRversion() < "3.4.2")
+  isFALSE <- function(x) {
+    is.logical(x) && length(x) == 1L && !is.na(x) && !x
+  }

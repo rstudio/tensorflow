@@ -35,11 +35,14 @@ the value of \code{x} will be recycled to fill a tensor of the requested shape
 a tensorflow tensor
 }
 \description{
-Coerce objects to tensorflow tensors (potentially of a specific dtype). The
+Coerce objects to tensorflow tensors (potentially of a specific dtype or shape). The
 provided default methods will call
-\href{https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor}{\code{tf.convert_to_tensor}}
-and \href{https://www.tensorflow.org/api_docs/python/tf/cast}{\code{tf.cast}} as
-appropriate.
+\href{https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor}{\code{tf.convert_to_tensor}}. Depending on arguments supplied it may also call some combination of
+\itemize{
+\item \href{https://www.tensorflow.org/api_docs/python/tf/cast}{\code{tf.dtypes.saturate_cast}}
+\item tf.fill or tf.reshape
+\item 
+}
 }
 \examples{
 \dontrun{
