@@ -6,7 +6,8 @@
   - `^` will now invoke `tf.square()` or `tf.sqrt()` directly when appropriate
   - `|`, `&`, and `!` now cast arguments to 'bool' dtype.
   - `print()` now shows 1d shapes without a trailing commas.
-
+  - `str()` method for tensors now returns only a single compact line;
+    `str()` on a list of tensors now does something sensible.
 
 
 - Tensors with dtype 'string' now convert to R character vectors by methods

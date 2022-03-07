@@ -12,6 +12,25 @@ print.tensorflow.tensor <- function(x, ...) {
   invisible(x)
 }
 
+
+#' @export
+str.tensorflow.tensor <- function(object, ...) {
+
+  if(py_is_null_xptr(object))
+    return(cat("<pointer: 0x0>\n"))
+
+  x <- py_repr(object)
+  x <- strsplit(x, "\n", fixed = TRUE)[[1L]]
+  if(length(x) > 1)
+    x <- paste0(x[[1]], "...>")
+
+  # strip the trailing comma in 1d vector shapes
+  x <- sub("shape=\\((None|[[:digit:]]+),\\)", "shape=(\\1)", x)
+
+  writeLines(x)
+}
+
+
 #' @importFrom utils .DollarNames
 #' @export
 .DollarNames.tensorflow.python.platform.flags._FlagValues <- function(x, pattern = "") {
