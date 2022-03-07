@@ -102,7 +102,19 @@ length.tensorflow.tensor <- function(x) {
 
 #' @export
 "^.tensorflow.tensor" <- function(a, b) {
-  autocast_ab_to_tensors()
+
+  if (is.numeric(b)) {
+    if (isTRUE(b == 2))
+      return(tf$square(a))
+    if (isTRUE(b == .5))
+      return(tf$sqrt(a))
+    else if (is_integerish(b))
+      b <- as.integer(b)
+  }
+
+  if(is.numeric(a))
+    a <- as_tensor(a, dtype = b$dtype)
+
   tf$pow(a, b)
 }
 
