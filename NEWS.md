@@ -2,8 +2,12 @@
 
 - New `as.character()` method for Tensors.
 
-- Tensors with dtype 'string' now converted to R character vectors by
-  `as.array()` and `as.matrix()`. (previously they converted python.builtin.bytes,
+- Generics changes:
+  - `^` will now invoke `tf.square()` or `tf.sqrt()` directly when appropriate
+  - `|`, `&`, and `!` now cast arguments to 'bool' dtype.
+
+- Tensors with dtype 'string' now convert to R character vectors by methods
+  `as.array()` and `as.matrix()`. (previously they converted to python.builtin.bytes,
   or an R list of python.builtin.bytes objects)
 
 - tf.SparseTensor objects now inherit from "tensorflow.tensor".

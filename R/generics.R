@@ -121,20 +121,23 @@ length.tensorflow.tensor <- function(x) {
 
 #' @export
 "&.tensorflow.tensor" <- function(a, b) {
-  autocast_ab_to_tensors()
+  a <- tf$cast(a, "bool")
+  b <- tf$cast(b, "bool")
   tf$logical_and(a, b)
 }
 
 
 #' @export
 "|.tensorflow.tensor" <- function(a, b) {
-  autocast_ab_to_tensors()
+  a <- tf$cast(a, "bool")
+  b <- tf$cast(b, "bool")
   tf$logical_or(a, b)
 }
 
 
 #' @export
 "!.tensorflow.tensor" <- function(x) {
+  x <- tf$cast(x, "bool")
   tf$logical_not(x)
 }
 
