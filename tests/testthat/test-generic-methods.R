@@ -220,16 +220,22 @@ expect_equivalent_bind_generic <- function(fn, ...) {
   res1 <- fn(...)
   dimnames(res1) <- NULL
   res2 <- as.array(do.call(fn, lapply(list(...), as_tensor)))
+  if(is_windows()) # https://github.com/rstudio/reticulate/issues/1071
+    storage.mode(res2) <- "integer"
   expect_identical(res1, res2)
 
   dots <- list(...)
   dots[[1L]] <- as_tensor(..1)
   res3 <- as.array(do.call(fn, dots))
+  if(is_windows()) # https://github.com/rstudio/reticulate/issues/1071
+    storage.mode(res3) <- "integer"
   expect_identical(res1, res3)
 
   dots <- list(...)
   dots[[2L]] <- as_tensor(..2)
   res4 <- as.array(do.call(fn, dots))
+  if(is_windows()) # https://github.com/rstudio/reticulate/issues/1071
+    storage.mode(res4) <- "integer"
   expect_identical(res1, res4)
 }
 
