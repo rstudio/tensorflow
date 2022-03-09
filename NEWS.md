@@ -5,18 +5,19 @@
 - as_tensor():
   - atomic R integer vectors now convert to 'int32', not 'int64'
   - casting between integer and floating dtypes is now done via
-   `tf.dtypes.saturate_cast()` instaed of `tf.cast()`.
+   `tf.dtypes.saturate_cast()` instead of `tf.cast()`.
   - `shape` argument now accepts a tensor.
   - fixed issue where expanding a scalar tensor to a nd-array with would raise an error.
 
 - Generics changes:
+  - New methods:
+      all(), any(), sum(), prod(), min(), max(), mean(), range(),
+      cbind(), rbind()
   - `^` will now invoke `tf.square()` or `tf.sqrt()` directly when appropriate
   - `|`, `&`, and `!` now cast arguments to 'bool' dtype.
   - `print()` now shows 1d shapes without a trailing commas.
   - `str()` method for tensors now returns only a single compact line;
     `str()` on a list of tensors now does something sensible.
-  - New methods:
-      all(), any(), sum(), prod(), min(), max(), mean(), range()
 
 
 - Tensors with dtype 'string' now convert to R character vectors by methods

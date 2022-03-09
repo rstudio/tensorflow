@@ -351,7 +351,7 @@ log1p.tensorflow.tensor <- function(x) {
   switch_fun_if_tf(tf$digamma, tf$math$digamma)(x)
 }
 
-
+# ---- Reduce (max() and friends) ----
 
 new_tf_reduce_generic <- function(generic, callable) {
   # all the reduce functions have the same signature:
@@ -454,6 +454,140 @@ function(x, ..., axis = NULL, keepdims = FALSE, name = "R/range", na.rm = FALSE)
 }
 
 
+# ---- cbind / rbind() ----
+
+
+#' @export
+rbind.tensorflow.tensor <-
+function(..., deparse.level = 0L, dtype = NULL, name = "R/rbind") {
+
+  if(deparse.level != 0)
+    warning("Tensors do not support dimnames; deparse.level argument ignored")
+
+  dots <- list(...)
+
+  if(is.null(dtype))
+    dtype <- reduce_dtypes(dots)
+
+  shape <- reduce_dims(dots, binding_on = "rows")
+
+  values <- lapply(dots, as_tensor, dtype = dtype, shape = shape)
+
+  if(length(shape) == 1)
+    tf$stack(values, axis = 0L, name = name)
+  else # length(shape) == 2
+    tf$concat(values, axis = 0L, name = name)
+}
+
+
+#' @export
+cbind.tensorflow.tensor <-
+function(..., deparse.level = 0L, dtype = NULL, name = "R/cbind") {
+  dots <- list(...)
+
+  if(deparse.level != 0)
+    warning("Tensors do not support dimnames; deparse.level argument ignored")
+
+  if(is.null(dtype))
+    dtype <- reduce_dtypes(dots)
+
+  shape <- reduce_dims(dots, binding_on = "cols")
+
+  values <- lapply(dots, as_tensor, dtype = dtype, shape = shape)
+
+  if(length(shape) == 1)
+    tf$stack(values, axis = 1L, name = name)
+  else # length(shape) == 2
+    tf$concat(values, axis = 1L, name = name)
+}
+
+
+
+reduce_dims <- function(tensors_andor_atomics, binding_on = c("cols", "rows")) {
+
+  binding_on <- match.arg(binding_on)
+
+  dims <- lapply(tensors_andor_atomics,
+                 function(x) dim(x) %||% length(x))
+
+  max_rank <- max(lengths(dims))
+
+  if(max_rank == 0L) {
+    shape <- c(1L)
+    return(shape)
+  }
+
+  if(max_rank == 1L) {
+    shape <- do.call(max, dims)
+    return(shape)
+  }
+
+  if(max_rank != 2L)
+    stop("cbind can only accept tensors where length(dim(x)) <= 2")
+
+
+  if(binding_on == "rows") {
+
+    ncols <- sapply(dims, function(d) {
+      if (length(d) == 2L) d[2L]
+      else if (length(d) == 1L) 1L
+      else 1L
+    })
+
+    ncols <- setdiff(ncols, 1L)
+    if(length(ncols) == 0) # all scalars
+      return(1L)
+
+    if(length(ncols) != 1)
+      stop("matrix tensors must have a common number of columns")
+
+    shape <- c(-1L, ncols)
+    return(shape)
+
+  } else if (binding_on == "cols") {
+
+    nrows <- sapply(dims, function(d) {
+      if (length(d) == 2L) d[1L]
+      else if (length(d) == 1L) d
+      else 1L
+    })
+
+    nrows <- setdiff(nrows, 1L)
+
+    if (length(nrows) == 1)
+      shape <- c(nrows, -1L)
+    else if(length(nrows) == 0) # all scalars
+      shape <- 1L
+    else
+      stop("matrix tensors must have a common number of rows")
+  }
+
+}
+
+
+reduce_dtypes <- function(tensors_andor_atomics) {
+  dtypes <- unique(unlist(lapply(
+    tensors_andor_atomics,
+    function(x) if(is_tensor(x)) x$dtype$name)))
+
+  if(length(dtypes) == 0)
+    return(NULL)
+  if(length(dtypes) == 1)
+    return(dtypes)
+
+  # if all the tf.tensor dtypes are of the same family, cast to the widest member
+  fam <- unique(sub("^([[:alpha:]]+)([[:digit:]]+)", "\\1", dtypes))
+  if(length(fam) == 1)
+    return(dtypes[which.max(as.integer(sub(fam, "", dtypes)))])
+
+  # if we couldn't reduce to one dtype, do nothing and let python throw the
+  # exception
+  NULL
+}
+
+
+# ---- Complex ----
+
 #' @export
 Re.tensorflow.tensor <- function(z) {
   switch_fun_if_tf(tf$real, tf$math$real)(z)
@@ -497,6 +631,7 @@ autocast_ab_to_tensors <- function()
   }))
 
 
+# ---- as_tensor ----
 
 #' as_tensor
 #'

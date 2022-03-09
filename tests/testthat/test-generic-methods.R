@@ -215,3 +215,37 @@ for (fn in bool_reduce_generics) {
     expect_equal(fn(x, x), as.logical(fn(as_tensor(x), x)))
   }
 }
+
+expect_equivalent_generic <- function(fn, ...) {
+  res1 <- fn(...)
+  dimnames(res1) <- NULL
+  res2 <- as.array(do.call(fn, lapply(list(...), as_tensor)))
+  expect_identical(res1, res2)
+
+  dots <- list(...)
+  dots[[1L]] <- as_tensor(..1)
+  res3 <- as.array(do.call(fn, dots))
+  expect_identical(res1, res3)
+
+  dots <- list(...)
+  dots[[2L]] <- as_tensor(..2)
+  res4 <- as.array(do.call(fn, dots))
+  expect_identical(res1, res4)
+}
+
+m <- matrix(1:9, nrow = 3)
+v <- 1:3
+v1 <- as.array(1:3)
+for (fn in list(cbind, rbind)) {
+  expect_equivalent_generic(fn, v,v,v)
+  expect_equivalent_generic(fn, v1,v,m)
+  expect_equivalent_generic(fn, m,v,v)
+  expect_equivalent_generic(fn, m, m)
+  expect_equivalent_generic(fn, m, v)
+  expect_equivalent_generic(fn, 1, 1)
+  expect_equivalent_generic(fn, 1, as.matrix(1))
+  expect_equivalent_generic(fn, as.array(1), 1)
+  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int64")$dtype$name, "int64")
+  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int16")$dtype$name, "int16")
+  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "float16")$dtype$name, "float16")
+}
