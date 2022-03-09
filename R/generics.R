@@ -585,6 +585,32 @@ reduce_dtypes <- function(tensors_andor_atomics) {
   NULL
 }
 
+# ---- t() / aperm() ----
+
+#' @export
+aperm.tensorflow.tensor <-
+  function(a, perm = NULL, ..., conjugate = FALSE, name = 'R/aperm') {
+    chkDots(...)
+    if (!is.null(perm))
+      perm <- as.integer(perm) - 1L
+    tf$transpose(a, perm, conjugate, name = name)
+  }
+
+
+#' @export
+t.tensorflow.tensor <- function(x) {
+  ndim <- length(dim(x))
+  if(ndim == 0L)
+    tf$reshape(x, c(1L, 1L), name = "R/t")
+  else if(ndim == 1L)
+    tf$expand_dims(x, 0L, name = "R/t")
+  else if(ndim == 2L)
+    tf$transpose(x, name = "R/t")
+  else
+    stop("x must be a matrix or 1d vector. Use aperm() for nd arrays.")
+}
+
+
 
 # ---- Complex ----
 

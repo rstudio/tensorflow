@@ -216,7 +216,7 @@ for (fn in bool_reduce_generics) {
   }
 }
 
-expect_equivalent_generic <- function(fn, ...) {
+expect_equivalent_bind_generic <- function(fn, ...) {
   res1 <- fn(...)
   dimnames(res1) <- NULL
   res2 <- as.array(do.call(fn, lapply(list(...), as_tensor)))
@@ -237,15 +237,35 @@ m <- matrix(1:9, nrow = 3)
 v <- 1:3
 v1 <- as.array(1:3)
 for (fn in list(cbind, rbind)) {
-  expect_equivalent_generic(fn, v,v,v)
-  expect_equivalent_generic(fn, v1,v,m)
-  expect_equivalent_generic(fn, m,v,v)
-  expect_equivalent_generic(fn, m, m)
-  expect_equivalent_generic(fn, m, v)
-  expect_equivalent_generic(fn, 1, 1)
-  expect_equivalent_generic(fn, 1, as.matrix(1))
-  expect_equivalent_generic(fn, as.array(1), 1)
+  expect_equivalent_bind_generic(fn, v,v,v)
+  expect_equivalent_bind_generic(fn, v1,v,m)
+  expect_equivalent_bind_generic(fn, m,v,v)
+  expect_equivalent_bind_generic(fn, m, m)
+  expect_equivalent_bind_generic(fn, m, v)
+  expect_equivalent_bind_generic(fn, 1, 1)
+  expect_equivalent_bind_generic(fn, 1, as.matrix(1))
+  expect_equivalent_bind_generic(fn, as.array(1), 1)
   expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int64")$dtype$name, "int64")
   expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int16")$dtype$name, "int16")
   expect_equal(fn(as_tensor(1:3), 1:3, dtype = "float16")$dtype$name, "float16")
 }
+
+
+test_generic("t", 1)
+test_generic("t", array(1))
+test_generic("t", matrix(1))
+test_generic("t", 1:3)
+test_generic("t", array(1:3))
+test_generic("t", matrix(1:3))
+test_generic("t", m)
+
+test_generic("aperm", array(1))
+test_generic("aperm", matrix(1))
+test_generic("aperm", array(1:3))
+test_generic("aperm", matrix(1:3))
+test_generic("aperm", m)
+
+a <- arr(3, 4, 5)
+r1 <- aperm(a, c(2, 1, 3))
+r2 <- as.array(aperm(as_tensor(a), c(2, 1, 3)))
+expect_identical(r1, r2)
