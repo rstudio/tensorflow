@@ -63,6 +63,19 @@ length.tensorflow.tensor <- function(x) {
 }
 
 
+#' @export
+is.finite.tensorflow.tensor <-
+  function(x) tf$math$is_finite(x)
+
+#' @export
+is.infinite.tensorflow.tensor <-
+  function(x) tf$math$is_inf(x)
+
+#' @export
+is.nan.tensorflow.tensor <-
+  function(x) tf$math$is_nan(x)
+
+
 # https://stat.ethz.ch/R-manual/R-devel/library/base/html/InternalMethods.html
 
 # extract `[.tensorflow.tensor` in R/extract.R

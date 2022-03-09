@@ -275,3 +275,9 @@ a <- arr(3, 4, 5)
 r1 <- aperm(a, c(2, 1, 3))
 r2 <- as.array(aperm(as_tensor(a), c(2, 1, 3)))
 expect_identical(r1, r2)
+
+
+x <- array(c(0, 1, Inf, NaN))
+test_generic("is.finite", x)
+test_generic("is.infinite", x)
+test_generic("is.nan", x)
