@@ -639,6 +639,26 @@ function(x, decreasing = FALSE, ..., axis = -1L, name = NULL) {
 }
 
 
+#' @export
+rep.tensorflow.tensor <- function(x, times, ..., name = "R/rep") {
+  if(length(list(...)))
+    stop("rep() method for tensors only supports 2 arguments, see tf.tile() docs.")
+
+  if(length(times) != 1)
+    stop("`times` argument must be a scalar for rep() Tensor")
+
+  times <- as_tensor(times, dtype = "int32", shape = 1L, name = name)
+
+  if (identical(ndim <- as_r_value(x$ndim), 0L))
+    return(tf$fill(times, x, name = name))
+
+  if(!identical(ndim, 1L))
+    stop("rep() Tensor method only compatible with 1d vectors.",
+         " Use tf$tile() directly to expand an nd-array")
+
+  tf$tile(x, times, name = name)
+}
+
 # ---- Complex ----
 
 #' @export

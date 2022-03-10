@@ -290,3 +290,14 @@ x <- array(c(2L, 10L, 3L, 1L, 7L, 4L, 6L, 8L, 9L, 5L))
 test_generic("sort", x)
 decreasing_sort <- function(x) sort(x, decreasing = TRUE)
 test_generic(decreasing_sort, x)
+
+
+xx <- list(array(1:3),
+           1)
+
+for (x in xx) {
+  test_generic(function(a) as.array(rep(a, 3)), x)
+  test_generic(function(a) as.array(rep(as_tensor(a), as_tensor(3L))), x)
+}
+
+
