@@ -625,6 +625,20 @@ t.tensorflow.tensor <- function(x) {
 
 
 
+#' @export
+sort.tensorflow.tensor <-
+function(x, decreasing = FALSE, ..., axis = -1L, name = NULL) {
+  if(length(list(...)))
+    stop("Unrecognized arguments in ...")
+  tf$sort(
+    x,
+    axis = as_axis(axis),
+    direction = if (decreasing) "DESCENDING" else "ASCENDING",
+    name = name
+  )
+}
+
+
 # ---- Complex ----
 
 #' @export

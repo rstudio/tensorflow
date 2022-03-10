@@ -26,9 +26,13 @@ test_that("log with supplied base works", {
 
 
 
-test_generic <- function(name, ..., namespace = "base") {
+test_generic <- function(fn, ..., namespace = "base") {
+  name <- gsub("[\"']", "", deparse(substitute(fn)))
+  if(!is.function(fn))
+    name <- fn
   test_that(paste("Generic", name, "works"), {
     skip_if_no_tensorflow()
+    if(!is.function(fn))
     fn <- get(name, envir = asNamespace(namespace),
               mode = 'function')
 
@@ -281,3 +285,8 @@ x <- array(c(0, 1, Inf, NaN))
 test_generic("is.finite", x)
 test_generic("is.infinite", x)
 test_generic("is.nan", x)
+
+x <- array(c(2L, 10L, 3L, 1L, 7L, 4L, 6L, 8L, 9L, 5L))
+test_generic("sort", x)
+decreasing_sort <- function(x) sort(x, decreasing = TRUE)
+test_generic(decreasing_sort, x)
