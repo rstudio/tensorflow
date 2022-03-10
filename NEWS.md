@@ -12,7 +12,7 @@
 - Generics changes:
   - New methods:
       all(), any(), sum(), prod(), min(), max(), mean(), range(),
-      cbind(), rbind(), t(), aperm(), sort(),
+      cbind(), rbind(), t(), aperm(), sort(), as.vector(),
       is.infinite(), is.finite(), is.nan()
   - `^` will now invoke `tf.square()` or `tf.sqrt()` directly when appropriate
   - `|`, `&`, and `!` now cast arguments to 'bool' dtype.

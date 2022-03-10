@@ -18,6 +18,19 @@ as.array.tensorflow.python.framework.ops.EagerTensor <- as.array.python.builtin.
 as.array.tensorflow.python.ops.variables.Variable <- as.array.python.builtin.EagerTensor
 
 
+
+#' @export
+as.vector.python.builtin.EagerTensor <- function(x, ...) {
+  as.vector(as.array(x, ...))
+}
+
+#' @export
+as.vector.tensorflow.python.framework.ops.EagerTensor <- as.vector.python.builtin.EagerTensor
+
+#' @export
+as.vector.tensorflow.python.ops.variables.Variable <- as.vector.python.builtin.EagerTensor
+
+
 #' @export
 as.matrix.python.builtin.EagerTensor <- function(x, ...) {
   if (py_is_null_xptr(x))

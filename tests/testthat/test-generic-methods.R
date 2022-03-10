@@ -298,6 +298,7 @@ xx <- list(array(1:3),
 for (x in xx) {
   test_generic(function(a) as.array(rep(a, 3)), x)
   test_generic(function(a) as.array(rep(as_tensor(a), as_tensor(3L))), x)
-}
 
+  test_generic("as.vector", x)
+}
 
