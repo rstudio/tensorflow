@@ -26,9 +26,13 @@ test_that("log with supplied base works", {
 
 
 
-test_generic <- function(name, ..., namespace = "base") {
+test_generic <- function(fn, ..., namespace = "base") {
+  name <- gsub("[\"']", "", deparse(substitute(fn)))
+  if(!is.function(fn))
+    name <- fn
   test_that(paste("Generic", name, "works"), {
     skip_if_no_tensorflow()
+    if(!is.function(fn))
     fn <- get(name, envir = asNamespace(namespace),
               mode = 'function')
 
@@ -72,6 +76,8 @@ for (fn in c(binary_arith_generics, binary_compr_generics)) {
   expect_equal(fn(5, 3L), grab(fn(as_tensor(5, "float64"), 3L)))
 }
 
+expect_equal(as.numeric(as_tensor(3) ^ 2), 3^2)
+expect_equal(as.numeric(as_tensor(3, "float64") ^ .5), 3^.5)
 
 binary_logic_generics <- c("&", "|")
 
@@ -179,4 +185,120 @@ unary_complex_generics <- c("Re", "Im", "Conj", "Arg", "Mod")
 for (fn in unary_complex_generics)
   test_generic(fn, 1 + 2i)
 
+
+
+numeric_reduce_generics <-
+  list(sum, prod, min, max, mean, range)
+
+
+x <- arr(3, 4)
+xt <- as_tensor(x)
+
+for(fn in numeric_reduce_generics)
+  expect_equal(fn(x), as.numeric(fn(as_tensor(x))))
+
+for(fn in list(sum, prod, min, max, range)) # not  mean
+  expect_equal(fn(x, x), as.numeric(fn(as_tensor(x), as_tensor(x))))
+
+for(fn in list(sum, prod, min, max, mean)) { # not range
+  expect_equal(dim(fn(xt, axis = 1)), 4L)
+  expect_equal(dim(fn(xt, axis = 2)), 3L)
+  expect_equal(dim(fn(xt, axis = 1, keepdims = TRUE)), c(1L, 4L))
+  expect_equal(dim(fn(xt, axis = 2, keepdims = TRUE)), c(3L, 1L))
+}
+
+
+bool_reduce_generics <- list(all, any)
+for (fn in bool_reduce_generics) {
+  tt <- rep(TRUE, 5)
+  ff <- rep(FALSE, 5)
+  mx <- rep(c(TRUE, FALSE), 4)
+  for (x in list(tt, ff, mx)) {
+    expect_equal(fn(x), as.logical(fn(as_tensor(x))))
+    expect_equal(fn(x, x), as.logical(fn(as_tensor(x), as_tensor(x))))
+    expect_equal(fn(x, x), as.logical(fn(as_tensor(x), x)))
+  }
+}
+
+expect_equivalent_bind_generic <- function(fn, ...) {
+  res1 <- fn(...)
+  dimnames(res1) <- NULL
+  res2 <- as.array(do.call(fn, lapply(list(...), as_tensor)))
+  if(is_windows()) # https://github.com/rstudio/reticulate/issues/1071
+    storage.mode(res2) <- "integer"
+  expect_identical(res1, res2)
+
+  dots <- list(...)
+  dots[[1L]] <- as_tensor(..1)
+  res3 <- as.array(do.call(fn, dots))
+  if(is_windows()) # https://github.com/rstudio/reticulate/issues/1071
+    storage.mode(res3) <- "integer"
+  expect_identical(res1, res3)
+
+  dots <- list(...)
+  dots[[2L]] <- as_tensor(..2)
+  res4 <- as.array(do.call(fn, dots))
+  if(is_windows()) # https://github.com/rstudio/reticulate/issues/1071
+    storage.mode(res4) <- "integer"
+  expect_identical(res1, res4)
+}
+
+m <- matrix(1:9, nrow = 3)
+v <- 1:3
+v1 <- as.array(1:3)
+for (fn in list(cbind, rbind)) {
+  expect_equivalent_bind_generic(fn, v,v,v)
+  expect_equivalent_bind_generic(fn, v1,v,m)
+  expect_equivalent_bind_generic(fn, m,v,v)
+  expect_equivalent_bind_generic(fn, m, m)
+  expect_equivalent_bind_generic(fn, m, v)
+  expect_equivalent_bind_generic(fn, 1, 1)
+  expect_equivalent_bind_generic(fn, 1, as.matrix(1))
+  expect_equivalent_bind_generic(fn, as.array(1), 1)
+  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int64")$dtype$name, "int64")
+  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int16")$dtype$name, "int16")
+  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "float16")$dtype$name, "float16")
+}
+
+
+test_generic("t", 1)
+test_generic("t", array(1))
+test_generic("t", matrix(1))
+test_generic("t", 1:3)
+test_generic("t", array(1:3))
+test_generic("t", matrix(1:3))
+test_generic("t", m)
+
+test_generic("aperm", array(1))
+test_generic("aperm", matrix(1))
+test_generic("aperm", array(1:3))
+test_generic("aperm", matrix(1:3))
+test_generic("aperm", m)
+
+a <- arr(3, 4, 5)
+r1 <- aperm(a, c(2, 1, 3))
+r2 <- as.array(aperm(as_tensor(a), c(2, 1, 3)))
+expect_identical(r1, r2)
+
+
+x <- array(c(0, 1, Inf, NaN))
+test_generic("is.finite", x)
+test_generic("is.infinite", x)
+test_generic("is.nan", x)
+
+x <- array(c(2L, 10L, 3L, 1L, 7L, 4L, 6L, 8L, 9L, 5L))
+test_generic("sort", x)
+decreasing_sort <- function(x) sort(x, decreasing = TRUE)
+test_generic(decreasing_sort, x)
+
+
+xx <- list(array(1:3),
+           1)
+
+for (x in xx) {
+  test_generic(function(a) as.array(rep(a, 3)), x)
+  test_generic(function(a) as.array(rep(as_tensor(a), as_tensor(3L))), x)
+
+  test_generic("as.vector", x)
+}
 

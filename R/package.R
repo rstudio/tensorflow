@@ -103,7 +103,8 @@ tf_v2 <- function() {
   reticulate::register_class_filter(function(classes) {
     if (any(c("tensorflow.python.ops.variables.Variable",
               "tensorflow.python.framework.ops.Tensor",
-              "tensorflow.python.ops.ragged.ragged_tensor.RaggedTensor")
+              "tensorflow.python.ops.ragged.ragged_tensor.RaggedTensor",
+              "tensorflow.python.framework.sparse_tensor.SparseTensor")
             %in%
             classes)) {
       c("tensorflow.tensor", classes)

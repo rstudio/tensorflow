@@ -1,6 +1,9 @@
 Sys.setenv(TF_CPP_MIN_LOG_LEVEL = 1)
 options(warn = 1L)
 
+if(py_module_available("tensorflow"))
+  tf$abs(1) # initialize on load_all()
+
 .SESS <- NULL
 grab <- function(x) {
   if(!inherits(x, "tensorflow.tensor"))
