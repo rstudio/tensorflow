@@ -1,5 +1,12 @@
 # tensorflow (development version)
 
+- `[` method for tensors now interperts Tensors "R" style, 1 based and 
+  inclusive of the slice end. To restore the previous behavior, 
+  call `x[..., style = "python"]`, or set option `options(tensorflow.extract.style = "python").
+  
+- `[` gains the ability to accept a string for slice specs (optionally as a variable).
+  `x["::2"]` is equivalent to `x[NA:NA:2]`.
+  
 - Tensors with dtype 'string' now convert to R character vectors by methods
   `as.array()` and `as.matrix()`. (previously they converted to python.builtin.bytes,
   or an R list of python.builtin.bytes objects)

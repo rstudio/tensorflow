@@ -313,19 +313,35 @@ py_slice <-
       if(is.numeric(stop))  stop  <- translate_one_based_to_zero_based(stop)
     }
 
+    if(is.null(step))
+      step <- 1L
+
     # maybe invert sign of step if start:stop are selecting items in reverse
     # (python doesn't do this, but we do because it's a nice convenience)
-    if (is.numeric(start) && is.numeric(stop) && !is_tensor(step) &&
-        start > stop && sign(start) == sign(stop) && sign(step %||% 1) == 1)
-      step <- (step %||% 1L) * -1L
+    if(!is.null(start) && !is.null(stop))
+    step <- tfautograph::tf_cond(
+      start > stop & sign(start) == sign(stop) & step > 0L,
+      function() step * -1L,
+      function() step)
+
+    if(identical(step, 1L))
+      step <- NULL
 
     # python slice() is exclusive of stop, but R is typically inclusive of all
     # elements in a slicing sequence. Default to R behavior.
-    if (inclusive_stop) {
+    if (!is.null(stop) && inclusive_stop) {
+
+      stop <- stop + sign(step %||% 1L)
+
       if (is.numeric(stop)) {
-        stop <- stop + as.integer(sign(step %||% 1L))
-        if (stop == 0 && sign(step %||% 1) == 1)
+        stop <- as.integer(stop)
+        if (stop == 0L && (step %||% 1L) > 0L)
           stop <- NULL
+      } else if(is_tensor(stop)) {
+        stop <- tfautograph::tf_cond(
+          stop == 0L & (step %||% 1L) > 0L,
+          function() tf$raw_ops$OptionalNone(),
+          function() stop)
       }
     }
 
@@ -347,39 +363,55 @@ maybe_reparse_as_slice_spec_then_force <- function(..., .env) {
     if(is_missing(d))
       return(py_slice())
 
-    if (is_has_colon(d)) {
-
-      if (is_colon_call(d)) {
-
-        d <- as.list(d)[-1]
-
-        if (is_colon_call(d[[1]] -> d1)) # step supplied
-          d <- c(as.list(d1)[-1], d[-1])
-
-      } else { # single name with colon , like `::2`
-
-        d <- deparse(d, width.cutoff = 500, backtick = FALSE)
-        d <- strsplit(d, ":", fixed = TRUE)[[1]]
-        d[!nzchar(d)] <- "NULL"
-        d <- lapply(d, parse1)
-      }
-
-      if(!length(d) %in% 1:3)
-        stop("Only 1, 2, or 3 arguments can be supplied as a python-style slice")
-
-      d <- lapply(d, eval, envir = .env)
-
-      if(length(d) < 3L)
-        d <- c(d, rep_len(list(NULL), 3L - length(d)))
-
-      class(d) <- "py_slice_spec"
-      return(d)
+    if (!is_has_colon(d)) {
+      # no `:` in call or symbol, eval normally
+      d <- eval(d, envir = .env)
+      if (!is.character(d))
+        return(d)
     }
 
-    # else, eval normally
-    eval(d, envir = .env)
+    if(is.character(d)) {
+      d <- strsplit(d, ":", fixed = TRUE)[[1L]]
+      if(length(d) == 1)
+        return(eval(parse1(d), env))
+
+      d[!nzchar(d)] <- "NULL"
+      d <- lapply(d, parse1)
+
+    } else if (is_colon_call(d)) {
+
+      d <- as.list(d)[-1]
+
+      if (is_colon_call(d[[1]] -> d1))
+        # step supplied
+        d <- c(as.list(d1)[-1], d[-1])
+
+    } else {
+      # single name with colon , like `::2`
+
+      d <- deparse(d, width.cutoff = 500L, backtick = FALSE)
+      d <- strsplit(d, ":", fixed = TRUE)[[1L]]
+      d[!nzchar(d)] <- "NULL"
+      d <- lapply(d, parse1)
+    }
+
+
+    if (!length(d) %in% 1:3)
+      stop("Only 1, 2, or 3 arguments can be supplied as a python-style slice")
+
+    d <- lapply(d, eval, envir = .env)
+
+    if (length(d) < 3L)
+      d <- c(d, rep_len(list(NULL), 3L - length(d)))
+
+    class(d) <- "py_slice_spec"
+    return(d)
+
   })
 }
+
+is_scalar_integer_tensor <- function(x)
+  is_tensor(x) && isTRUE(x$dtype$is_integer)
 
 
 as_valid_py__getitem__arg <- function(x, options) {
@@ -395,8 +427,10 @@ as_valid_py__getitem__arg <- function(x, options) {
   if(is.atomic(x) && (is.character(x) || anyNA(x) || any(is.infinite(x))))
     stop("NA, Inf, or character inputs not supported")
 
-  if(is_scalar_integerish(x)) {
+  if(is_scalar_integerish(x))
     x <- as.integer(x)
+
+  if(is_scalar_integerish(x) || is_scalar_integer_tensor(x)) {
     if(options$one_based)
       x <- translate_one_based_to_zero_based(x)
 
@@ -441,7 +475,14 @@ R_slicing_sequence_to_py_slice <- function(x, options) {
 
 
 translate_one_based_to_zero_based <- function(x) {
+  if (is_scalar_integer_tensor(x)) {
+    return(tfautograph::tf_cond(x > 0L,
+                                function() x - 1L,
+                                function() x))
+  }
+
   stopifnot(is_scalar_integerish(x))
+
   if (x > 0L)
     x - 1L
   else if (x < 0L)
