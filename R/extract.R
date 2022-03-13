@@ -123,6 +123,10 @@
 
     if (options$warn_tensors_passed_asis)
       warn_if_any_tensors(dots)
+    
+    if (is_tensor(dots[[1]])) 
+      dots <- list(as.integer(dots[[1]]))
+    
 
     dots <- lapply(dots, as_valid_py__getitem__arg, options)
 
@@ -131,10 +135,6 @@
     dots <-  if (is_scalar(dots)) dots[[1L]] else tuple(dots)
     # this would change [ so it no longer passes tensors through as-is, but translates them from 1-based to 0-based
     
-    if (is_tensor(dots) && as.logical(dots > -1L)){
-      stop_if_any_zeros(list(as.integer(dots)))
-      dots <- dots - 1L
-    } 
     x$`__getitem__`(dots)
   }
 
