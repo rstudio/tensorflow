@@ -125,6 +125,22 @@ as.character.tensorflow.python.framework.ops.EagerTensor <-
 as.character.tensorflow.python.ops.variables.Variable <-
   as.character.python.builtin.EagerTensor
 
+
+#' @export
+as.raster.python.builtin.EagerTensor <-
+function(x, max = if(x$dtype$is_integer) x$dtype$max else 1, ...)
+  as.raster(as.array(x), max = max, ...)
+
+#' @export
+as.raster.tensorflow.python.framework.ops.EagerTensor <-
+  as.raster.python.builtin.EagerTensor
+
+#' @export
+as.raster.tensorflow.python.ops.variables.Variable <-
+  as.raster.python.builtin.EagerTensor
+
+
+
 #' Creates a callable TensorFlow graph from an R function.
 #'
 #' `tf_function` constructs a callable that executes a TensorFlow graph created
