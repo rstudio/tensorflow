@@ -23,7 +23,7 @@ str.tensorflow.tensor <- function(object, ...) {
   x <- py_repr(object)
   x <- strsplit(x, "\n", fixed = TRUE)[[1L]]
   if(length(x) > 1)
-    x <- paste0(x[[1]], "...>")
+    x <- paste0(x[[1]], "\u2026>") # 1-char width ellipsis "..."
 
   # strip the trailing comma in 1d vector shapes
   x <- sub("shape=\\((None|[[:digit:]]+),\\)", "shape=(\\1)", x)
