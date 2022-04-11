@@ -125,7 +125,9 @@ as.character.tensorflow.python.framework.ops.EagerTensor <-
 as.character.tensorflow.python.ops.variables.Variable <-
   as.character.python.builtin.EagerTensor
 
+## @exportS3Method grDevices::as.raster A delayed registration like this requires R>=3.6
 
+#' @importFrom grDevices as.raster
 #' @export
 as.raster.python.builtin.EagerTensor <-
 function(x, max = if(x$dtype$is_integer) x$dtype$max else 1, ...)
