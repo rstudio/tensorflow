@@ -524,16 +524,15 @@ warned_about$tensors_passed_asis <- FALSE
 
 
 warn_if_any_negative <- function(dots) {
-  recursivly_check_dots( dots,
+  recursivly_check_dots(dots,
     check_fun = function(d) is_scalar_integerish(d) && d < 0,
     ignore_py_slice_step = TRUE,
     if_any_TRUE = {
       warning( call. = FALSE,
         "Negative numbers are interpreted python-style when subsetting tensorflow tensors." ,
-        " (they select items by counting from the back). For more details, see:",
-        "\n\thttps://numpy.org/doc/stable/reference/arrays.indexing.html#basic-slicing-and-indexing",
+        "\nSee: ?`[.tensorflow.tensor` for details.",
         "\nTo turn off this warning, set",
-        " 'options(tensorflow.extract.warn_negatives_pythonic = FALSE)'")
+        " `options(tensorflow.extract.warn_negatives_pythonic = FALSE)`")
       warned_about$negative_indices <- TRUE
     })
 }
