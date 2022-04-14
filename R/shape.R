@@ -111,6 +111,7 @@ shape <- function(..., dims = list(...)) {
   if(inherits(dims, "tensorflow.tensor") && tf$executing_eagerly())
     dims <- as_r_value(dims$numpy())
 
+  names(dims) <- NULL
   dims <- lapply(dims, function(d) {
     if (is.null(d) || isTRUE(is.na(d)) ||
         (is.numeric(d) && isTRUE(d == -1L)))
