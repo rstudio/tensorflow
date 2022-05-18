@@ -74,7 +74,11 @@ test_that("shape() works", {
   expect_false(shape(3, 4) == shape(4, 4)) # FALSE
 
   # Partially-known shapes always return FALSE
-  expect_false(shape(NA, 4) == shape(NA, 4))
+  if (tf_version() >= "2.9")
+    expect_true(shape(NA, 4) == shape(NA, 4))
+  else
+    expect_false(shape(NA, 4) == shape(NA, 4))
+
   expect_false(shape(NA, 4) == shape(3, 4))
 
   # Two unknown shapes, return TRUE
@@ -84,10 +88,13 @@ test_that("shape() works", {
   expect_false(shape(dims = NULL) == shape(NULL))
   expect_false(shape(dims = NULL) == shape(4))
 
-  # != is mostly the inverse of ==, with one difference:
+  if(tf_version() < "2.9") {
+  # in 2.9, != is just negation of ==
+  # prior versions: != is mostly the inverse of ==, with one difference:
   # it raises an error when comparing a fully unknown shapes
   expect_error(shape(dims = NULL) != shape(dims = NULL)) # ValueError: The inequality of unknown TensorShapes is undefined.
   expect_error(shape(dims = NULL) != shape())            # ValueError: The inequality of unknown TensorShapes is undefined.
+  }
 
 
   # --- extract or replace ---
