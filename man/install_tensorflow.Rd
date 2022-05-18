@@ -25,11 +25,11 @@ available on Windows.}
 
 \item{conda}{The path to a \code{conda} executable. Use \code{"auto"} to allow
 \code{reticulate} to automatically find an appropriate \code{conda} binary.
-See \strong{Finding Conda} and \code{\link[reticulate:conda-tools]{conda_binary()}} for more details.}
+See \strong{Finding Conda} and \code{\link[reticulate:conda_binary]{conda_binary()}} for more details.}
 
 \item{version}{TensorFlow version to install. Valid values include:
 \itemize{
-\item \code{"default"} installs  2.8
+\item \code{"default"} installs  2.9
 \item \code{"release"} installs the latest release version of tensorflow (which may
 be incompatible with the current version of the R package)
 \item A version specification like \code{"2.4"} or \code{"2.4.0"}. Note that if the patch
@@ -72,13 +72,13 @@ direct dependencies. For a more complete installation that includes
 additional optional dependencies, use \code{\link[keras:install_keras]{keras::install_keras()}}.
 }
 \details{
-You may be prompted you if you want it to download and install
+You may be prompted to download and install
 miniconda if reticulate did not find a non-system installation of python.
 Miniconda is the recommended installation method for most users, as it
 ensures that the R python installation is isolated from other python
 installations. All python packages will by default be installed into a
 self-contained conda or venv environment named "r-reticulate". Note that
-"conda" is the only supported method on Windows.
+"conda" is the only supported method on M1 Mac and Windows.
 
 If you initially declined the miniconda installation prompt, you can later
 manually install miniconda by running \code{\link[reticulate:install_miniconda]{reticulate::install_miniconda()}}.
@@ -88,7 +88,9 @@ manually install miniconda by running \code{\link[reticulate:install_miniconda]{
 \code{keras::install_keras()} isn't required to use tensorflow with the package.
 If you manually configure a python environment with the required
 dependencies, you can tell R to use it by pointing reticulate at it,
-commonly by setting an environment variable:\if{html}{\out{<div class="sourceCode R">}}\preformatted{Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")
+commonly by setting an environment variable:
+
+\if{html}{\out{<div class="sourceCode R">}}\preformatted{Sys.setenv("RETICULATE_PYTHON" = "~/path/to/python-env/bin/python")
 }\if{html}{\out{</div>}}
 }
 
@@ -102,7 +104,9 @@ and \code{tensorflow-metal} on Arm Macs. See
 on how to do the equivalent manually. Please note that this is an
 experimental build of both Python and Tensorflow, with known issues. In
 particular, certain operations will cause errors, but can often be remedied
-by pinning them to the CPU. For example:\if{html}{\out{<div class="sourceCode R">}}\preformatted{x <- array(runif(64*64), c(1, 64, 64))
+by pinning them to the CPU. For example:
+
+\if{html}{\out{<div class="sourceCode R">}}\preformatted{x <- array(runif(64*64), c(1, 64, 64))
 keras::layer_random_rotation(x, .5)  # Error:
 # No registered 'RngReadAndSkip' OpKernel for 'GPU' devices
 # Pin the operation to the CPU to avoid the error

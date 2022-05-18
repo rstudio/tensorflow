@@ -28,24 +28,21 @@ jobs:
           - {os: 'windows-latest', tf: 'default', r: 'oldrel'}
           - {os: 'macOS-latest'  , tf: 'default', r: 'oldrel'}
 
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.6'} # default R in ubuntu-20.04
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.5'} #
-          - {os: 'ubuntu-20.04', tf: 'default', r: '3.4'} #
-          # - {os: 'ubuntu-20.04', tf: 'default', r: '3.3'} # Oldest R available in RStudio Marketplace offerings; rcmdcheck not available
-          # - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.2'} # rcmdcheck not available
-          # - {os: 'ubuntu-20.04', tf: 'tensorflow-cpu', r: '3.1'} # remotes not available
+          # - {os: 'ubuntu-20.04', tf: 'default', r: '3.6'} # default R in ubuntu-20.04
+          - {os: 'ubuntu-20.04', tf: 'default', r: 'oldrel-1'} #
+          - {os: 'ubuntu-20.04', tf: 'default', r: 'oldrel-2'} #
+          - {os: 'ubuntu-20.04', tf: 'default', r: 'oldrel-3'} #
 
           ## uncomment if/when tf "release" != "default"
           # - {os: 'ubuntu-20.04'  , tf: 'release', r: 'release'}
           # - {os: 'windows-latest', tf: 'release', r: 'release'}
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
+          - {os: 'ubuntu-20.04', tf: '2.8', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.7', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.6', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.5', r: 'release'}
           - {os: 'ubuntu-20.04', tf: '2.4', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.3', r: 'release'}
-          # - {os: 'ubuntu-20.04', tf: '2.2', r: 'release'}
 
           # these are allowed to fail
           # - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
