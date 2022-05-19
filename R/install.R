@@ -4,13 +4,13 @@
 #' direct dependencies. For a more complete installation that includes
 #' additional optional dependencies, use [`keras::install_keras()`].
 #'
-#' @details You may be prompted you if you want it to download and install
+#' @details You may be prompted to download and install
 #'   miniconda if reticulate did not find a non-system installation of python.
 #'   Miniconda is the recommended installation method for most users, as it
 #'   ensures that the R python installation is isolated from other python
 #'   installations. All python packages will by default be installed into a
 #'   self-contained conda or venv environment named "r-reticulate". Note that
-#'   "conda" is the only supported method on Windows.
+#'   "conda" is the only supported method on M1 Mac and Windows.
 #'
 #'   If you initially declined the miniconda installation prompt, you can later
 #'   manually install miniconda by running [`reticulate::install_miniconda()`].
@@ -99,16 +99,17 @@
 #' @seealso [`keras::install_keras()`]
 #'
 #' @export
-install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
-                               conda = "auto",
-                               version = "default",
-                               envname = NULL,
-                               extra_packages = NULL,
-                               restart_session = TRUE,
-                               conda_python_version = NULL,
-                               ...,
-                               pip_ignore_installed = TRUE,
-                               python_version = conda_python_version) {
+install_tensorflow <-
+function(method = c("auto", "virtualenv", "conda"),
+         conda = "auto",
+         version = "default",
+         envname = NULL,
+         extra_packages = NULL,
+         restart_session = TRUE,
+         conda_python_version = NULL,
+         ...,
+         pip_ignore_installed = TRUE,
+         python_version = conda_python_version) {
 
   method <- match.arg(method)
 
@@ -188,7 +189,7 @@ install_tensorflow <- function(method = c("auto", "virtualenv", "conda"),
 }
 
 
-default_version <- numeric_version("2.8")
+default_version <- numeric_version("2.9")
 
 parse_tensorflow_version <- function(version) {
   # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'

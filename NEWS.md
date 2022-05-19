@@ -1,10 +1,15 @@
 # tensorflow (development version)
 
+- `install_tensorflow()` now install TensorFlow 2.9 by default.
+
+- Comparing two partially-defined `TensorShape` now returns TRUE if each dimension matches.
+  e.g.: `shape(NA, 4) == shape(NA, 4)` now returns TRUE, previously FALSE.
+
 - Tensors with dtype 'string' now convert to R character vectors by methods
   `as.array()` and `as.matrix()`. (previously they converted to python.builtin.bytes,
   or an R list of python.builtin.bytes objects)
 
-- Generic Methods:
+- Generic method updates:
   - New methods:
       all(), any(), sum(), prod(), min(), max(), mean(), range(),
       cbind(), rbind(), t(), aperm(), sort(), 
@@ -19,12 +24,12 @@
 - `as_tensor()`:
   - atomic R integer vectors now convert to 'int32', not 'int64'
   - casting between integer and floating dtypes is now done via
-   `tf.dtypes.saturate_cast()` instead of `tf.cast()`.
+   `tf$dtypes$saturate_cast()` instead of `tf$cast()`.
   - `shape` argument now accepts a tensor.
   - fixed issue where expanding a scalar tensor to an nd-array with
     `shape` provided as a tensor would raise an error.
 
-- tf.SparseTensor objects now inherit from "tensorflow.tensor".
+- `tf.SparseTensor` objects now inherit from `"tensorflow.tensor"`.
 
 # tensorflow 2.8.0
 
