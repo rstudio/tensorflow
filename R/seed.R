@@ -50,7 +50,7 @@ use_session_with_seed <- function(seed,
                                   quiet = FALSE) {
 
 
-  msg <- "use_session_with_seed will be deprecated in the future. use set_random_seed instead."
+  msg <- "use_session_with_seed will be deprecated in the future. use tensorflow::set_random_seed instead."
   if (tf_version() >= "2.0") {
     tf <- tf$compat$v1
     warning(msg)
