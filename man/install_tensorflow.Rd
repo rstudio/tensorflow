@@ -78,7 +78,7 @@ Miniconda is the recommended installation method for most users, as it
 ensures that the R python installation is isolated from other python
 installations. All python packages will by default be installed into a
 self-contained conda or venv environment named "r-reticulate". Note that
-"conda" is the only supported method on M1 Mac and Windows.
+"conda" is the only supported method on M1 Mac.
 
 If you initially declined the miniconda installation prompt, you can later
 manually install miniconda by running \code{\link[reticulate:install_miniconda]{reticulate::install_miniconda()}}.

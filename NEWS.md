@@ -2,6 +2,8 @@
 
 - `install_tensorflow()` now install TensorFlow 2.9 by default.
 
+- `install_tensorflow()` no longer requires conda on Windows, now works in a regular venv.
+
 - Comparing two partially-defined `TensorShape` now returns TRUE if each dimension matches.
   e.g.: `shape(NA, 4) == shape(NA, 4)` now returns TRUE, previously FALSE.
 
