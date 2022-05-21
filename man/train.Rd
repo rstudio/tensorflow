@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimator-generics.R
 \name{train}
 \alias{train}
-\title{Train a Model}
+\title{(Deprecated) Train a Model}
 \usage{
 train(object, ...)
 }
@@ -22,3 +22,4 @@ Train a model object. See implementation in the
 }
 }
 
+\keyword{internal}

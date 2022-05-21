@@ -2,7 +2,7 @@
 % Please edit documentation in R/estimator-generics.R
 \name{train_and_evaluate}
 \alias{train_and_evaluate}
-\title{Simultaneously Train and Evaluate a Model}
+\title{(Deprecated) Simultaneously Train and Evaluate a Model}
 \usage{
 train_and_evaluate(object, ...)
 }

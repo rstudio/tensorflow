@@ -1,6 +1,6 @@
 
 
-#' Train a Model
+#' (Deprecated) Train a Model
 #'
 #' Train a model object. See implementation in the
 #' [tfestimators][tfestimators::train.tf_estimator()] package.
@@ -13,6 +13,7 @@
 #'   - [tfestimators][tfestimators::train.tf_estimator()]
 #'
 #' @export
+#' @keywords internal
 train <- function(object, ...) {
   UseMethod("train")
 }
@@ -36,7 +37,7 @@ evaluate <- function(object, ...) {
   UseMethod("evaluate")
 }
 
-#' Simultaneously Train and Evaluate a Model
+#' (Deprecated) Simultaneously Train and Evaluate a Model
 #'
 #' Train and evaluate a model object. See implementation in the
 #' [tfestimators][tfestimators::train_and_evaluate.tf_estimator()] package.
@@ -73,7 +74,7 @@ train_and_evaluate <- function(object, ...) {
 #'   - [keras][keras::export_savedmodel.keras.engine.training.Model()]
 #'   - [tfestimators][tfestimators::export_savedmodel.tf_estimator()]
 #'
-#'
+#' @keywords internal
 #' @export
 export_savedmodel <- function(
   object,
