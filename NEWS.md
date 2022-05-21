@@ -1,16 +1,5 @@
 # tensorflow (development version)
 
-- `install_tensorflow()` now install TensorFlow 2.9 by default.
-
-- `install_tensorflow()` no longer requires conda on Windows, now works in a regular venv.
-
-- Comparing two partially-defined `TensorShape` now returns TRUE if each dimension matches.
-  e.g.: `shape(NA, 4) == shape(NA, 4)` now returns TRUE, previously FALSE.
-
-- Tensors with dtype 'string' now convert to R character vectors by methods
-  `as.array()` and `as.matrix()`. (previously they converted to python.builtin.bytes,
-  or an R list of python.builtin.bytes objects)
-
 - Generic method updates:
   - New methods:
       all(), any(), sum(), prod(), min(), max(), mean(), range(),
@@ -22,6 +11,17 @@
   - `print()` now shows 1d shapes without a trailing commas.
   - `str()` method for tensors now returns only a single compact line;
     `str()` on a list of tensors now does something sensible.
+
+- `install_tensorflow()` now install TensorFlow 2.9 by default.
+
+- `install_tensorflow()` no longer requires conda on Windows, now works in a regular venv.
+
+- Comparing two partially-defined `TensorShape` now returns TRUE if each dimension matches.
+  e.g.: `shape(NA, 4) == shape(NA, 4)` now returns TRUE, previously FALSE.
+
+- Tensors with dtype 'string' now convert to R character vectors by methods
+  `as.array()` and `as.matrix()`. (previously they converted to python.builtin.bytes,
+  or an R list of python.builtin.bytes objects)
 
 - `as_tensor()`:
   - atomic R integer vectors now convert to 'int32', not 'int64'
