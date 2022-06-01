@@ -766,6 +766,13 @@ as_tensor.default <- function(x, dtype = NULL, ..., shape = NULL, name = NULL) {
     }
   }
 
+  # bare R vectors auto convert to a list if not an array
+  # usually not an issue, except that length-1 doubles get converted to float32
+  # while R arrays get converted to float64 np arrays. For consistent dtype of created tensors,
+  # cast to R array, so we get float64 scalars by default in the common case.
+  if(is.atomic(x) && !is.array(x))
+    x <- as.array(x)
+
   # dtype_hint() arg in convert_to_tensor() calls tf$constant(),
   # can silently overflow e.g., tf$convert_to_tensor(-1L, "uint8") --> 255
   x <- tf$convert_to_tensor(x, name = name)
