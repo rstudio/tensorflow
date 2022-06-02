@@ -1,11 +1,13 @@
 # tensorflow (development version)
 
+- `as_tensor()` now converts atomic (non-array) R double vectors to "float64" dtype.
+  Previously they would in some circumstances get converted to "float32".
 # tensorflow 2.9.0
 
 - Generic method updates:
   - New methods:
       all(), any(), sum(), prod(), min(), max(), mean(), range(),
-      cbind(), rbind(), t(), aperm(), sort(), 
+      cbind(), rbind(), t(), aperm(), sort(),
       as.vector(), as.character(), as.raster(),
       is.infinite(), is.finite(), is.nan()
   - `^` will now invoke `tf.square()` or `tf.sqrt()` directly when appropriate
