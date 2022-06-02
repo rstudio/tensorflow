@@ -1,9 +1,5 @@
 # tensorflow (development version)
 
-- `as_tensor()` now coerces bare R atomic vectors to R arrays before conversion.
-  As a consequence, by default, R atomic double vectors now coerce to 
-  'float64' dtype tensors instead of 'float32'.
-
 # tensorflow 2.9.0
 
 - Generic method updates:
