@@ -77,6 +77,11 @@ shape(dims = NULL) == shape(NULL) # FALSE
 shape(dims = NULL) == shape(4)    # FALSE
 
 
+values of length greater than one supplied to `...`  are automatically flattened
+shape(1, c(2, 3), 4) # shape(1, 2, 3, 4)
+shape(1, shape(2, 3), 4) # shape(1, 2, 3, 4)
+shape(1, as_tensor(2, 3), 4) # shape(1, 2, 3, 4)
+
 # --- extract or replace ---
 # regular R-list semantics for `[`, `[[`, `[<-`, `[[<-`
 x <- shape(1, 2, 3)

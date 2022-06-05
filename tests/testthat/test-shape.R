@@ -152,4 +152,10 @@ test_that("shape() works", {
   expect_equal(format(shape(3, NA)), "(3, NA)")
   expect_equal(format(shape(3, NULL)), "(3, NA)")
 
+  # shape() can accept tf.TensorShapes, and flatten them
+  expect_equal(as.list(shape(shape(3))), list(3L))
+  expect_equal(as.list(shape(shape(3, 4))), list(3L, 4L))
+  expect_equal(as.list(shape(shape(3, 4), 5)), list(3L, 4L, 5L))
+  expect_equal(as.list(shape(NA, shape(3, 4), 5)), list(NULL, 3L, 4L, 5L))
+
 })

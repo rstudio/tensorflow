@@ -69,6 +69,11 @@
 #' shape(dims = NULL) == shape(4)    # FALSE
 #'
 #'
+#' values of length greater than one supplied to `...`  are automatically flattened
+#' shape(1, c(2, 3), 4) # shape(1, 2, 3, 4)
+#' shape(1, shape(2, 3), 4) # shape(1, 2, 3, 4)
+#' shape(1, as_tensor(2, 3), 4) # shape(1, 2, 3, 4)
+#'
 #' # --- extract or replace ---
 #' # regular R-list semantics for `[`, `[[`, `[<-`, `[[<-`
 #' x <- shape(1, 2, 3)
@@ -106,12 +111,16 @@ shape <- function(..., dims = list(...)) {
 
   names(dims) <- NULL
   dims <- lapply(dims, function(d) {
-    if (is.null(d) || isTRUE(is.na(d)) ||
+    d <- as_r_value(d)
+    if (is.null(d) ||
+        is.atomic(d) && isTRUE(is.na(d)) ||
         (is.numeric(d) && isTRUE(d == -1L)))
-      NULL
+      list(NULL)
     else
       as.integer(d)
   })
+  if(length(dims))
+    dims <- unlist(dims, recursive = FALSE, use.names = FALSE)
 
   tf$TensorShape(dims)
 }
@@ -130,6 +139,7 @@ as_r_value <- function (x) {
   else
     x
 }
+
 
 
 #' @export
