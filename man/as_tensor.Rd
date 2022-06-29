@@ -37,11 +37,12 @@ a tensorflow tensor
 \description{
 Coerce objects to tensorflow tensors (potentially of a specific dtype or shape). The
 provided default methods will call
-\href{https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor}{\code{tf.convert_to_tensor}}. Depending on arguments supplied it may also call some combination of
+\href{https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor}{\code{tf$convert_to_tensor}}. Depending on arguments supplied it may also call some combination of
 \itemize{
-\item \href{https://www.tensorflow.org/api_docs/python/tf/cast}{\code{tf.dtypes.saturate_cast}}
-\item tf.fill or tf.reshape
-\item 
+\item \href{https://www.tensorflow.org/api_docs/python/tf/dtypes/saturate_cast}{\code{tf$saturate_cast}} or
+\href{https://www.tensorflow.org/api_docs/python/tf/cast}{\code{tf$cast}}
+\item \href{https://www.tensorflow.org/api_docs/python/tf/fill}{\code{tf$fill}} or
+\href{https://www.tensorflow.org/api_docs/python/tf/reshape}{\code{tf$reshape}}
 }
 }
 \examples{
