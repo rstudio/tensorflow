@@ -89,7 +89,7 @@ tf_v2 <- function() {
       # TODO: move this into .onAttach, where you either emit immediately if
       # already loaded otherwise register emit hook for reticulate
       emit <- get("packageStartupMessage") # R CMD check
-      emit("Loaded Tensorflow version ", tf$version$VERSION)
+      emit("Loaded TensorFlow version ", tf$version$VERSION)
     }
     ,
 
