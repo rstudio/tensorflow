@@ -710,10 +710,12 @@ autocast_ab_to_tensors <- function()
 #'
 #' Coerce objects to tensorflow tensors (potentially of a specific dtype or shape). The
 #' provided default methods will call
-#' [`tf.convert_to_tensor`](https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor). Depending on arguments supplied it may also call some combination of
-#'  - [`tf.dtypes.saturate_cast`](https://www.tensorflow.org/api_docs/python/tf/cast)
-#'  - tf.fill or tf.reshape
-#'  -
+#' [`tf$convert_to_tensor`](https://www.tensorflow.org/api_docs/python/tf/convert_to_tensor). Depending on arguments supplied it may also call some combination of
+#'  - [`tf$saturate_cast`](https://www.tensorflow.org/api_docs/python/tf/dtypes/saturate_cast) or
+#'    [`tf$cast`](https://www.tensorflow.org/api_docs/python/tf/cast)
+#'  - [`tf$fill`](https://www.tensorflow.org/api_docs/python/tf/fill) or
+#'    [`tf$reshape`](https://www.tensorflow.org/api_docs/python/tf/reshape)
+#'
 #'
 #' @param x object to convert
 #' @param dtype `NULL`, a tensorflow dtype (`tf$int32`), or something coercible
