@@ -51,4 +51,4 @@ Suggests:
     testthat (>= 2.1.0),
     keras,
     callr
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1

@@ -9,12 +9,10 @@ tf_extract_opts(
   ...,
   one_based = getOption("tensorflow.extract.one_based", TRUE),
   inclusive_stop = getOption("tensorflow.extract.inclusive_stop", TRUE),
-  disallow_out_of_bounds = getOption("tensorflow.extract.dissallow_out_of_bounds",
-    TRUE),
+  disallow_out_of_bounds = getOption("tensorflow.extract.dissallow_out_of_bounds", TRUE),
   warn_tensors_passed_asis = getOption("tensorflow.extract.warn_tensors_passed_asis",
     TRUE),
-  warn_negatives_pythonic = getOption("tensorflow.extract.warn_negatives_pythonic",
-    TRUE)
+  warn_negatives_pythonic = getOption("tensorflow.extract.warn_negatives_pythonic", TRUE)
 )
 }
 \arguments{
