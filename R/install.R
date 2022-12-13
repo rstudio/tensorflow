@@ -176,7 +176,7 @@ function(method = c("auto", "virtualenv", "conda"),
 }
 
 
-default_version <- numeric_version("2.10")
+default_version <- numeric_version("2.11")
 
 parse_tensorflow_version <- function(version) {
   # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'

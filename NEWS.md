@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- `install_tensorflow()` now installs TF v2.11 by default.
+
 - `as_tensor()` now coerces bare R atomic vectors to R arrays before conversion.
   As a consequence, by default, R atomic double vectors now coerce to 
   'float64' dtype tensors instead of 'float32'.
