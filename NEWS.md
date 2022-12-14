@@ -8,6 +8,9 @@
   
 - `shape()` gains the ability to accept vectors of length > 1 in `...`, 
   including other `tf.TensorShape`s. Shapes are automatically flattened.
+  
+- Fixed an issue where a `ListWrapper` object of trackable keras layers 
+  (e.g., as part of a keras model) would not convert to an R list.
 
 # tensorflow 2.9.0
 
