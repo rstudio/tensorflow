@@ -4,7 +4,7 @@ on:
       - main
   pull_request:
   schedule:
-    - cron: '21 3 * * MON'
+    - cron: '21 3 * * Fri'
 
 name: R-CMD-check
 
@@ -20,28 +20,29 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - {os: 'ubuntu-20.04'  , tf: 'default', r: 'release'}
+          - {os: 'ubuntu-latest' , tf: 'default', r: 'release'}
           - {os: 'windows-latest', tf: 'default', r: 'release'}
           - {os: 'macOS-latest'  , tf: 'default', r: 'release'}
 
-          - {os: 'ubuntu-20.04'  , tf: 'default', r: 'oldrel'}
+          - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel'}
           - {os: 'windows-latest', tf: 'default', r: 'oldrel'}
           - {os: 'macOS-latest'  , tf: 'default', r: 'oldrel'}
 
           # - {os: 'ubuntu-20.04', tf: 'default', r: '3.6'} # default R in ubuntu-20.04
-          - {os: 'ubuntu-20.04', tf: 'default', r: 'oldrel-1'} #
-          - {os: 'ubuntu-20.04', tf: 'default', r: 'oldrel-2'} #
-          - {os: 'ubuntu-20.04', tf: 'default', r: 'oldrel-3'} #
+          - {os: 'ubuntu-latest', tf: 'default', r: 'oldrel-1'}
+          - {os: 'ubuntu-latest', tf: 'default', r: 'oldrel-2'}
+          - {os: 'ubuntu-latest', tf: 'default', r: 'oldrel-3'}
 
           ## uncomment if/when tf "release" != "default"
           # - {os: 'ubuntu-20.04'  , tf: 'release', r: 'release'}
           # - {os: 'windows-latest', tf: 'release', r: 'release'}
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
-          - {os: 'ubuntu-20.04', tf: '2.9', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.7', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.6', r: 'release'}
-          - {os: 'ubuntu-20.04', tf: '2.5', r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.10', r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.9' , r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.7' , r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.6' , r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.5' , r: 'release'}
 
           # these are allowed to fail
           # - {os: 'ubuntu-20.04', tf: 'default', r: 'devel'}
