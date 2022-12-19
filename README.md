@@ -36,7 +36,7 @@ See the package website for additional details on using the TensorFlow API from 
 
 See the TensorFlow API reference for details on all of the modules, classes, and functions within the API: <https://www.tensorflow.org/api_docs/python/tf/all_symbols>
 
-The tensorflow package provides code completion and inline help for the TensorFlow API when running within the RStudio IDE. In order to take advantage of these features you should also install the [Current Release](https://www.rstudio.com/products/rstudio/download/) of RStudio.
+The tensorflow package provides code completion and inline help for the TensorFlow API when running within the RStudio IDE. In order to take advantage of these features you should also install the [Current Release](https://posit.co/download/rstudio-desktop/) of RStudio.
 
 
 
