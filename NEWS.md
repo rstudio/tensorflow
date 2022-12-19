@@ -1,4 +1,4 @@
-# tensorflow (development version)
+# tensorflow 2.11.0
 
 - `install_tensorflow()` now installs TF v2.11 by default.
 
