@@ -39,7 +39,7 @@ Depends: R (>= 3.1)
 Imports:
     config,
     processx,
-    reticulate (>= 1.24),
+    reticulate (>= 1.28.9000),
     tfruns (>= 1.0),
     utils,
     yaml,
@@ -52,3 +52,5 @@ Suggests:
     keras,
     callr
 RoxygenNote: 7.2.3
+Remotes:  
+    rstudio/reticulate
