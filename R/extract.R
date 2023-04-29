@@ -545,7 +545,7 @@ warn_if_any_tensors <- function(dots) {
         "Indexing tensors are passed as-is to python, no index offsetting or ",
         "R to python translation is performed. Selected options for one_based ",
         "and inclusive_stop are ignored and treated as FALSE. To silence this warning, set ",
-        "option(tensorflow.extract.warn_tensors_passed_asis = FALSE)")
+        "options(tensorflow.extract.warn_tensors_passed_asis = FALSE)")
       warned_about$tensors_passed_asis <- TRUE
     })
 }
