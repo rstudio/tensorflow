@@ -429,7 +429,7 @@ R_slicing_sequence_to_py_slice <- function(x, options) {
   if (start < 0L || end < 0L ||
       any(suppressWarnings(x != seq.int(from = start, to = end, by = step))))
     stop("only positive sequences with a single step size are accepted ",
-         "if indexing with sequences not specified by a call to `:`", call. = FALSE)
+         "if indexing with sequences not specified by a call to `:`", call. = TRUE)
 
   if(identical(step, 1L))
     step <- NULL
@@ -513,7 +513,7 @@ stop_if_any_zeros <- function(dots) {
         "The tensorflow package now uses 1-based extraction by default.\n",
         "You can switch to the old behavior (0-based extraction) with:",
         "  options(tensorflow.extract.one_based = FALSE)\n", sep = "\n" ),
-      call. = FALSE
+      call. = TRUE
       ))
 }
 
@@ -541,7 +541,7 @@ warn_if_any_tensors <- function(dots) {
   recursivly_check_dots(dots,
     function(x) TRUE, classes = "tensorflow.tensor",
     if_any_TRUE = {
-      warning(call. = FALSE,
+      warning(call. = TRUE,
         "Indexing tensors are passed as-is to python, no index offsetting or ",
         "R to python translation is performed. Selected options for one_based ",
         "and inclusive_stop are ignored and treated as FALSE. To silence this warning, set ",
@@ -562,7 +562,7 @@ check_vars <- function(..., .fun, .friendly_description) {
       stop(paste("In call:", deparse(sys.call(1L)), "\n",
         "Value supplied to", sQuote(symbol[i]), "must be",
                  .friendly_description),
-           call. = FALSE)
+           call. = TRUE)
   }
   invisible(TRUE)
 }
