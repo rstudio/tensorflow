@@ -49,7 +49,7 @@ tf_v2 <- function() {
 
     priority = 5,
 
-    environment = "r-reticulate",
+    environment = "r-tensorflow",
 
     on_load = function() {
 
