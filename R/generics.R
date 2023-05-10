@@ -12,23 +12,32 @@ print.tensorflow.tensor <- function(x, ...) {
   invisible(x)
 }
 
-# TODO maybe: a nicer print for  print.tensorflow.python.framework.sparse_tensor.SparseTensor
 
-#' @export
-str.tensorflow.tensor <- function(object, ...) {
 
-  if(py_is_null_xptr(object))
-    return(cat("<pointer: 0x0>\n"))
+#' @exportS3Method pillar::type_sum
+type_sum.tensorflow.tensor <- function(x) {
 
-  x <- py_repr(object)
+  if(py_is_null_xptr(x))
+    return("<pointer: 0x0>")
+
+  x <- py_repr(x)
   x <- strsplit(x, "\n", fixed = TRUE)[[1L]]
-  if(length(x) > 1)
+  if (length(x) > 1L)
     x <- paste0(x[[1]], "\u2026>") # 1-char width ellipsis "..."
 
   # strip the trailing comma in 1d vector shapes
   x <- sub("shape=\\((None|[[:digit:]]+),\\)", "shape=(\\1)", x)
 
-  writeLines(x)
+  x
+}
+# TODO maybe: a nicer print for  print.tensorflow.python.framework.sparse_tensor.SparseTensor
+
+
+
+
+#' @export
+str.tensorflow.tensor <- function(object, ...) {
+  writeLines(type_sum.tensorflow.tensor(object))
 }
 
 

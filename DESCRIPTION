@@ -50,7 +50,8 @@ Roxygen: list(markdown = TRUE)
 Suggests:
     testthat (>= 2.1.0),
     keras,
+    pillar,
     callr
 RoxygenNote: 7.2.3
-Remotes:  
+Remotes:
     rstudio/reticulate

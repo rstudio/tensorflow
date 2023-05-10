@@ -1,17 +1,20 @@
 # tensorflow (development version)
 
+- New `pillar:type_sum()` method for Tensors, giving a
+  more informative printout of Tensors in R tracebacks and tibbles.
+
 # tensorflow 2.11.0
 
 - `install_tensorflow()` now installs TF v2.11 by default.
 
 - `as_tensor()` now coerces bare R atomic vectors to R arrays before conversion.
-  As a consequence, by default, R atomic double vectors now coerce to 
+  As a consequence, by default, R atomic double vectors now coerce to
   'float64' dtype tensors instead of 'float32'.
-  
-- `shape()` gains the ability to accept vectors of length > 1 in `...`, 
+
+- `shape()` gains the ability to accept vectors of length > 1 in `...`,
   including other `tf.TensorShape`s. Shapes are automatically flattened.
-  
-- Fixed an issue where a `ListWrapper` object of trackable keras layers 
+
+- Fixed an issue where a `ListWrapper` object of trackable keras layers
   (e.g., as part of a keras model) would not convert to an R list.
 
 # tensorflow 2.9.0
@@ -19,7 +22,7 @@
 - Generic method updates:
   - New methods:
       all(), any(), sum(), prod(), min(), max(), mean(), range(),
-      cbind(), rbind(), t(), aperm(), sort(), 
+      cbind(), rbind(), t(), aperm(), sort(),
       as.vector(), as.character(), as.raster(),
       is.infinite(), is.finite(), is.nan()
   - `^` will now invoke `tf.square()` or `tf.sqrt()` directly when appropriate
