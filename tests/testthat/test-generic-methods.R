@@ -76,6 +76,11 @@ for (fn in c(binary_arith_generics, binary_compr_generics)) {
   expect_equal(fn(5, 3L), grab(fn(as_tensor(5, "float64"), 3L)))
 }
 
+
+if(getRversion() >= "4.3.0") {
+  test_generic("%*%", rarr(3, 3), rarr(3, 3))
+}
+
 expect_equal(as.numeric(as_tensor(3) ^ 2), 3^2)
 expect_equal(as.numeric(as_tensor(3, "float64") ^ .5), 3^.5)
 
