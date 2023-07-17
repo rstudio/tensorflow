@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- `install_tensorflow()` now installs TF v2.13 by default.
+
 - New `pillar:type_sum()` method for Tensors, giving a
   more informative printout of Tensors in R tracebacks and tibbles.
 

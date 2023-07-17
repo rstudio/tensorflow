@@ -96,7 +96,9 @@
 #' @param ... other arguments passed to [`reticulate::conda_install()`] or
 #'   [`reticulate::virtualenv_install()`], depending on the `method` used.
 #'
-#' @seealso [`keras::install_keras()`]
+#' @seealso
+#' -  [`keras::install_keras()`]
+#' -  <https://tensorflow.rstudio.com/reference/tensorflow/install_tensorflow>
 #'
 #' @export
 install_tensorflow <-
@@ -176,7 +178,7 @@ function(method = c("auto", "virtualenv", "conda"),
 }
 
 
-default_version <- numeric_version("2.11")
+default_version <- numeric_version("2.13")
 
 parse_tensorflow_version <- function(version) {
   # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'
