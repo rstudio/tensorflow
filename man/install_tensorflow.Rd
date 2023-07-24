@@ -8,7 +8,7 @@ install_tensorflow(
   method = c("auto", "virtualenv", "conda"),
   conda = "auto",
   version = "default",
-  envname = NULL,
+  envname = "r-tensorflow",
   extra_packages = NULL,
   restart_session = TRUE,
   conda_python_version = NULL,
