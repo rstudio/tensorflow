@@ -2,6 +2,11 @@
 
 - `install_tensorflow()` now installs TF v2.13 by default.
 
+- `install_tensorflow()`: the `envname` argument default is now `"r-tensorflow"`. 
+  Unless the `envname` argument supplied, `install_tensorflow()` will now 
+  install into the `"r-tensorflow"` environment, bootstrapping a venv of that name
+  if necessary. 
+
 - New `pillar:type_sum()` method for Tensors, giving a
   more informative printout of Tensors in R tracebacks and tibbles.
 

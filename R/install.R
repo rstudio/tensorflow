@@ -105,7 +105,7 @@ install_tensorflow <-
 function(method = c("auto", "virtualenv", "conda"),
          conda = "auto",
          version = "default",
-         envname = NULL,
+         envname = "r-tensorflow",
          extra_packages = NULL,
          restart_session = TRUE,
          conda_python_version = NULL,
@@ -115,24 +115,18 @@ function(method = c("auto", "virtualenv", "conda"),
 
   method <- match.arg(method)
 
-  if(is_mac_arm64())
-    return(install_tensorflow_mac_arm64(
-      method = method,
-      conda = conda,
-      version = version,
-      envname = envname,
-      extra_packages = extra_packages,
-      restart_session = restart_session,
-      python_version = python_version
-    ))
 
+  if(is_mac_arm64()) {
+    if(!version %in% c("default", "release") ||
+       isTRUE(tryCatch(numeric_version(version) >= "2.13.0", error = NULL)))
+      stop("Only tensorflow>=2.13 supported on Arm Macs.")
+  }
 
   # verify 64-bit
   if (.Machine$sizeof.pointer != 8) {
     stop("Unable to install TensorFlow on this platform.",
          "Binary installation is only available for 64-bit platforms.")
   }
-
 
   # some special handling for windows
   if (is_windows()) {
@@ -149,12 +143,6 @@ function(method = c("auto", "virtualenv", "conda"),
     parse_tensorflow_version(version),
     as.character(extra_packages)
   ))
-
-  # don't double quote if packages were shell quoted already
-  packages <- shQuote(gsub("[\"']", "", packages))
-
-  # message("Installing the python pip packages :\n",
-          # paste("  -", packages, collapse = "\n"))
 
   reticulate::py_install(
     packages       = packages,
