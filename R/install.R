@@ -93,6 +93,8 @@
 #'   to `TRUE`, to ensure that TensorFlow dependencies like NumPy are compatible
 #'   with the prebuilt TensorFlow binaries.
 #'
+#' @param fresh If `TRUE`, any existing environment specified by `envname` is deleted first.
+#'
 #' @param ... other arguments passed to [`reticulate::conda_install()`] or
 #'   [`reticulate::virtualenv_install()`], depending on the `method` used.
 #'
@@ -111,10 +113,10 @@ function(method = c("auto", "virtualenv", "conda"),
          conda_python_version = NULL,
          ...,
          pip_ignore_installed = TRUE,
-         python_version = conda_python_version) {
+         fresh = identical(envname, "r-tensorflow"),
+         python_version = NULL) {
 
   method <- match.arg(method)
-
 
   if(is_mac_arm64()) {
     if(!version %in% c("default", "release") ||
@@ -144,12 +146,27 @@ function(method = c("auto", "virtualenv", "conda"),
     as.character(extra_packages)
   ))
 
+  if (isTRUE(fresh)) {
+
+    if (method %in% c("auto", "virtualenv") &&
+        reticulate::virtualenv_exists(envname))
+      reticulate::virtualenv_remove(envname = envname, confirm = FALSE)
+
+    if (method %in% c("auto", "conda")) {
+      if (!is.null(tryCatch(conda_python(envname, conda = conda),
+                            error = function(e) NULL)))
+        reticulate::conda_remove(envname, conda = conda)
+    }
+
+  }
+
+
   reticulate::py_install(
     packages       = packages,
     envname        = envname,
     method         = method,
     conda          = conda,
-    python_version = python_version,
+    python_version = python_version %||% conda_python_version,
     pip            = TRUE,
     pip_ignore_installed = pip_ignore_installed,
     ...

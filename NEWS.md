@@ -7,6 +7,9 @@
   install into the `"r-tensorflow"` environment, bootstrapping a venv of that name
   if necessary. 
 
+- `install_tensorflow()` gains a `fresh` argument. If `TRUE`, any existing 
+  environment specified by `envname` is deleted and created anew.
+
 - New `pillar:type_sum()` method for Tensors, giving a
   more informative printout of Tensors in R tracebacks and tibbles.
 

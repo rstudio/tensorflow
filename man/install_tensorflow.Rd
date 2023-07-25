@@ -14,7 +14,8 @@ install_tensorflow(
   conda_python_version = NULL,
   ...,
   pip_ignore_installed = TRUE,
-  python_version = conda_python_version
+  fresh = identical(envname, "r-tensorflow"),
+  python_version = NULL
 )
 }
 \arguments{
@@ -59,6 +60,8 @@ only occur within RStudio).}
 packages and reinstall all already installed python packages. This defaults
 to \code{TRUE}, to ensure that TensorFlow dependencies like NumPy are compatible
 with the prebuilt TensorFlow binaries.}
+
+\item{fresh}{If \code{TRUE}, any existing environment specified by \code{envname} is deleted first.}
 
 \item{python_version, conda_python_version}{Pass a string like "3.8" to
 request that conda install a specific Python version. This is ignored when
