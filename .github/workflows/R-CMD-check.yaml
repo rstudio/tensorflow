@@ -112,14 +112,15 @@ jobs:
       - name: Install package + deps
         run: remotes::install_local(dependencies = TRUE, force = TRUE)
 
+      - name: show env
+        shell: bash
+        run: env
+
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
 
       - name: Install TensorFlow
         run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}-cpu')
-
-      - name: Install rcmdcheck
-        run: remotes::install_cran("rcmdcheck")
 
       - name: Check
         run: rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')
