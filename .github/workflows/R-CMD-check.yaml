@@ -67,6 +67,9 @@ jobs:
           Ncpus: '2L'
           use-public-rspm: true
 
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.config.python }}
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -99,11 +102,14 @@ jobs:
             sudo $cmd
           done < <(Rscript -e "writeLines(remotes::system_requirements('$ID-$VERSION_ID'))")
 
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: rcmdcheck remotes local::.
+          cache-version: 3
+          upgrade: 'TRUE'
+
       - name: Install package + deps
         run: remotes::install_local(dependencies = TRUE, force = TRUE)
-
-      - name: Install Miniconda
-        run: reticulate::install_miniconda()
 
       - name: Install TensorFlow
         run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}-cpu')
