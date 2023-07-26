@@ -170,7 +170,11 @@ function(method = c("auto", "virtualenv", "conda"),
     # release. In general, we're better off picking the oldest Python version available
     # that works with the current release of tensorflow.
     # TF 2.13 is compatible with Python <=3.11,>=3.8
-    python_version <- min(reticulate::virtualenv_starter(version = ">=3.8", all = TRUE))
+
+    available <- reticulate::virtualenv_starter(version = ">=3.8", all = TRUE)
+    # pick the smallest minor version, ignoring patchlevel
+    python_version <- min(available$version[, 1:2])
+
   }
 
   reticulate::py_install(
