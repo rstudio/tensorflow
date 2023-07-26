@@ -5,10 +5,11 @@
 - `install_tensorflow()`: the `envname` argument default is now `"r-tensorflow"`. 
   Unless the `envname` argument supplied, `install_tensorflow()` will now 
   install into the `"r-tensorflow"` environment, bootstrapping a venv of that name
-  if necessary. 
+  if necessary.
 
-- `install_tensorflow()` gains a `fresh` argument. If `TRUE`, any existing 
-  environment specified by `envname` is deleted and created anew.
+- `install_tensorflow()` gains a `new_env` argument. If `TRUE`, any existing 
+  environment specified by `envname` is deleted and created anew. Defaults to `TRUE` if
+  envname is `"r-tensorflow"`, `FALSE` otherwise.
 
 - New `pillar:type_sum()` method for Tensors, giving a
   more informative printout of Tensors in R tracebacks and tibbles.

@@ -14,7 +14,7 @@ install_tensorflow(
   conda_python_version = NULL,
   ...,
   pip_ignore_installed = TRUE,
-  fresh = identical(envname, "r-tensorflow"),
+  new_env = identical(envname, "r-tensorflow"),
   python_version = NULL
 )
 }
@@ -61,13 +61,15 @@ packages and reinstall all already installed python packages. This defaults
 to \code{TRUE}, to ensure that TensorFlow dependencies like NumPy are compatible
 with the prebuilt TensorFlow binaries.}
 
-\item{fresh}{If \code{TRUE}, any existing environment specified by \code{envname} is deleted first.}
+\item{new_env}{If \code{TRUE}, any existing Python virtual environment and/or
+conda environment specified by \code{envname} is deleted first.}
 
 \item{python_version, conda_python_version}{Pass a string like "3.8" to
 request that conda install a specific Python version. This is ignored when
 attempting to install in a Python virtual environment. Note that the Python
-version must be compatible with the requested Tensorflow version, documented
-here: \url{https://www.tensorflow.org/install/pip#system-requirements}}
+version must be compatible with the requested Tensorflow version,
+documented here:
+\url{https://www.tensorflow.org/install/pip#system-requirements}}
 }
 \description{
 \code{install_tensorflow()} installs just the tensorflow python package and it's
@@ -75,13 +77,13 @@ direct dependencies. For a more complete installation that includes
 additional optional dependencies, use \code{\link[keras:install_keras]{keras::install_keras()}}.
 }
 \details{
-You may be prompted to download and install
-miniconda if reticulate did not find a non-system installation of python.
-Miniconda is the recommended installation method for most users, as it
-ensures that the R python installation is isolated from other python
-installations. All python packages will by default be installed into a
-self-contained conda or venv environment named "r-reticulate". Note that
-"conda" is the only supported method on M1 Mac.
+You may be prompted to download and install miniconda if reticulate
+did not find a non-system installation of python. Miniconda is the
+recommended installation method for most users, as it ensures that the R
+python installation is isolated from other python installations. All python
+packages will by default be installed into a self-contained conda or venv
+environment named "r-reticulate". Note that "conda" is the only supported
+method on M1 Mac.
 
 If you initially declined the miniconda installation prompt, you can later
 manually install miniconda by running \code{\link[reticulate:install_miniconda]{reticulate::install_miniconda()}}.
