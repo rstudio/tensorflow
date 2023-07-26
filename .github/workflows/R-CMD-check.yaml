@@ -112,9 +112,15 @@ jobs:
       - name: Install package + deps
         run: remotes::install_local(dependencies = TRUE, force = TRUE)
 
+      - name: install dev reticulate
+        run: remotes::install_github("rstudio/reticulate@find-more-venv-starters", force = TRUE)
+
       - name: show env
         shell: bash
         run: env
+
+      - name: find starters
+        run: reticulate::virtualenv_starter(all = TRUE)
 
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
