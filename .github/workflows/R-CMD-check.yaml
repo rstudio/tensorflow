@@ -68,8 +68,8 @@ jobs:
           use-public-rspm: true
 
       - uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.config.python }}
+        # this doesn't really do anything, since we find venv starters
+        # not through the PATH
 
       - uses: r-lib/actions/setup-pandoc@v2
 
@@ -87,9 +87,9 @@ jobs:
           path: ${{ env.R_LIBS_USER }}
           key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}-1
 
-      - name: Install remotes
-        if: steps.r-package-cache.outputs.cache-hit != 'true'
-        run: install.packages("remotes")
+      # - name: Install remotes
+      #   if: steps.r-package-cache.outputs.cache-hit != 'true'
+      #   run: install.packages("remotes")
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
@@ -105,17 +105,17 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: rcmdcheck remotes local::.
-          cache-version: 3
+          cache-version: 4
           upgrade: 'TRUE'
 
-      - name: Install package + deps
-        run: remotes::install_local(dependencies = TRUE, force = TRUE)
+      # - name: Install package + deps
+      #   run: remotes::install_local(dependencies = TRUE, force = TRUE)
 
       - name: Install TensorFlow
         run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}-cpu')
 
-      - name: Install rcmdcheck
-        run: remotes::install_cran("rcmdcheck")
+      # - name: Install rcmdcheck
+      #   run: remotes::install_cran("rcmdcheck")
 
       - name: Check
         run: rcmdcheck::rcmdcheck(args = '--no-manual', error_on = 'warning', check_dir = 'check')
