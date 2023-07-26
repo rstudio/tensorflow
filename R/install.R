@@ -161,6 +161,14 @@ function(method = c("auto", "virtualenv", "conda"),
   }
 
 
+  python_version <- python_version %||% conda_python_version
+  if(method %in% c("auto", "virtualenv") &&
+     is.null(python_version) &&
+     version == "default") {
+    # we need to constrain the python version
+    python_version <- "<=3.11,>=3.8"
+  }
+
   reticulate::py_install(
     packages       = packages,
     envname        = envname,
