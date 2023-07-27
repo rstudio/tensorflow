@@ -175,8 +175,8 @@ function(method = c("auto", "virtualenv", "conda"),
 
     available <- reticulate::virtualenv_starter(version = ">=3.8", all = TRUE)
     # pick the smallest minor version, ignoring patchlevel
-    python_version <- min(available$version[, 1:2])
-
+    if(nrow(available))
+      python_version <- min(available$version[, 1:2])
   }
 
   reticulate::py_install(
@@ -184,7 +184,7 @@ function(method = c("auto", "virtualenv", "conda"),
     envname        = envname,
     method         = method,
     conda          = conda,
-    python_version = python_version %||% conda_python_version,
+    python_version = python_version,
     pip            = TRUE,
     pip_ignore_installed = pip_ignore_installed,
     ...
