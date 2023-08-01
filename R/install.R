@@ -148,6 +148,9 @@ function(method = c("auto", "virtualenv", "conda"),
     as.character(extra_packages)
   ))
 
+  if(is_linux() && version %in% c("default", "release", "2.13"))
+    packages <- c(packages, "nvidia-cudnn-cu11==8.6.*")
+
   if (isTRUE(new_env)) {
 
     if (method %in% c("auto", "virtualenv") &&
