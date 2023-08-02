@@ -153,12 +153,14 @@ function(method = c("auto", "virtualenv", "conda"),
   ))
 
   has_gpu <- FALSE
-  if (is.null(configure_cuda_vars))
+  if (is.null(configure_cuda_vars)) {
+    configure_cuda_vars <- FALSE
     if (is_linux() && version %in% c("default", "2.13")) {
       configure_cuda_vars <- has_gpu <- tryCatch(
         as.logical(length(system("lspci | grep -i nvidia", intern = TRUE))),
         warning = function(w) FALSE) # warning emitted by system for non-0 exit status
     }
+  }
 
   if(configure_cuda_vars)
     packages <- c(packages, "nvidia-cudnn-cu11==8.6.*")
