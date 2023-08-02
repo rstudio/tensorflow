@@ -223,8 +223,8 @@ function(method = c("auto", "virtualenv", "conda"),
     cudnn_path <- get_cudnn_path(python)
     cudnn_path <- sub(path.expand("~"), "${HOME}", cudnn_path, fixed = TRUE)
     vars <- c(
-      sprintf('CUDNN_PATH="%s"', cudnn_path),
-      sprintf('LD_LIBRARY_PATH="${CUDNN_PATH}/lib:${LD_LIBRARY_PATH}"')
+      sprintf('export CUDNN_PATH="%s"', cudnn_path),
+      sprintf('export LD_LIBRARY_PATH="${CUDNN_PATH}/lib:${LD_LIBRARY_PATH}"')
     )
 
     msg <- "# Configured by the R function tensorflow::install_tensorflow()"
