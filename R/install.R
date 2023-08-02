@@ -229,7 +229,7 @@ function(method = c("auto", "virtualenv", "conda"),
 
     msg <- "# Configured by the R function tensorflow::install_tensorflow()"
 
-    if(!all(c(msg, vars) %in% profile)) {
+    if(!all(c(vars) %in% profile)) {
       profile <- c(profile, "", msg, vars, "")
       writeLines(profile, "~/.profile")
       message("- Updated file '~/.profile' with new environment variables.")
