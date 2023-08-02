@@ -14,7 +14,7 @@ install_tensorflow(
   conda_python_version = NULL,
   ...,
   configure_cuda_vars = NULL,
-  pip_ignore_installed = TRUE,
+  pip_ignore_installed = FALSE,
   new_env = identical(envname, "r-tensorflow"),
   python_version = NULL
 )
@@ -108,16 +108,12 @@ commonly by setting an environment variable:
 }
 
 \section{Apple Silicon}{
- Tensorflow on Apple Silicon is not officially
-supported by the Tensorflow maintainers. However Apple has published a
-custom version of Tensorflow compatible with Arm Macs.
-\code{install_tensorflow()} will install the special packages \code{tensorflow-macos}
-and \code{tensorflow-metal} on Arm Macs. See
+ Beginning with Tensorflow version 2.13, the default
+tensorflow package now works on Apple Silicon. See
 \url{https://developer.apple.com/metal/tensorflow-plugin/} for instructions
-on how to do the equivalent manually. Please note that this is an
-experimental build of both Python and Tensorflow, with known issues. In
-particular, certain operations will cause errors, but can often be remedied
-by pinning them to the CPU. For example:
+on how to install older versions of Tensorflow on macOS. Please note that
+not all operations are supported on Arm Mac GPUs. You can work around the
+missing operations by pinning operations to CPU. For example:
 
 \if{html}{\out{<div class="sourceCode R">}}\preformatted{x <- array(runif(64*64), c(1, 64, 64))
 keras::layer_random_rotation(x, .5)  # Error:

@@ -13,6 +13,9 @@
        and if so, and installs cuDNN, updates "~/.profile", and emits additional 
        instructions for how to install the necessary CUDA drivers to enable GPU usage. 
        Set new arg `configure_cuda_vars=FALSE` to disable.
+     - `pip_ignore_installed` default is now `FALSE` again.
+     - On Arm Macs (M1/M2), the default tensorflow package is once again installed, 
+       rather than `tensorflow-macos` and `tensorflow-metal`.
 
 - New `pillar:type_sum()` method for Tensors, giving a
   more informative printout of Tensors in R tracebacks and tibbles.
