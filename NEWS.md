@@ -1,15 +1,18 @@
 # tensorflow (development version)
 
-- `install_tensorflow()` now installs TF v2.13 by default.
-
-- `install_tensorflow()`: the `envname` argument default is now `"r-tensorflow"`. 
-  Unless the `envname` argument supplied, `install_tensorflow()` will now 
-  install into the `"r-tensorflow"` environment, bootstrapping a venv of that name
-  if necessary.
-
-- `install_tensorflow()` gains a `new_env` argument. If `TRUE`, any existing 
-  environment specified by `envname` is deleted and created anew. Defaults to `TRUE` if
-  envname is `"r-tensorflow"`, `FALSE` otherwise.
+- `install_tensorflow()` changes:
+     - Installs TensorFlow v2.13 by default now.
+     - The `envname` argument new default is `"r-tensorflow"`. This means that 
+       unless the `envname` argument supplied, `install_tensorflow()` will now 
+       install into the `"r-tensorflow"` environment, bootstrapping a venv of 
+       that name if necessary.
+     - gains a `new_env` argument. If `TRUE`, any existing environment 
+       specified by `envname` is deleted and created anew. Defaults to `TRUE` if
+       envname is `"r-tensorflow"`, `FALSE` otherwise.
+     - If running on Linux, now detects if NVIDIA GPUs on Linux are installed, 
+       and if so, and installs cuDNN, updates "~/.profile", and emits additional 
+       instructions for how to install the necessary CUDA drivers to enable GPU usage. 
+       Set new arg `configure_cuda_vars=FALSE` to disable.
 
 - New `pillar:type_sum()` method for Tensors, giving a
   more informative printout of Tensors in R tracebacks and tibbles.

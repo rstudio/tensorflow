@@ -89,6 +89,13 @@
 #'   documented here:
 #'   <https://www.tensorflow.org/install/pip#system-requirements>
 #'
+#' @param configure_cuda_vars If `install_tensorflow()` detects the platform is
+#'   Linux, an Nvidia GPU is available, and the TensorFlow version is 2.13 (the
+#'   default), it will install also install the pip package
+#'   "nvidia-cudnn-cu11==8.6.*", update "~/.profile" with environment variables,
+#'   and emit instructions for how to install Nvidia drivers to enable GPU
+#'   usage.
+#'
 #' @param pip_ignore_installed Whether pip should ignore installed python
 #'   packages and reinstall all already installed python packages. This defaults
 #'   to `TRUE`, to ensure that TensorFlow dependencies like NumPy are compatible
@@ -114,7 +121,8 @@ function(method = c("auto", "virtualenv", "conda"),
          restart_session = TRUE,
          conda_python_version = NULL,
          ...,
-         pip_ignore_installed = TRUE,
+         configure_cuda_vars = NULL,
+         pip_ignore_installed = FALSE,
          new_env = identical(envname, "r-tensorflow"),
          python_version = NULL) {
 
@@ -148,7 +156,15 @@ function(method = c("auto", "virtualenv", "conda"),
     as.character(extra_packages)
   ))
 
-  if(is_linux() && version %in% c("default", "release", "2.13"))
+  has_gpu <- FALSE
+  if (is.null(configure_cuda_vars))
+    if (is_linux() && version %in% c("default", "2.13")) {
+      configure_cuda_vars <- has_gpu <- tryCatch(
+        as.logical(length(system("lspci | grep -i nvidia", intern = TRUE))),
+        warning = function(w) FALSE) # warning emitted by system for non-0 exit status
+    }
+
+  if(configure_cuda_vars)
     packages <- c(packages, "nvidia-cudnn-cu11==8.6.*")
 
   if (isTRUE(new_env)) {
@@ -195,12 +211,91 @@ function(method = c("auto", "virtualenv", "conda"),
 
   cat("\nInstallation complete.\n\n")
 
+  if(!file.exists(python <- virtualenv_python(envname))) {
+    # only configure if venv, not conda
+    configure_cuda_vars <- FALSE
+  }
+
+  if(isTRUE(configure_cuda_vars)) {
+
+    profile <- character()
+    if (file.exists("~/.profile"))
+      profile <- readLines("~/.profile")
+    profile <- trimws(profile, "right")
+    cudnn_path <- get_cudnn_path(python)
+    cudnn_path <- sub(path.expand("~"), "${HOME}", cudnn_path, fixed = TRUE)
+    vars <- c(
+      sprintf('CUDNN_PATH="%s"', cudnn_path),
+      sprintf('LD_LIBRARY_PATH="${CUDNN_PATH}/lib:${LD_LIBRARY_PATH}"')
+    )
+
+    msg <- "# Configured by the R function tensorflow::install_tensorflow()"
+
+    if(!all(c(msg, vars) %in% profile)) {
+      browser()
+      profile <- c(profile, "", msg, vars, "")
+      writeLines(profile, "~/.profile")
+      message("- Updated file '~/.profile' with new environment variables.")
+      message("- Please logout and login again for the new environment variables to take effect and enable TensorFlow to find cuDNN for GPU usage.")
+    }
+
+    message("- To install the necessary drivers to enable GPU usage, ", appendLF = FALSE)
+    if (is_ubuntu()) {
+      is_wsl <- tryCatch(as.logical(length(system("uname -r | grep -i microsoft", intern = TRUE))),
+                         warning = function(w) FALSE)
+      keyring_url <- if(is_wsl)
+        "https://developer.download.nvidia.com/compute/cuda/repos/wsl-ubuntu/x86_64/cuda-keyring_1.0-1_all.deb"
+      else {
+        version_id <- system(". /etc/os-release && echo $VERSION_ID", intern = TRUE)
+        version_id <- sub(".", "", version_id, fixed = TRUE)
+        if(!version_id %in% c("1804", "2004", "2204")) {
+          warning("Unsupported Ubuntu version for CUDA 11.8. Only LTS version 18.04, 20.04 and 22.04 are supported")
+          version_id <- "2204"
+        }
+        sprintf("https://developer.download.nvidia.com/compute/cuda/repos/ubuntu%s/x86_64/cuda-keyring_1.0-1_all.deb", version_id)
+      }
+      instructions <- paste0(c(
+          "run the following terminal commands:",
+          paste("wget", keyring_url),
+          "sudo dpkg -i cuda-keyring_1.1-1_all.deb",
+          "sudo apt-get update",
+          "sudo apt-get -y install cuda-toolkit-11-8"
+        ), collapse = "\n" )
+    } else {
+      instructions <- c(
+          "follow the instructions for your Linux platform and install 'cuda-toolkit-11-8':\n",
+          "  https://developer.nvidia.com/cuda-11-8-0-download-archive?target_os=Linux&target_arch=x86_64")
+    }
+    message(instructions)
+  }
+
   if (restart_session &&
       requireNamespace("rstudioapi", quietly = TRUE) &&
       rstudioapi::hasFun("restartSession"))
     rstudioapi::restartSession()
 
   invisible(NULL)
+}
+
+
+get_cudnn_path <- function(python = py_discover_config()$python) {
+
+  # For TF 2.13, this assumes that someone already has cudn 11-8 installed,
+  # e.g., on ubuntu:
+  # sudo apt install cuda-toolkit-11-8
+  # also, that `python -m pip install 'nvidia-cudnn-cu11==8.6.*'`
+
+  force(python)
+  cudnn_module_path <- suppressWarnings(system2(
+    python, c("-c", shQuote("import nvidia.cudnn;print(nvidia.cudnn.__file__)")),
+    stdout = TRUE, stderr = TRUE))
+  if (!is.null(attr(cudnn_module_path, "status")) ||
+      !is_string(cudnn_module_path) ||
+      !file.exists(cudnn_module_path))
+    return()
+
+  dirname(cudnn_module_path)
+
 }
 
 
