@@ -85,12 +85,12 @@
 #'   documented here:
 #'   <https://www.tensorflow.org/install/pip#system-requirements>
 #'
-#' @param configure_cuda_vars If `install_tensorflow()` detects the platform is
+#' @param configure_cudnn If `install_tensorflow()` detects the platform is
 #'   Linux, an Nvidia GPU is available, and the TensorFlow version is 2.13 (the
 #'   default), it will install also install the pip package
-#'   "nvidia-cudnn-cu11==8.6.*", update "~/.profile" with environment variables,
-#'   and emit instructions for how to install Nvidia drivers to enable GPU
-#'   usage.
+#'   "nvidia-cudnn-cu11==8.6.*", symlink the cudnn ".so" files so they can be
+#'   found by tensorflow, and emit instructions for how to install Nvidia
+#'   drivers to enable GPU usage.
 #'
 #' @param pip_ignore_installed Whether pip should ignore installed python
 #'   packages and reinstall all already installed python packages. This defaults
@@ -117,7 +117,7 @@ function(method = c("auto", "virtualenv", "conda"),
          restart_session = TRUE,
          conda_python_version = NULL,
          ...,
-         configure_cuda_vars = NULL,
+         configure_cudnn = NULL,
          pip_ignore_installed = FALSE,
          new_env = identical(envname, "r-tensorflow"),
          python_version = NULL) {
@@ -153,16 +153,18 @@ function(method = c("auto", "virtualenv", "conda"),
   ))
 
   has_gpu <- FALSE
-  if (is.null(configure_cuda_vars)) {
-    configure_cuda_vars <- FALSE
-    if (is_linux() && version %in% c("default", "2.13")) {
-      configure_cuda_vars <- has_gpu <- tryCatch(
+  if (is.null(configure_cudnn)) {
+    configure_cudnn <- FALSE
+    if (is_linux() &&
+        (version %in% c("default", "2.13") || grepl("^2\\.13", version)) &&
+        !grepl("cpu", version)) {
+      configure_cudnn <- has_gpu <- tryCatch(
         as.logical(length(system("lspci | grep -i nvidia", intern = TRUE))),
         warning = function(w) FALSE) # warning emitted by system for non-0 exit status
     }
   }
 
-  if(configure_cuda_vars)
+  if(configure_cudnn)
     packages <- c(packages, "nvidia-cudnn-cu11==8.6.*")
 
   if (isTRUE(new_env)) {
@@ -207,34 +209,38 @@ function(method = c("auto", "virtualenv", "conda"),
     ...
   )
 
-  cat("\nInstallation complete.\n\n")
 
   if(!file.exists(python <- virtualenv_python(envname))) {
     # only configure if venv, not conda
-    configure_cuda_vars <- FALSE
+    configure_cudnn <- FALSE
   }
 
-  if(isTRUE(configure_cuda_vars)) {
+  if(isTRUE(configure_cudnn)) {
 
-    profile <- character()
-    if (file.exists("~/.profile"))
-      profile <- readLines("~/.profile")
-    profile <- trimws(profile, "right")
+    python <-  "/home/tomasz/.virtualenvs/r-tensorflow/bin/python"
+    # "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn"
     cudnn_path <- get_cudnn_path(python)
-    cudnn_path <- sub(path.expand("~"), "${HOME}", cudnn_path, fixed = TRUE)
-    vars <- c(
-      sprintf('export CUDNN_PATH="%s"', cudnn_path),
-      sprintf('export LD_LIBRARY_PATH="${CUDNN_PATH}/lib:${LD_LIBRARY_PATH}"')
-    )
 
-    msg <- "# Configured by the R function tensorflow::install_tensorflow()"
+    # [1] "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn/lib/libcudnn_adv_infer.so.8"
+    # [2] "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn/lib/libcudnn_adv_train.so.8"
+    # [3] "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn/lib/libcudnn_cnn_infer.so.8"
+    # [4] "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn/lib/libcudnn_cnn_train.so.8"
+    # [5] "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn/lib/libcudnn_ops_infer.so.8"
+    # [6] "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn/lib/libcudnn_ops_train.so.8"
+    # [7] "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn/lib/libcudnn.so.8"
+    cudnn_sos <- Sys.glob(paste0(cudnn_path, "/lib/*.so*"))
 
-    if(!all(c(vars) %in% profile)) {
-      profile <- c(profile, "", msg, vars, "")
-      writeLines(profile, "~/.profile")
-      message("- Updated file '~/.profile' with new environment variables.")
-      message("- Please logout and login again for the new environment variables to take effect and enable TensorFlow to find cuDNN for GPU usage.")
-    }
+    # "/home/tomasz/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/tensorflow/__init__.py"
+    tf_lib_path <- system2(python, c("-c", shQuote("import tensorflow as tf; print(tf.__file__)")),
+                       stderr = FALSE, stdout = TRUE)
+    tf_lib_path <- dirname(tf_lib_path)
+
+    from <- sub("^.*/site-packages/", "../", cudnn_sos)
+    to <- file.path(tf_lib_path, basename(cudnn_sos))
+    writeLines("creating symlinks:")
+    writeLines(paste("-", shQuote(to), "->", shQuote(from)))
+    file.symlink(from = from, to = to)
+
 
     message("- To install the necessary drivers to enable GPU usage, ", appendLF = FALSE)
     if (is_ubuntu()) {
@@ -265,6 +271,9 @@ function(method = c("auto", "virtualenv", "conda"),
     }
     message(instructions)
   }
+
+
+  cat("\nInstallation complete.\n\n")
 
   if (restart_session &&
       requireNamespace("rstudioapi", quietly = TRUE) &&

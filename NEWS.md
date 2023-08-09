@@ -10,9 +10,9 @@
        specified by `envname` is deleted and created anew. Defaults to `TRUE` if
        envname is `"r-tensorflow"`, `FALSE` otherwise.
      - If running on Linux, now detects if NVIDIA GPUs on Linux are installed, 
-       and if so, and installs cuDNN, updates "~/.profile", and emits additional 
-       instructions for how to install the necessary CUDA drivers to enable GPU usage. 
-       Set new arg `configure_cuda_vars=FALSE` to disable.
+       and if so, and installs cuDNN (via pip), configures symlinks for tensorflow 
+       to find cuDNN, and emits additional instructions for how to install the necessary CUDA 
+       drivers to enable GPU usage. Set new arg `configure_cudnn = FALSE` to disable.
      - `pip_ignore_installed` default is now `FALSE` again.
      - On Arm Macs (M1/M2), the default tensorflow package is once again installed, 
        rather than `tensorflow-macos` and `tensorflow-metal`.

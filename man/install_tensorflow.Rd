@@ -13,7 +13,7 @@ install_tensorflow(
   restart_session = TRUE,
   conda_python_version = NULL,
   ...,
-  configure_cuda_vars = NULL,
+  configure_cudnn = NULL,
   pip_ignore_installed = FALSE,
   new_env = identical(envname, "r-tensorflow"),
   python_version = NULL
@@ -57,12 +57,12 @@ only occur within RStudio).}
 \item{...}{other arguments passed to \code{\link[reticulate:conda-tools]{reticulate::conda_install()}} or
 \code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}, depending on the \code{method} used.}
 
-\item{configure_cuda_vars}{If \code{install_tensorflow()} detects the platform is
+\item{configure_cudnn}{If \code{install_tensorflow()} detects the platform is
 Linux, an Nvidia GPU is available, and the TensorFlow version is 2.13 (the
 default), it will install also install the pip package
-"nvidia-cudnn-cu11==8.6.*", update "~/.profile" with environment variables,
-and emit instructions for how to install Nvidia drivers to enable GPU
-usage.}
+"nvidia-cudnn-cu11==8.6.*", symlink the cudnn ".so" files so they can be
+found by tensorflow, and emit instructions for how to install Nvidia
+drivers to enable GPU usage.}
 
 \item{pip_ignore_installed}{Whether pip should ignore installed python
 packages and reinstall all already installed python packages. This defaults
