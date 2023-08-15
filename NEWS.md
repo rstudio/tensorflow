@@ -1,4 +1,4 @@
-# tensorflow (development version)
+# tensorflow 2.13.0
 
 - `install_tensorflow()` changes:
      - Installs TensorFlow v2.13 by default now.
