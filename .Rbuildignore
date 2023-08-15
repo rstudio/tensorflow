@@ -19,3 +19,4 @@ MNIST-data
 ^\.github.*$
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
+^revdep$
