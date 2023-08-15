@@ -35,11 +35,11 @@ URL: https://github.com/rstudio/tensorflow
 BugReports: https://github.com/rstudio/tensorflow/issues
 SystemRequirements: TensorFlow (https://www.tensorflow.org/)
 Encoding: UTF-8
-Depends: R (>= 3.1)
+Depends: R (>= 3.6)
 Imports:
     config,
     processx,
-    reticulate (>= 1.30.9000),
+    reticulate (>= 1.31),
     tfruns (>= 1.0),
     utils,
     yaml,
@@ -53,5 +53,3 @@ Suggests:
     pillar,
     callr
 RoxygenNote: 7.2.3
-Remotes:
-    rstudio/reticulate
