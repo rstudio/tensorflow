@@ -46,7 +46,9 @@ tf_v2 <- function() {
     Sys.setenv(TF_CPP_MIN_LOG_LEVEL = max(min(cpp_log_opt, 3), 0))
 
   # delay load tensorflow
-  tf <<- import("tensorflow", delay_load = list(
+  tryCatch({
+
+    tf <<- import("tensorflow", delay_load = list(
 
     priority = 5, # keras sets priority = 10
 
@@ -101,8 +103,15 @@ tf_v2 <- function() {
     on_error = function(e) {
       stop(tf_config_error_message(), call. = FALSE)
     }
-
   ))
+  },
+  python.builtin.ModuleNotFoundError = function(e) {
+    warning(e$message, "\n",
+    "Restart the R session and load the tensorflow R package before ",
+    "reticulate has initialized Python, or ensure reticulate initialized ",
+    "a Python installation where the tensorflow module is installed.", call. = FALSE)
+  })
+
 
   # provide a common base S3 class for tensors
   reticulate::register_class_filter(function(classes) {
