@@ -199,6 +199,9 @@ function(method = c("auto", "virtualenv", "conda"),
       python_version <- min(available$version[, 1:2])
   }
 
+  if(is_mac_arm64())
+    packages <- c(packages, "tensorflow-metal")
+
   reticulate::py_install(
     packages       = packages,
     envname        = envname,
