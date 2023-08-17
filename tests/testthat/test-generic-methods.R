@@ -313,8 +313,10 @@ test_that("generics can handle tensors w/ convert=FALSE", {
   skip_if_no_tensorflow()
 
   # this tests that `*` dispatches correctly even of both x and y provide Ops methods
-  x <- tf$ones(shape(5, 5)) * r_to_py(array(1, dim = c(5, 5)))
-  expect_true(as.logical(all(x == 1)))
+  if(getRversion() >= "4.3.0") {
+    x <- tf$ones(shape(5, 5)) * r_to_py(array(1, dim = c(5, 5)))
+    expect_true(as.logical(all(x == 1)))
+  }
 
   # test that as.array / as.raster can work even if convert=FALSE
   img <- tf$random$uniform(shape(256, 256, 4), maxval = 256) |>
@@ -322,10 +324,14 @@ test_that("generics can handle tensors w/ convert=FALSE", {
   x <- np_array(array(c(2, 1, 1, 1), dim = c(1, 1, 4)), dtype = "int8") # convert=FALSE
 
   expect_no_error(as.raster(img))
-  expect_no_error(as.raster(img %/% x))
-  expect_no_error(as.raster(r_to_py(img %/% x)))
-  expect_no_error(as.raster(r_to_py(r_to_py(img) %/% x)))
-  expect_no_error(as.raster(r_to_py(img %/% r_to_py(x))))
+  expect_no_error(as.raster(r_to_py(img)))
+
+  if (getRversion() >= "4.3.0") {
+    expect_no_error(as.raster(img %/% x))
+    expect_no_error(as.raster(r_to_py(img %/% x)))
+    expect_no_error(as.raster(r_to_py(r_to_py(img) %/% x)))
+    expect_no_error(as.raster(r_to_py(img %/% r_to_py(x))))
+  }
 
 })
 
