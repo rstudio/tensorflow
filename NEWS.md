@@ -1,5 +1,11 @@
 # tensorflow (development version)
 
+- `install_tensorflow()` installs the "tensorflow-metal" package on arm macs
+- Fixed an issue where `as.array()` and other methods might fail if the tensor
+  had conversion disabled via `r_to_py()` or `convert = FALSE`.
+- Fixed an issue where Ops group generic dispatch would error one object was a tensor
+  and the other was a non-tensor Python object.
+
 # tensorflow 2.13.0
 
 - `install_tensorflow()` changes:

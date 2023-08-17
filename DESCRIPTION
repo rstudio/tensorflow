@@ -39,7 +39,7 @@ Depends: R (>= 3.6)
 Imports:
     config,
     processx,
-    reticulate (>= 1.31),
+    reticulate (>= 1.31.0.9000),
     tfruns (>= 1.0),
     utils,
     yaml,
@@ -53,3 +53,5 @@ Suggests:
     pillar,
     callr
 RoxygenNote: 7.2.3
+Remotes:  
+    rstudio/reticulate
