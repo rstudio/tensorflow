@@ -4,7 +4,7 @@
 as.array.python.builtin.EagerTensor <- function(x, ...) {
   if (py_is_null_xptr(x))
     return(NULL)
-  if(x$dtype$name == "string")
+  if(as_r_value(x$dtype$name) == "string")
     array(as.character(x, ...),
           dim = if(length(dx <- dim(x))) dx else 1L)
   else
@@ -130,7 +130,7 @@ as.character.tensorflow.python.ops.variables.Variable <-
 #' @importFrom grDevices as.raster
 #' @export
 as.raster.python.builtin.EagerTensor <-
-function(x, max = if(x$dtype$is_integer) x$dtype$max else 1, ...)
+function(x, max = if(as_r_value(x$dtype$is_integer)) as_r_value(x$dtype$max) else 1, ...)
   as.raster(as.array(x), max = max, ...)
 
 #' @export
