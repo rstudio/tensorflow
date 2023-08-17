@@ -8,7 +8,7 @@ as.array.python.builtin.EagerTensor <- function(x, ...) {
     array(as.character(x, ...),
           dim = if(length(dx <- dim(x))) dx else 1L)
   else
-    x$numpy()
+    as_r_value(x$numpy())
 }
 
 #' @export
@@ -107,7 +107,7 @@ as.logical.tensorflow.python.ops.variables.Variable <- as.logical.python.builtin
 
 #' @export
 as.character.python.builtin.EagerTensor <- function(x, ...) {
-  out <- x$numpy()
+  out <- as_r_value(x$numpy())
   # as.character() on python bytes dispatches to
   # reticulate:::as.character.python.builtin.bytes, which calls
   # x$decode(encoding = "utf-8", errors = "strict")
