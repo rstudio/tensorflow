@@ -3,6 +3,7 @@
 \docType{package}
 \name{tensorflow}
 \alias{tensorflow}
+\alias{tensorflow-package}
 \title{TensorFlow for R}
 \description{
 \href{https://www.tensorflow.org}{TensorFlow} is an open source software library

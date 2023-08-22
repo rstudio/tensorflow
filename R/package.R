@@ -19,6 +19,7 @@
 #' @import reticulate
 #'
 #' @docType package
+#' @aliases tensorflow-package
 #' @name tensorflow
 NULL
 
