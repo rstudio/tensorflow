@@ -319,8 +319,8 @@ test_that("generics can handle tensors w/ convert=FALSE", {
   }
 
   # test that as.array / as.raster can work even if convert=FALSE
-  img <- tf$random$uniform(shape(256, 256, 4), maxval = 256) |>
-    tf$cast("uint8")
+  img <- tf$cast(tf$random$uniform(shape(256, 256, 4), maxval = 256),
+                 "uint8")
   x <- np_array(array(c(2, 1, 1, 1), dim = c(1, 1, 4)), dtype = "uint8") # convert=FALSE
 
   expect_no_error(as.raster(img))
