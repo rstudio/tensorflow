@@ -146,6 +146,11 @@ function(method = c("auto", "virtualenv", "conda"),
            "R session that has not yet initialized Keras and TensorFlow (this is ",
            "to avoid DLL in use errors during installation)")
     }
+
+    if(grepl("gpu", as.character(version), ignore.case = TRUE))
+      warning("Caution: TensorFlow 2.10 was the last TensorFlow release that supported GPU on native-Windows. Starting with TensorFlow 2.11, you will need to install TensorFlow in WSL2, or install a CPU-only version of TensorFlow.",
+              if(identical(.Platform$GUI, "RStudio")) " For a guide on how to use RStudio with WSL2, see https://support.posit.co/hc/en-us/articles/360049776974-Using-RStudio-Server-in-Windows-WSL2")
+
   }
 
   packages <- unique(c(
