@@ -219,14 +219,14 @@ function(method = c("auto", "virtualenv", "conda"),
   )
 
 
-  if(!file.exists(python <- virtualenv_python(envname))) {
+  if(method == "conda" ||
+     !file.exists(python <- virtualenv_python(envname))) {
     # only configure if venv, not conda
     configure_cudnn <- FALSE
   }
 
   if(isTRUE(configure_cudnn)) {
 
-    python <-  "/home/tomasz/.virtualenvs/r-tensorflow/bin/python"
     # "~/.virtualenvs/r-tensorflow/lib/python3.8/site-packages/nvidia/cudnn"
     cudnn_path <- get_cudnn_path(python)
 
