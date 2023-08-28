@@ -62,7 +62,8 @@ Linux, an Nvidia GPU is available, and the TensorFlow version is 2.13 (the
 default), it will install also install the pip package
 "nvidia-cudnn-cu11==8.6.*", symlink the cudnn ".so" files so they can be
 found by tensorflow, and emit instructions for how to install Nvidia
-drivers to enable GPU usage.}
+drivers to enable GPU usage. This is not applicable if the installation
+method is \code{"conda"}}
 
 \item{pip_ignore_installed}{Whether pip should ignore installed python
 packages and reinstall all already installed python packages. This defaults
