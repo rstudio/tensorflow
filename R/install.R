@@ -127,7 +127,7 @@ function(method = c("auto", "virtualenv", "conda"),
 
   if(is_mac_arm64()) {
     if(!as.character(version) %in% c("default", "release") &&
-       !isTRUE(tryCatch(numeric_version(version) >= "2.13.0",
+       !isTRUE(tryCatch(numeric_version(sub("rc", ".", version)) >= "2.13.0",
                        error = function(e) NULL)))
       stop("Only tensorflow>=2.13 supported on Arm Macs.")
   }
