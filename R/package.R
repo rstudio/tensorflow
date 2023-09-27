@@ -208,11 +208,11 @@ print.tensorflow_config <- function(x, ...) {
 
 #' TensorFlow GPU configuration information
 #'
-#' @return A bool, wether GPU is configured or not, or NA if could not be
+#' @return A bool, whether GPU is configured or not, or NA if could not be
 #' determined.
 #'
 #' @keywords internal
-#' @param verbose boolean. Wether to show extra GPU info.
+#' @param verbose boolean. Whether to show extra GPU info.
 #' @export
 tf_gpu_configured <- function(verbose=TRUE) {
   res <- tryCatch({
