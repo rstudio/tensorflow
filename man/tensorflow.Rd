@@ -42,11 +42,11 @@ Authors:
 
 Other contributors:
 \itemize{
-  \item Posit, PBC [copyright holder, funder]
   \item Daniel Falbel \email{daniel@posit.co} [contributor, copyright holder]
   \item Dirk Eddelbuettel \email{edd@debian.org} [contributor, copyright holder]
   \item Nick Golding \email{nick.golding.research@gmail.com} [contributor, copyright holder]
   \item Google Inc. (Examples and Tutorials) [contributor, copyright holder]
+  \item Posit, PBC [copyright holder, funder]
 }
 
 }
