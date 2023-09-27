@@ -4,7 +4,6 @@ Title: R Interface to 'TensorFlow'
 Version: 2.13.0.9000
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cph")),
-  person("Posit, PBC", role = c("cph", "fnd")),
   person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"),
          email = "tomasz.kalinowski@posit.co"),
   person("Daniel", "Falbel", role = c("ctb", "cph"), email = "daniel@posit.co"),
@@ -17,6 +16,7 @@ Authors@R: c(
          email = "nick.golding.research@gmail.com"),
   person("Google Inc.", role = c("ctb", "cph"),
          comment = "Examples and Tutorials")
+  person("Posit, PBC", role = c("cph", "fnd"))
   )
 Description: Interface to 'TensorFlow' <https://www.tensorflow.org/>,
   an open source software library for numerical computation using data
