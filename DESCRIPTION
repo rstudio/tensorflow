@@ -3,18 +3,18 @@ Type: Package
 Title: R Interface to 'TensorFlow'
 Version: 2.13.0.9000
 Authors@R: c(
-  person("Daniel", "Falbel", role = c("ctb", "cph"), email = "daniel@rstudio.com"),
   person("JJ", "Allaire", role = c("aut", "cph")),
-  person("RStudio", role = c("cph", "fnd")),
+  person("Posit, PBC", role = c("cph", "fnd")),
+  person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"),
+         email = "tomasz.kalinowski@posit.co"),
+  person("Daniel", "Falbel", role = c("ctb", "cph"), email = "daniel@posit.co"),
+  person("Dirk", "Eddelbuettel", role = c("ctb", "cph"),
+         email = "edd@debian.org"),
   person("Yuan", "Tang", role = c("aut", "cph"),
          email = "terrytangyuan@gmail.com",
          comment = c(ORCID = "0000-0001-5243-233X")),
-  person("Dirk", "Eddelbuettel", role = c("ctb", "cph"),
-         email = "edd@debian.org"),
   person("Nick", "Golding", role = c("ctb", "cph"),
          email = "nick.golding.research@gmail.com"),
-  person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"),
-         email = "tomasz.kalinowski@rstudio.com"),
   person("Google Inc.", role = c("ctb", "cph"),
          comment = "Examples and Tutorials")
   )
