@@ -3,6 +3,7 @@
 \docType{package}
 \name{tensorflow}
 \alias{tensorflow}
+\alias{_PACKAGE}
 \alias{tensorflow-package}
 \title{TensorFlow for R}
 \description{
@@ -21,4 +22,31 @@ complete TensorFlow API from within R.
 
 For additional documentation on the tensorflow package see
 \href{https://tensorflow.rstudio.com}{https://tensorflow.rstudio.com}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/rstudio/tensorflow}
+  \item Report bugs at \url{https://github.com/rstudio/tensorflow/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Tomasz Kalinowski \email{tomasz.kalinowski@rstudio.com} [contributor, copyright holder]
+
+Authors:
+\itemize{
+  \item JJ Allaire [copyright holder]
+  \item Yuan Tang \email{terrytangyuan@gmail.com} (\href{https://orcid.org/0000-0001-5243-233X}{ORCID}) [copyright holder]
+}
+
+Other contributors:
+\itemize{
+  \item Daniel Falbel \email{daniel@rstudio.com} [contributor, copyright holder]
+  \item RStudio [copyright holder, funder]
+  \item Dirk Eddelbuettel \email{edd@debian.org} [contributor, copyright holder]
+  \item Nick Golding \email{nick.golding.research@gmail.com} [contributor, copyright holder]
+  \item Google Inc. (Examples and Tutorials) [contributor, copyright holder]
+}
+
 }

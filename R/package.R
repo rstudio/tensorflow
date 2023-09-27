@@ -21,11 +21,16 @@
 #' @docType package
 #' @aliases tensorflow-package
 #' @name tensorflow
-NULL
+"_PACKAGE"
+
+## usethis namespace: start
+#' @importFrom lifecycle deprecated
+## usethis namespace: end
+
 
 tf_v2 <- function() {
   # 1.14 already shows deprecation warnings.
-  package_version(tf_version()) >= "1.14"
+  package_version(tf_version()) >= "2.0"
 }
 
 # globals
