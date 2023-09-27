@@ -2,6 +2,11 @@
 
 - `install_tensorflow()`:
   - Installs TensorFlow v2.14 by default.
+  - Now will automatically install the required Nvidia CUDA runtime as a pip
+    package if on Linux and a GPU is detected. You can opt-out by passing 
+    `install_tensorflow(cuda = FALSE)`. Aside from the Nvidia driver, no other 
+    pre-existing Nvidia CUDA packages are now necessary.
+  - `configure_cudnn` argument is now superseded by new argument `cuda`.
 - `install_tensorflow()` installs the "tensorflow-metal" package on arm macs
 - Fixed an issue where `as.array()` and other methods might fail if the tensor
   had conversion disabled via `r_to_py()` or `convert = FALSE`.
