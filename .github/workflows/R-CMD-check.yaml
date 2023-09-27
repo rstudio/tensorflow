@@ -39,10 +39,11 @@ jobs:
           # - {os: 'windows-latest', tf: 'release', r: 'release'}
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
+
+          - {os: 'ubuntu-latest', tf: '2.14', r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.13', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.12', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.11' , r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.10' , r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.9' , r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.8' , r: 'release'}
 
           # these are allowed to fail
