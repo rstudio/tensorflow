@@ -89,6 +89,10 @@
 #'   Linux, an Nvidia GPU is available, and the TensorFlow version is 2.14 (the
 #'   default), it will install also install the required CUDA libraries through pip.
 #'
+#' @param metal Whether to install `tensorflow-metal` pip package on Arm Macs.
+#'   This enables tensorflow to use the GPU. Pass a string to install a specific
+#'   version like `"tensorflow-metal==0.7.*`.
+#'
 #' @param pip_ignore_installed Whether pip should ignore installed python
 #'   packages and reinstall all already installed python packages.
 #'
@@ -170,8 +174,23 @@ function(method = c("auto", "virtualenv", "conda"),
   ))
 
 
-  if (metal)
-    packages <- unique(c(packages, "tensorflow-metal"))
+  if (isTRUE(metal)) repeat {
+    tf_ver <- extract_numeric_version(tf_package_spec)
+    if(is.na(tf_ver))
+      break
+
+    if(tf_ver >= "2.14")
+      metal <- "tensorflow-metal>1.0.1"
+    else if (tf_ver >= "2.13")
+      metal <- "tensorflow-metal>=1.0.1"
+    else if (tf_ver >= "2.12")
+      metal <- "tensorflow-metal==0.8.*"
+    else
+      # https://pypi.org/project/tensorflow-metal/
+      metal <- "tensorflow-metal"
+
+    break
+  }
 
   python_version <- python_version %||% conda_python_version
   if(method %in% c("auto", "virtualenv") &&
@@ -218,6 +237,18 @@ function(method = c("auto", "virtualenv", "conda"),
   py_install_args$configure_cudnn <- NULL
 
   do.call(reticulate::py_install, py_install_args)
+
+  if(is_string(metal)) {
+    py_install_args$packages <- metal
+    tryCatch(do.call(reticulate::py_install, py_install_args),
+             error = function(e) {
+               message(e)
+               message("No suitable version of the 'tensorflow-metal' found. You can ",
+                       "use TensorFlow with CPU only, or install a previous release ",
+                       "of tensorflow that has GPU support on ARM macs with ",
+                       "`tensorflow::install_tensorflow(version = '2.13')`")
+             })
+  }
 
   cat("\nInstallation complete.\n\n")
 
@@ -273,5 +304,7 @@ parse_tensorflow_version <- function(version) {
 
 extract_numeric_version <- function(x, strict = FALSE) {
   x <- gsub("[^0-9.]+", "", as.character(x), perl = TRUE)
+  x <- sub("^\\.+", "", x)
+  x <- sub("\\.+$", "", x)
   numeric_version(x, strict = strict)
 }

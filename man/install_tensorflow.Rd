@@ -62,6 +62,10 @@ only occur within RStudio).}
 Linux, an Nvidia GPU is available, and the TensorFlow version is 2.14 (the
 default), it will install also install the required CUDA libraries through pip.}
 
+\item{metal}{Whether to install \code{tensorflow-metal} pip package on Arm Macs.
+This enables tensorflow to use the GPU. Pass a string to install a specific
+version like \verb{"tensorflow-metal==0.7.*}.}
+
 \item{pip_ignore_installed}{Whether pip should ignore installed python
 packages and reinstall all already installed python packages.}
 
