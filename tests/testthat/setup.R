@@ -16,8 +16,8 @@ clean_python_tmp_dir <- function() {
                            full.names = TRUE)
 
     if(length(detritus)) {
-      cat("Unlinking:\n",
-          paste("-", detritus, "\n"), sep = "")
+      # cat("Unlinking:\n",
+      #     paste("-", detritus, "\n"), sep = "")
       unlink(detritus, TRUE, TRUE)
     }
   },

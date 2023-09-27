@@ -52,6 +52,7 @@ Suggests:
     testthat (>= 2.1.0),
     keras,
     pillar,
+    withr,
     callr
 RoxygenNote: 7.2.3
 Remotes: 
