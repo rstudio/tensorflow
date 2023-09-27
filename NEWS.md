@@ -13,7 +13,8 @@
   had conversion disabled via `r_to_py()` or `convert = FALSE`.
 - Fixed an issue where Ops group generic dispatch would error one object was a tensor
   and the other was a non-tensor Python object (e.g., a numpy array).
-- Removed long depracated symobls: `install_tensorflow_extras()`
+- Removed long deprecated symbols: 
+    `install_tensorflow_extras()`, `tfe_enable_eager_execution()`
 
 # tensorflow 2.13.0
 
