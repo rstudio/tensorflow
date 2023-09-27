@@ -73,13 +73,6 @@ jobs:
           use-public-rspm: true
           Ncpus: '2L'
 
-        # use setup-python for convenient caching of pip pkgs,
-        # (we find venv starters not through the PATH)
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          cache: 'pip' # caching pip dependencies
-
       - name: Get Date
         id: get-date
         shell: bash
