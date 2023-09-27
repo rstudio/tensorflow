@@ -261,7 +261,7 @@ test_that("indexing works with variables", {
   skip_if_no_tensorflow()
 
   expect_ok <- function (expr) {
-    expect_is(expr, "tensorflow.python.framework.ops.Tensor")
+    expect_is(expr, "tensorflow.tensor")
   }
 
   # set up tensors
