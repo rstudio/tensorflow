@@ -1,4 +1,4 @@
-# tensorflow (development version)
+# tensorflow 2.14.0
 
 - `install_tensorflow()` changes:
   - Installs TensorFlow v2.14 by default.
