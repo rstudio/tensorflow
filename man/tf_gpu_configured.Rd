@@ -7,10 +7,10 @@
 tf_gpu_configured(verbose = TRUE)
 }
 \arguments{
-\item{verbose}{boolean. Wether to show extra GPU info.}
+\item{verbose}{boolean. Whether to show extra GPU info.}
 }
 \value{
-A bool, wether GPU is configured or not, or NA if could not be
+A bool, whether GPU is configured or not, or NA if could not be
 determined.
 }
 \description{

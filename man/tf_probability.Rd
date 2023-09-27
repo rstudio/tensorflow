@@ -16,8 +16,10 @@ TensorFlow Probability Module
 \examples{
 \dontrun{
 library(tensorflow)
+## one time setup:
+# reticulate::py_install("tensorflow_probability")
 tfp <- tf_probability()
-tfp$distributions$Normal(loc=0, scale=1)
+tfp$distributions$Normal(loc = 0, scale = 1)
 }
 
 }
