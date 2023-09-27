@@ -13,7 +13,7 @@ install_tensorflow(
   restart_session = TRUE,
   conda_python_version = NULL,
   ...,
-  configure_cudnn = NULL,
+  cuda = NULL,
   pip_ignore_installed = FALSE,
   new_env = identical(envname, "r-tensorflow"),
   python_version = NULL
@@ -31,7 +31,7 @@ See \strong{Finding Conda} and \code{\link[reticulate:conda_binary]{conda_binary
 
 \item{version}{TensorFlow version to install. Valid values include:
 \itemize{
-\item \code{"default"} installs  2.13
+\item \code{"default"} installs  2.14
 \item \code{"release"} installs the latest release version of tensorflow (which may
 be incompatible with the current version of the R package)
 \item A version specification like \code{"2.4"} or \code{"2.4.0"}. Note that if the patch
@@ -57,18 +57,12 @@ only occur within RStudio).}
 \item{...}{other arguments passed to \code{\link[reticulate:conda-tools]{reticulate::conda_install()}} or
 \code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}, depending on the \code{method} used.}
 
-\item{configure_cudnn}{If \code{install_tensorflow()} detects the platform is
-Linux, an Nvidia GPU is available, and the TensorFlow version is 2.13 (the
-default), it will install also install the pip package
-"nvidia-cudnn-cu11==8.6.*", symlink the cudnn ".so" files so they can be
-found by tensorflow, and emit instructions for how to install Nvidia
-drivers to enable GPU usage. This is not applicable if the installation
-method is \code{"conda"}}
+\item{cuda}{logical \code{TRUE} or \code{FALSE}. If \code{install_tensorflow()} detects the platform is
+Linux, an Nvidia GPU is available, and the TensorFlow version is 2.14 (the
+default), it will install also install the required CUDA libraries through pip.}
 
 \item{pip_ignore_installed}{Whether pip should ignore installed python
-packages and reinstall all already installed python packages. This defaults
-to \code{TRUE}, to ensure that TensorFlow dependencies like NumPy are compatible
-with the prebuilt TensorFlow binaries.}
+packages and reinstall all already installed python packages.}
 
 \item{new_env}{If \code{TRUE}, any existing Python virtual environment and/or
 conda environment specified by \code{envname} is deleted first.}
