@@ -276,21 +276,3 @@ parse_tensorflow_version <- function(version) {
 
   paste0(package, version)
 }
-
-
-#' (Defunct) Install additional Python packages alongside TensorFlow
-#'
-#' This function is deprecated. Use the `extra_packages` argument to
-#' `install_tensorflow()` or `reticulate::py_install()` to install additional packages.
-#'
-#' @param packages Python packages to install
-#' @param conda Path to conda executable (or "auto" to find conda using the PATH
-#'   and other conventional install locations). Only used when TensorFlow is
-#'   installed within a conda environment.
-#'
-#' @export
-install_tensorflow_extras <- function(packages, conda = "auto") {
-     stop("Extra packages not installed (this function is deprecated). \n",
-          "Use the extra_packages argument to install_tensorflow() or reticulate::py_install() to ",
-          "install additional packages.")
-}
