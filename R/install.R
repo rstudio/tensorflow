@@ -315,7 +315,7 @@ get_cudnn_path <- function(python = py_discover_config()$python) {
 }
 
 
-default_version <- numeric_version("2.13")
+default_version <- numeric_version("2.14")
 
 parse_tensorflow_version <- function(version) {
   # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'

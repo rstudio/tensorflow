@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- `install_tensorflow()`:
+  - Installs TensorFlow v2.14 by default.
 - `install_tensorflow()` installs the "tensorflow-metal" package on arm macs
 - Fixed an issue where `as.array()` and other methods might fail if the tensor
   had conversion disabled via `r_to_py()` or `convert = FALSE`.
