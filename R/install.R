@@ -162,10 +162,9 @@ function(method = c("auto", "virtualenv", "conda"),
 
   }
 
-
   tf_package_spec <- parse_tensorflow_version(version)
 
-  if(isTRUE(cuda)) {
+  if(isTRUE(cuda) && !grepl("^.*\\.whl$", tf_package_spec)) {
     tf_package_spec <- sub("([^=<>!]*)(.*)", "\\1[and-cuda]\\2",
                            tf_package_spec)
   }
