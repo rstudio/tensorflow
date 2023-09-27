@@ -1,20 +1,23 @@
 # tensorflow (development version)
 
-- `install_tensorflow()`:
+- `install_tensorflow()` changes:
   - Installs TensorFlow v2.14 by default.
   - Now will automatically install the required Nvidia CUDA runtime as a pip
     package if on Linux and a GPU is detected. You can opt-out by passing
     `install_tensorflow(cuda = FALSE)`. Aside from the Nvidia driver, no other
     pre-existing Nvidia CUDA packages are now necessary.
-  - `configure_cudnn` argument is now superseded by new argument `cuda`.
+  - The `configure_cudnn` argument is now superseded by the new argument `cuda`.
+  - New argument `metal`, for specifying if the `tensorflow-metal` pip package
+    should be installed on Arm Macs. Defaults to `TRUE` on Arm Macs.
 
-- `install_tensorflow()` installs the "tensorflow-metal" package on arm macs
 - Fixed an issue where `as.array()` and other methods might fail if the tensor
   had conversion disabled via `r_to_py()` or `convert = FALSE`.
 - Fixed an issue where Ops group generic dispatch would error one object was a tensor
   and the other was a non-tensor Python object (e.g., a numpy array).
 - Removed long deprecated symbols: 
     `install_tensorflow_extras()`, `tfe_enable_eager_execution()`
+- tfestimator generics `train()` and `train_and_evaluate()` now warn about 
+  their deprecation status when called. The will be removed in a future release. 
 
 # tensorflow 2.13.0
 
