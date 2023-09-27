@@ -154,7 +154,8 @@ function(method = c("auto", "virtualenv", "conda"),
 
     can_use_gpu <-
       is_linux() &&
-      (version %in% c("default", "2.14") || grepl("^2\\.14", version)) &&
+      (version %in% c("default", "release") ||
+         isTRUE(extract_numeric_version(version) >= "2.14")) &&
       tryCatch(as.logical(length(system("lspci | grep -i nvidia", intern = TRUE))),
                warning = function(w) FALSE) # warning emitted by system for non-0 exit stat
 
@@ -234,7 +235,6 @@ function(method = c("auto", "virtualenv", "conda"),
   invisible(NULL)
 }
 
-
 default_version <- numeric_version("2.14")
 
 parse_tensorflow_version <- function(version) {
@@ -274,4 +274,10 @@ parse_tensorflow_version <- function(version) {
     version <- sprintf("==%s.*", version)
 
   paste0(package, version)
+}
+
+
+extract_numeric_version <- function(x, strict = FALSE) {
+  x <- gsub("[^0-9.]+", "", as.character(x), perl = TRUE)
+  numeric_version(x, strict = strict)
 }
