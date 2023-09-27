@@ -3,26 +3,24 @@
 #' (Deprecated) Train a Model
 #'
 #' Train a model object. See implementation in the
-#' [tfestimators][tfestimators::train.tf_estimator()] package.
+#' `tfestimators::train.tf_estimator()` package.
 #'
 #' @param object A trainable \R object.
 #' @param ... Optional arguments passed on to implementing methods.
 #'
-#' @section Implementations:
-#'
-#'   - [tfestimators][tfestimators::train.tf_estimator()]
+#' `r lifecycle::badge('deprecated')`
 #'
 #' @export
 #' @keywords internal
 train <- function(object, ...) {
+  lifecycle::deprecate_warn("2.9", "train()", "fit()")
   UseMethod("train")
 }
 
 #' Evaluate a Model
 #'
 #' Evaluate a model object. See implementations in the
-#' [keras][keras::evaluate.keras.engine.training.Model()] and
-#' [tfestimators][tfestimators::evaluate.tf_estimator()] packages.
+#' [keras][keras::evaluate.keras.engine.training.Model()] package.
 #'
 #' @param object An evaluatable \R object.
 #' @param ... Optional arguments passed on to implementing methods.
@@ -30,7 +28,6 @@ train <- function(object, ...) {
 #' @section Implementations:
 #'
 #'   - [keras][keras::evaluate.keras.engine.training.Model()]
-#'   - [tfestimators][tfestimators::evaluate.tf_estimator()]
 #'
 #' @export
 evaluate <- function(object, ...) {
@@ -40,18 +37,16 @@ evaluate <- function(object, ...) {
 #' (Deprecated) Simultaneously Train and Evaluate a Model
 #'
 #' Train and evaluate a model object. See implementation in the
-#' [tfestimators][tfestimators::train_and_evaluate.tf_estimator()] package.
+#' `tfestimators::train_and_evaluate.tf_estimator()` package.
 #'
 #' @param object An \R object.
 #' @param ... Optional arguments passed on to implementing methods.
 #'
-#' @section Implementations:
-#'
-#'   - [tfestimators][tfestimators::train_and_evaluate.tf_estimator()]
-#'
+#'`r lifecycle::badge('deprecated')`
 #'
 #' @export
 train_and_evaluate <- function(object, ...) {
+  lifecycle::deprecate_warn("2.9", "train_and_evaluate()")
   UseMethod("train_and_evaluate")
 }
 
@@ -59,8 +54,8 @@ train_and_evaluate <- function(object, ...) {
 #' Export a Saved Model
 #'
 #' Serialize a model to disk. See implementations in the
-#' [keras][keras::export_savedmodel.keras.engine.training.Model()] and
-#' [tfestimators][tfestimators::export_savedmodel.tf_estimator()] packages.
+#' [keras][keras::export_savedmodel.keras.engine.training.Model()]
+#' package.
 #'
 #' @param object An \R object.
 #' @param export_dir_base A string containing a directory in which to export the
@@ -72,7 +67,6 @@ train_and_evaluate <- function(object, ...) {
 #' @section Implementations:
 #'
 #'   - [keras][keras::export_savedmodel.keras.engine.training.Model()]
-#'   - [tfestimators][tfestimators::export_savedmodel.tf_estimator()]
 #'
 #' @keywords internal
 #' @export

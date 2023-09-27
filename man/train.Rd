@@ -9,17 +9,12 @@ train(object, ...)
 \arguments{
 \item{object}{A trainable \R object.}
 
-\item{...}{Optional arguments passed on to implementing methods.}
+\item{...}{Optional arguments passed on to implementing methods.
+
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}
 }
 \description{
 Train a model object. See implementation in the
-\link[tfestimators:train.tf_estimator]{tfestimators} package.
+\code{tfestimators::train.tf_estimator()} package.
 }
-\section{Implementations}{
-
-\itemize{
-\item \link[tfestimators:train.tf_estimator]{tfestimators}
-}
-}
-
 \keyword{internal}

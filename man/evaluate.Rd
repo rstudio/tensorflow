@@ -13,14 +13,12 @@ evaluate(object, ...)
 }
 \description{
 Evaluate a model object. See implementations in the
-\link[keras:evaluate.keras.engine.training.Model]{keras} and
-\link[tfestimators:evaluate.tf_estimator]{tfestimators} packages.
+\link[keras:evaluate.keras.engine.training.Model]{keras} package.
 }
 \section{Implementations}{
 
 \itemize{
 \item \link[keras:evaluate.keras.engine.training.Model]{keras}
-\item \link[tfestimators:evaluate.tf_estimator]{tfestimators}
 }
 }
 

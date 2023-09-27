@@ -9,16 +9,11 @@ train_and_evaluate(object, ...)
 \arguments{
 \item{object}{An \R object.}
 
-\item{...}{Optional arguments passed on to implementing methods.}
+\item{...}{Optional arguments passed on to implementing methods.
+
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}}
 }
 \description{
 Train and evaluate a model object. See implementation in the
-\link[tfestimators:train_and_evaluate.tf_estimator]{tfestimators} package.
+\code{tfestimators::train_and_evaluate.tf_estimator()} package.
 }
-\section{Implementations}{
-
-\itemize{
-\item \link[tfestimators:train_and_evaluate.tf_estimator]{tfestimators}
-}
-}
-
