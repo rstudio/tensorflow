@@ -113,18 +113,12 @@ function(method = c("auto", "virtualenv", "conda"),
          conda_python_version = NULL,
          ...,
          cuda = NULL,
+         metal = is_mac_arm64(),
          pip_ignore_installed = FALSE,
          new_env = identical(envname, "r-tensorflow"),
          python_version = NULL) {
 
   method <- match.arg(method)
-
-  if(is_mac_arm64()) {
-    if(!as.character(version) %in% c("default", "release") &&
-       !isTRUE(tryCatch(numeric_version(sub("rc", ".", version)) >= "2.13.0",
-                       error = function(e) NULL)))
-      stop("Only tensorflow>=2.13 supported on Arm Macs.")
-  }
 
   # verify 64-bit
   if (.Machine$sizeof.pointer != 8) {
@@ -176,7 +170,7 @@ function(method = c("auto", "virtualenv", "conda"),
   ))
 
 
-  if (is_mac_arm64())
+  if (metal)
     packages <- unique(c(packages, "tensorflow-metal"))
 
   python_version <- python_version %||% conda_python_version

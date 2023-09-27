@@ -14,6 +14,7 @@ install_tensorflow(
   conda_python_version = NULL,
   ...,
   cuda = NULL,
+  metal = is_mac_arm64(),
   pip_ignore_installed = FALSE,
   new_env = identical(envname, "r-tensorflow"),
   python_version = NULL
