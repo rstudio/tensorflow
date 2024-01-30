@@ -1,5 +1,9 @@
 # tensorflow (development version)
 
+- `install_tensorflow()` installs TensorFlow v2.15 by default
+- Fixed issue where lists of layers attached to a keras model would
+  fail to convert w/ the development version of reticulate (> 1.34).
+
 # tensorflow 2.14.0
 
 - `install_tensorflow()` changes:
