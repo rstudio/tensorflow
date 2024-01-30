@@ -3,7 +3,6 @@
 \docType{package}
 \name{tensorflow}
 \alias{tensorflow}
-\alias{_PACKAGE}
 \alias{tensorflow-package}
 \title{TensorFlow for R}
 \description{
