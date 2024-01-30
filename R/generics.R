@@ -841,3 +841,17 @@ if(getRversion() < "3.4.2")
   isFALSE <- function(x) {
     is.logical(x) && length(x) == 1L && !is.na(x) && !x
   }
+
+
+
+#' @export
+py_to_r.tensorflow.python.trackable.data_structures._DictWrapper <- function(x) {
+  import_builtins()$dict(x)
+}
+
+
+#' @export
+py_to_r.tensorflow.python.trackable.data_structures.ListWrapper <- function(x) {
+  import_builtins()$list(x)
+}
+
