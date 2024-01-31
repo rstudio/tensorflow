@@ -155,8 +155,10 @@ use_session_with_seed <- function(seed,
 #' @export
 set_random_seed <- function(seed, disable_gpu = TRUE) {
 
-  if (tf_version() < "2.0")
-    stop("set_random_seed only works for TF >= 2.0")
+  if(is.null(tf_ver <- tf_version()))
+    stop("TensorFlow not installed, please run `tensorflow::install_tensorflow()`")
+  else if (tf_ver < "2.0")
+    stop("set_random_seed() only works for TF >= 2.0")
 
   # cast seed to integer
   seed <- as.integer(seed)
