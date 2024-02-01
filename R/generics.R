@@ -855,3 +855,11 @@ py_to_r.tensorflow.python.trackable.data_structures.ListWrapper <- function(x) {
   import_builtins()$list(x)
 }
 
+# tf_version <= 2.9
+#' @export
+py_to_r.tensorflow.python.training.tracking.data_structures.ListWrapper <-
+  py_to_r.tensorflow.python.trackable.data_structures.ListWrapper
+
+#' @export
+py_to_r.tensorflow.python.training.tracking.data_structures._DictWrapper <-
+  py_to_r.tensorflow.python.trackable.data_structures._DictWrapper
