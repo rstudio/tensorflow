@@ -14,7 +14,7 @@ install.packages("pak")
 pak::pak(sprintf("rstudio/%s", c("reticulate", "tensorflow", "keras")))
 if (is.null(reticulate::virtualenv_starter()))
    reticulate::install_python()
-keras::install_keras()
+tensorflow::install_tensorflow()
 ```
 
 Test to see if installation was successful.

@@ -13,12 +13,12 @@ evaluate(object, ...)
 }
 \description{
 Evaluate a model object. See implementations in the
-\link[keras:evaluate.keras.engine.training.Model]{keras} package.
+\link[keras3:evaluate.keras.src.models.model.Model]{keras3} package.
 }
 \section{Implementations}{
 
 \itemize{
-\item \link[keras:evaluate.keras.engine.training.Model]{keras}
+\item \link[keras3:evaluate.keras.src.models.model.Model]{keras3}
 }
 }
 

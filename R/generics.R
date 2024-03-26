@@ -869,8 +869,7 @@ py_to_r.tensorflow.python.training.tracking.data_structures._DictWrapper <-
 # For tf_version() >= "2.16"
 ## Conditionally export these generics, if keras3 hasn't already exported them.
 ## We do this to keep keras3 and tensorflow decoupled, but to avoid
-## "S3 method overwritten" warnings
-## if both packages are loaded.
+## "S3 method overwritten" warnings if both packages are loaded.
 ##
 ## Note, we still may need to revisit this; either to disable it, or export a custom $<- method
 ## for base classes like Layer, so that compound assignment expressions aren't a

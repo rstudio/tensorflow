@@ -2,7 +2,7 @@
 #'
 #' `install_tensorflow()` installs just the tensorflow python package and it's
 #' direct dependencies. For a more complete installation that includes
-#' additional optional dependencies, use [`keras::install_keras()`].
+#' additional optional dependencies, use [`keras3::install_keras()`].
 #'
 #' @details You may be prompted to download and install miniconda if reticulate
 #'   did not find a non-system installation of python. Miniconda is the
@@ -16,7 +16,7 @@
 #'   manually install miniconda by running [`reticulate::install_miniconda()`].
 #'
 #' @section Custom Installation: `install_tensorflow()` or
-#'   `keras::install_keras()` isn't required to use tensorflow with the package.
+#'   `keras3::install_keras()` isn't required to use tensorflow with the package.
 #'   If you manually configure a python environment with the required
 #'   dependencies, you can tell R to use it by pointing reticulate at it,
 #'   commonly by setting an environment variable:
@@ -34,10 +34,10 @@
 #'
 #'   ```` R
 #'   x <- array(runif(64*64), c(1, 64, 64))
-#'   keras::layer_random_rotation(x, .5)  # Error:
+#'   keras3::layer_random_rotation(x, .5)  # Error:
 #'   # No registered 'RngReadAndSkip' OpKernel for 'GPU' devices
 #'   # Pin the operation to the CPU to avoid the error
-#'   with(tf$device("CPU"), keras::layer_random_rotation(x, .5) ) # No Error
+#'   with(tf$device("CPU"), keras3::layer_random_rotation(x, .5) ) # No Error
 #'   ````
 #'
 #' @section Additional Packages:
@@ -47,7 +47,7 @@
 #'   argument of `install_tensorflow()` or `install_keras()`, or alternatively
 #'   install them into an existing environment using the
 #'   [reticulate::py_install()] function. Note that `install_keras()` includes a
-#'   set of additional python packages by default, see `?keras::install_keras`
+#'   set of additional python packages by default, see `?keras3::install_keras`
 #'   for details.
 #'
 #' @md
@@ -103,7 +103,7 @@
 #'   [`reticulate::virtualenv_install()`], depending on the `method` used.
 #'
 #' @seealso
-#' -  [`keras::install_keras()`]
+#' -  [`keras3::install_keras()`]
 #' -  <https://tensorflow.rstudio.com/reference/tensorflow/install_tensorflow>
 #'
 #' @export
