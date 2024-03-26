@@ -117,7 +117,9 @@ function(method = c("auto", "virtualenv", "conda"),
          conda_python_version = NULL,
          ...,
          cuda = NULL,
-         metal = is_mac_arm64(),
+         # tensorflow-metal broken w/ TF v2.16 and default keras:
+         # https://github.com/tensorflow/tensorflow/issues/63854#issuecomment-2011725507
+         metal = FALSE, #is_mac_arm64(),
          pip_ignore_installed = FALSE,
          new_env = identical(envname, "r-tensorflow"),
          python_version = NULL) {
