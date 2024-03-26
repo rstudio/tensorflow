@@ -878,17 +878,17 @@ py_to_r.tensorflow.python.training.tracking.data_structures._DictWrapper <-
 #' @rawNamespace
 #' if(is.null(getS3method("py_to_r", "keras.src.utils.tracking.TrackedDict",
 #'                        optional = TRUE, envir = asNamespace("reticulate"))))
-#'   S3method(py_to_r,keras.src.utils.tracking.TrackedDict)
+#'   S3method(reticulate::py_to_r,keras.src.utils.tracking.TrackedDict)
 py_to_r.keras.src.utils.tracking.TrackedDict <- function(x) import("builtins")$dict(x)
 
 #' @rawNamespace
 #' if(is.null(getS3method("py_to_r", "keras.src.utils.tracking.TrackedDict",
 #'                        optional = TRUE, envir = asNamespace("reticulate"))))
-#'   S3method(py_to_r,keras.src.utils.tracking.TrackedList)
+#'   S3method(reticulate::py_to_r,keras.src.utils.tracking.TrackedList)
 py_to_r.keras.src.utils.tracking.TrackedList <- function(x) import("builtins")$list(x)
 
 #' @rawNamespace
 #' if(is.null(getS3method("py_to_r", "keras.src.utils.tracking.TrackedDict",
 #'                        optional = TRUE, envir = asNamespace("reticulate"))))
-#'   S3method(py_to_r,keras.src.utils.tracking.TrackedSet)
+#'   S3method(reticulate::py_to_r,keras.src.utils.tracking.TrackedSet)
 py_to_r.keras.src.utils.tracking.TrackedSet <- function(x) import("builtins")$list(x)
