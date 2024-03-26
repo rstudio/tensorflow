@@ -875,20 +875,11 @@ py_to_r.tensorflow.python.training.tracking.data_structures._DictWrapper <-
 ## for base classes like Layer, so that compound assignment expressions aren't a
 ## problem.
 
-#' @rawNamespace
-#' if(is.null(getS3method("py_to_r", "keras.src.utils.tracking.TrackedDict",
-#'                        optional = TRUE, envir = asNamespace("reticulate"))))
-#'   S3method(reticulate::py_to_r,keras.src.utils.tracking.TrackedDict)
+#' @export
 py_to_r.keras.src.utils.tracking.TrackedDict <- function(x) import("builtins")$dict(x)
 
-#' @rawNamespace
-#' if(is.null(getS3method("py_to_r", "keras.src.utils.tracking.TrackedDict",
-#'                        optional = TRUE, envir = asNamespace("reticulate"))))
-#'   S3method(reticulate::py_to_r,keras.src.utils.tracking.TrackedList)
+#' @export
 py_to_r.keras.src.utils.tracking.TrackedList <- function(x) import("builtins")$list(x)
 
-#' @rawNamespace
-#' if(is.null(getS3method("py_to_r", "keras.src.utils.tracking.TrackedDict",
-#'                        optional = TRUE, envir = asNamespace("reticulate"))))
-#'   S3method(reticulate::py_to_r,keras.src.utils.tracking.TrackedSet)
+#' @export
 py_to_r.keras.src.utils.tracking.TrackedSet <- function(x) import("builtins")$list(x)
