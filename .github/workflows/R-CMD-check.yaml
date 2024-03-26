@@ -73,24 +73,24 @@ jobs:
           use-public-rspm: true
           Ncpus: '2L'
 
-      - name: Get Date
-        id: get-date
-        shell: bash
-        run: |
-          echo "::set-output name=year-week::$(date -u "+%Y-%U")"
-          echo "::set-output name=date::$(date -u "+%F")"
-
-      - name: Restore R package cache
-        uses: actions/cache@v2
-        id: r-package-cache
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}-2
+      # - name: Get Date
+      #   id: get-date
+      #   shell: bash
+      #   run: |
+      #     echo "::set-output name=year-week::$(date -u "+%Y-%U")"
+      #     echo "::set-output name=date::$(date -u "+%F")"
+      #
+      # - name: Restore R package cache
+      #   uses: actions/cache@v2
+      #   id: r-package-cache
+      #   with:
+      #     path: ${{ env.R_LIBS_USER }}
+      #     key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}-2
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck local::.
-          cache-version: 1
+          cache-version: 2
           upgrade: 'TRUE'
 
       - name: Install TensorFlow
