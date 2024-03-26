@@ -58,7 +58,7 @@ tf_v2 <- function() {
 
     priority = 5, # keras sets priority = 10
 
-    environment = "r-tensorflow",
+    environment = c("r-tensorflow", "r-keras"),
 
     # before_load = function() {
     #
