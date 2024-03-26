@@ -90,7 +90,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck local::.
-          cache-version: 2
+          cache-version: 3
           upgrade: 'TRUE'
 
       - name: Install TensorFlow
