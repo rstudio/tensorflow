@@ -863,3 +863,18 @@ py_to_r.tensorflow.python.training.tracking.data_structures.ListWrapper <-
 #' @export
 py_to_r.tensorflow.python.training.tracking.data_structures._DictWrapper <-
   py_to_r.tensorflow.python.trackable.data_structures._DictWrapper
+
+
+
+# For tf_version() >= "2.16"
+## May need to revisit this; either to disable it, or export a custom $<- method
+## for base classes like Layer, so that compound assignment expressions aren't a
+## problem.
+#' @export
+py_to_r.keras.src.utils.tracking.TrackedDict <- function(x) import("builtins")$dict(x)
+
+#' @export
+py_to_r.keras.src.utils.tracking.TrackedList <- function(x) import("builtins")$list(x)
+
+#' @export
+py_to_r.keras.src.utils.tracking.TrackedSet <- function(x) import("builtins")$list(x)
