@@ -33,7 +33,7 @@ jobs:
           - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel'}
           - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel-1'}
           - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel-2'}
-          - {os: 'ubuntu-20.04'  , tf: 'default', r: '3.6'} # default R in ubuntu-20.04
+          - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel-3'}
 
           ## release keras/tf version (if different from 'default')
           # - {os: 'ubuntu-latest' , tf: 'release', r: 'release'}
@@ -90,7 +90,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck local::.
-          cache-version: 3
+          cache-version: 4
           upgrade: 'TRUE'
 
       - name: Install TensorFlow
