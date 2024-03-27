@@ -259,6 +259,10 @@ function(method = c("auto", "virtualenv", "conda"),
              })
   }
 
+  if(cuda && is_linux()) {
+    configure_cudnn_symlinks(envname = envname)
+  }
+
   cat("\nInstallation complete.\n\n")
 
   if (restart_session &&
@@ -316,4 +320,65 @@ extract_numeric_version <- function(x, strict = FALSE) {
   x <- sub("^\\.+", "", x)
   x <- sub("\\.+$", "", x)
   numeric_version(x, strict = strict)
+}
+
+
+
+get_cudnn_path <- function(python) {
+
+  # For TF 2.13, this assumes that someone already has cudn 11-8 installed,
+  # e.g., on ubuntu:
+  # sudo apt install cuda-toolkit-11-8
+  # also, that `python -m pip install 'nvidia-cudnn-cu11==8.6.*'`
+
+  force(python)
+  cudnn_module_path <- suppressWarnings(system2(
+    python, c("-c", shQuote("import nvidia.cudnn;print(nvidia.cudnn.__file__)")),
+    stdout = TRUE, stderr = TRUE))
+  if (!is.null(attr(cudnn_module_path, "status")) ||
+      !is_string(cudnn_module_path) ||
+      !file.exists(cudnn_module_path))
+    return()
+
+  dirname(cudnn_module_path)
+
+}
+
+configure_cudnn_symlinks <- function(envname) {
+  if(!is_linux()) return()
+  python <- reticulate::virtualenv_python(envname)
+
+  cudnn_path <- get_cudnn_path(python)
+  if(is.null(cudnn_path)) return()
+  # "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn"
+
+  cudnn_sos <- Sys.glob(paste0(cudnn_path, "/lib/*.so*"))
+  if(!length(cudnn_sos)) return()
+  # [1] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_adv_infer.so.8"
+  # [2] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_adv_train.so.8"
+  # [3] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_cnn_infer.so.8"
+  # [4] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_cnn_train.so.8"
+  # [5] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_ops_infer.so.8"
+  # [6] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_ops_train.so.8"
+  # [7] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn.so.8"
+
+  # "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/__init__.py"
+  tf_lib_path <- system2(python, c("-c", shQuote("import tensorflow as tf; print(tf.__file__)")),
+                         stderr = FALSE, stdout = TRUE)
+  tf_lib_path <- dirname(tf_lib_path)
+
+  from <- sub("^.*/site-packages/", "../", cudnn_sos)
+  to <- file.path(tf_lib_path, basename(cudnn_sos))
+  writeLines("creating symlinks:")
+  writeLines(paste("-", shQuote(to), "->", shQuote(from)))
+  # creating symlinks:
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_adv_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_adv_infer.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_adv_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_adv_train.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_cnn_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_cnn_infer.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_cnn_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_cnn_train.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_ops_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_ops_infer.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_ops_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_ops_train.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn.so.8' -> '../nvidia/cudnn/lib/libcudnn.so.8'
+  file.symlink(from = from, to = to)
+
 }
