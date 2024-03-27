@@ -33,7 +33,7 @@ jobs:
           - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel'}
           - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel-1'}
           - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel-2'}
-          - {os: 'ubuntu-20.04'  , tf: 'default', r: '3.6'} # default R in ubuntu-20.04
+          - {os: 'ubuntu-latest' , tf: 'default', r: 'oldrel-3'}
 
           ## release keras/tf version (if different from 'default')
           # - {os: 'ubuntu-latest' , tf: 'release', r: 'release'}
@@ -41,10 +41,10 @@ jobs:
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
           ## old keras/tf versions
+          - {os: 'ubuntu-latest', tf: '2.15', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.14', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.13', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.12', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.11', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.9' , r: 'release'}
 
           # these are allowed to fail
@@ -73,24 +73,24 @@ jobs:
           use-public-rspm: true
           Ncpus: '2L'
 
-      - name: Get Date
-        id: get-date
-        shell: bash
-        run: |
-          echo "::set-output name=year-week::$(date -u "+%Y-%U")"
-          echo "::set-output name=date::$(date -u "+%F")"
-
-      - name: Restore R package cache
-        uses: actions/cache@v2
-        id: r-package-cache
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}-2
+      # - name: Get Date
+      #   id: get-date
+      #   shell: bash
+      #   run: |
+      #     echo "::set-output name=year-week::$(date -u "+%Y-%U")"
+      #     echo "::set-output name=date::$(date -u "+%F")"
+      #
+      # - name: Restore R package cache
+      #   uses: actions/cache@v2
+      #   id: r-package-cache
+      #   with:
+      #     path: ${{ env.R_LIBS_USER }}
+      #     key: ${{ matrix.os }}-${{ steps.setup-r.outputs.installed-r-version }}-${{ steps.get-date.outputs.year-week }}-2
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck local::.
-          cache-version: 1
+          cache-version: 4
           upgrade: 'TRUE'
 
       - name: Install TensorFlow

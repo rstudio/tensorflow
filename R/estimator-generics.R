@@ -20,14 +20,14 @@ train <- function(object, ...) {
 #' Evaluate a Model
 #'
 #' Evaluate a model object. See implementations in the
-#' [keras][keras::evaluate.keras.engine.training.Model()] package.
+#' [keras3][keras3::evaluate.keras.src.models.model.Model()] package.
 #'
 #' @param object An evaluatable \R object.
 #' @param ... Optional arguments passed on to implementing methods.
 #'
 #' @section Implementations:
 #'
-#'   - [keras][keras::evaluate.keras.engine.training.Model()]
+#'   - [keras3][keras3::evaluate.keras.src.models.model.Model()]
 #'
 #' @export
 evaluate <- function(object, ...) {
@@ -54,7 +54,7 @@ train_and_evaluate <- function(object, ...) {
 #' Export a Saved Model
 #'
 #' Serialize a model to disk. See implementations in the
-#' [keras][keras::export_savedmodel.keras.engine.training.Model()]
+#' [keras3][keras3::export_savedmodel.keras.src.models.model.Model()]
 #' package.
 #'
 #' @param object An \R object.
@@ -66,7 +66,7 @@ train_and_evaluate <- function(object, ...) {
 #'
 #' @section Implementations:
 #'
-#'   - [keras][keras::export_savedmodel.keras.engine.training.Model()]
+#'   - [keras3][keras3::export_savedmodel.keras.src.models.model.Model]
 #'
 #' @keywords internal
 #' @export

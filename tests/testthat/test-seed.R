@@ -5,7 +5,7 @@ test_that("use_session_with_seed works", {
 
 
   f <- function() {
-    library(keras)
+    library(keras3)
     use_session_with_seed(seed = 1)
     model <- keras_model_sequential() %>%
       layer_dense(units = 1)
@@ -26,7 +26,7 @@ test_that("set_random_seed", {
     skip("set_random_seed only works for TF >= 2.0")
 
   f <- function() {
-    library(keras)
+    library(keras3)
     tensorflow::set_random_seed(seed = 1)
     model <- keras_model_sequential() %>%
       layer_dense(units = 1)
