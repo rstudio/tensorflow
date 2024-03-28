@@ -89,9 +89,12 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck local::.
+          extra-packages: any::rcmdcheck local::. any::remotes
           cache-version: 4
           upgrade: 'TRUE'
+
+      - name: Install Dev Keras3
+        run: remotes::install_github("rstudio/keras")
 
       - name: Install TensorFlow
         run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}-cpu')
