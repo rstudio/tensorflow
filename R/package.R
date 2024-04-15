@@ -58,7 +58,10 @@ tf_v2 <- function() {
 
     priority = 5, # keras sets priority = 10
 
-    environment = "r-tensorflow",
+    environment = c(
+      "r-tensorflow",
+      if(getNamespaceVersion("reticulate") >= "1.36.0") "r-keras"
+    ),
 
     # before_load = function() {
     #
@@ -118,9 +121,6 @@ tf_v2 <- function() {
     "a Python installation where the tensorflow module is installed.", call. = FALSE)
   })
 
-  # if keras3 (r pkg) is not loaded, but "r-keras" (venv) exists and
-  # "r-tensorflow" (venv) doesn't, use "r-keras".
-  use_virtualenv("r-keras", required = FALSE)
 
   # provide a common base S3 class for tensors
   reticulate::register_class_filter(function(classes) {
