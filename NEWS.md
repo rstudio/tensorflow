@@ -1,4 +1,4 @@
-# tensorflow (development version)
+# tensorflow 2.16.0
 
 - The package now Suggest 'keras3' instead of 'keras'
 - `install_tensorflow()` installs TensorFlow v2.16 by default.
