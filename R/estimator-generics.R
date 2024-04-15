@@ -44,6 +44,7 @@ evaluate <- function(object, ...) {
 #'
 #'`r lifecycle::badge('deprecated')`
 #'
+#' @keywords internal
 #' @export
 train_and_evaluate <- function(object, ...) {
   lifecycle::deprecate_warn("2.9", "train_and_evaluate()")

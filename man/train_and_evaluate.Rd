@@ -17,3 +17,4 @@ train_and_evaluate(object, ...)
 Train and evaluate a model object. See implementation in the
 \code{tfestimators::train_and_evaluate.tf_estimator()} package.
 }
+\keyword{internal}
