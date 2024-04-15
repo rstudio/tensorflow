@@ -3,7 +3,7 @@
 - The package now Suggest 'keras3' instead of 'keras'
 - `install_tensorflow()` installs TensorFlow v2.16 by default.
 - If `install_tensorflow()` detects a GPU on Linux, it will automatically 
-  install the cuda package and configure required symlinks for cudnn.
+  install the cuda package and configure required symlinks for cudnn and ptxax.
 
 
 # tensorflow 2.15.0
