@@ -204,16 +204,20 @@ function(method = c("auto", "virtualenv", "conda"),
     # that works with the current release of tensorflow.
     # TF 2.13 is compatible with Python <=3.11,>=3.8
 
-    available <- reticulate::virtualenv_starter(version = ">=3.9", all = TRUE)
+    # prefer 3.10 if we have it, otherwise, find 3.9
+    available <- reticulate::virtualenv_starter(version = ">=3.10,<=3.12", all = TRUE)
+    if(!nrow(available))
+      available <- reticulate::virtualenv_starter(version = ">=3.9,<=3.12", all = TRUE)
     # pick the smallest minor version, ignoring patchlevel
     if(nrow(available)) {
       python_version <- min(available$version[, 1:2])
-      if(python_version >= "3.12" && isTRUE(grepl("default", version)))
-        stop(
-          "The current release version of TensorFlow requires a Python version between 3.8 and 3.11. ",
-          "Python versions >=3.12 are not supported. Please use ",
-          "`reticulate::install_python('3.10:latest')` or manually install an older version of Python from www.python.org/downloads"
-          )
+      ## tf 2.16 supports python 3.12
+    #   if(python_version >= "3.12" && isTRUE(grepl("default", version)))
+    #     stop(
+    #       "The current release version of TensorFlow requires a Python version between 3.9 and 3.11. ",
+    #       "Python versions >=3.12 are not supported. Please use ",
+    #       "`reticulate::install_python('3.10:latest')` or manually install an older version of Python from www.python.org/downloads"
+    #       )
     }
   }
 
@@ -261,6 +265,7 @@ function(method = c("auto", "virtualenv", "conda"),
 
   if(cuda && is_linux()) {
     configure_cudnn_symlinks(envname = envname)
+    configure_ptxas_symlink(envname = envname)
   }
 
   cat("\nInstallation complete.\n\n")
@@ -323,32 +328,35 @@ extract_numeric_version <- function(x, strict = FALSE) {
 }
 
 
+python_module_dir <- function(python, module) {
 
-get_cudnn_path <- function(python) {
+  force(python)
+  py_cmd <- sprintf("import %s; print(%1$s.__file__)", module)
+
+  module_file <- suppressWarnings(system2(
+    python, c("-c", shQuote(py_cmd)),
+    stdout = TRUE, stderr = TRUE))
+
+  if (!is.null(attr(module_file, "status")) ||
+      !is_string(module_file) ||
+      !file.exists(module_file))
+    return()
+
+  dirname(module_file)
+
+}
+
+
+configure_cudnn_symlinks <- function(envname) {
+  if(!is_linux()) return()
+  python <- reticulate::virtualenv_python(envname)
 
   # For TF 2.13, this assumes that someone already has cudn 11-8 installed,
   # e.g., on ubuntu:
   # sudo apt install cuda-toolkit-11-8
   # also, that `python -m pip install 'nvidia-cudnn-cu11==8.6.*'`
 
-  force(python)
-  cudnn_module_path <- suppressWarnings(system2(
-    python, c("-c", shQuote("import nvidia.cudnn;print(nvidia.cudnn.__file__)")),
-    stdout = TRUE, stderr = TRUE))
-  if (!is.null(attr(cudnn_module_path, "status")) ||
-      !is_string(cudnn_module_path) ||
-      !file.exists(cudnn_module_path))
-    return()
-
-  dirname(cudnn_module_path)
-
-}
-
-configure_cudnn_symlinks <- function(envname) {
-  if(!is_linux()) return()
-  python <- reticulate::virtualenv_python(envname)
-
-  cudnn_path <- get_cudnn_path(python)
+  cudnn_path <- python_module_dir(python, "nvidia.cudnn")
   if(is.null(cudnn_path)) return()
   # "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn"
 
@@ -382,3 +390,33 @@ configure_cudnn_symlinks <- function(envname) {
   file.symlink(from = from, to = to)
 
 }
+
+configure_ptxas_symlink <- function(envname = "r-tensorflow") {
+  if(!is_linux()) return()
+  python <- reticulate::virtualenv_python(envname)
+
+  nvcc_path <- python_module_dir(python, "nvidia.cuda_nvcc")
+  if(is.null(nvcc_path)) return()
+
+  # configure a link so that ptxas can be found on the PATH
+  # when the venv is activated.
+  # https://discuss.tensorflow.org/t/tensorflow-version-2-16-just-released/23140/6#resolving-the-ptxas-issue-3
+  nvcc_bins <- Sys.glob(file.path(nvcc_path, "bin/*"))
+  if(!length(nvcc_bins)) return()
+  # "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cuda_nvcc/bin/ptxas"
+
+  to <- file.path(dirname(python), basename(nvcc_bins))
+  # "~/.virtualenvs/r-tensorflow/bin/ptxas"
+
+  # fs::path_rel(nvcc_bins, to)
+  from <- sub(dirname(dirname(python)), "../..", nvcc_bins)
+  # "../../lib/python3.9/site-packages/nvidia/cuda_nvcc/bin/ptxas"
+
+  # writeLines("creating symlinks:")
+  writeLines(paste("-", shQuote(to), "->", shQuote(from)))
+  # '~/.virtualenvs/r-tensorflow/bin/ptxas' -> '../../lib/python3.9/site-packages/nvidia/cuda_nvcc/bin/ptxas'
+
+  file.symlink(from = from, to = to)
+
+}
+
