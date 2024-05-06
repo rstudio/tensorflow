@@ -16,8 +16,8 @@
 #'   manually install miniconda by running [`reticulate::install_miniconda()`].
 #'
 #' @section Custom Installation: `install_tensorflow()` or
-#'   `keras3::install_keras()` isn't required to use tensorflow with the package.
-#'   If you manually configure a python environment with the required
+#'   `keras3::install_keras()` isn't required to use tensorflow with the
+#'   package. If you manually configure a python environment with the required
 #'   dependencies, you can tell R to use it by pointing reticulate at it,
 #'   commonly by setting an environment variable:
 #'
@@ -78,16 +78,20 @@
 #' @param restart_session Restart R session after installing (note this will
 #'   only occur within RStudio).
 #'
-#' @param python_version,conda_python_version Pass a string like "3.8" to
-#'   request that conda install a specific Python version. This is ignored when
-#'   attempting to install in a Python virtual environment. Note that the Python
-#'   version must be compatible with the requested Tensorflow version,
-#'   documented here:
+#' @param python_version Select the Python that will be used to create the
+#'   virtualenv. Pass a string with version constraints like `"3.8"`, or
+#'   `">=3.9,<=3.11"` or a file path to a `python` executable like
+#'   `"/path/to/bin/python3"`. The supplied value is passed on to
+#'   `reticulate::virtualenv_starter()`. Note that the Python version must be
+#'   compatible with the requested TensorFlow version, documented here:
 #'   <https://www.tensorflow.org/install/pip#system-requirements>
 #'
-#' @param cuda logical `TRUE` or `FALSE`. If `install_tensorflow()` detects the platform is
-#'   Linux, an Nvidia GPU is available, and the TensorFlow version is 2.14 (the
-#'   default), it will install also install the required CUDA libraries through pip.
+#' @param conda_python_version Passed to conda (only applicable if `method = "conda"`)
+#'
+#' @param cuda logical `TRUE` or `FALSE`. If `install_tensorflow()` detects the
+#'   platform is Linux, an Nvidia GPU is available, and the TensorFlow version
+#'   is 2.14 (the default), it will install also install the required CUDA
+#'   libraries through pip.
 #'
 #' @param metal Whether to install `tensorflow-metal` pip package on Arm Macs.
 #'   This enables tensorflow to use the GPU. Pass a string to install a specific
@@ -419,4 +423,3 @@ configure_ptxas_symlink <- function(envname = "r-tensorflow") {
   file.symlink(from = from, to = to)
 
 }
-

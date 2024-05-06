@@ -55,12 +55,15 @@ TensorFlow.}
 \item{restart_session}{Restart R session after installing (note this will
 only occur within RStudio).}
 
+\item{conda_python_version}{Passed to conda (only applicable if \code{method = "conda"})}
+
 \item{...}{other arguments passed to \code{\link[reticulate:conda-tools]{reticulate::conda_install()}} or
 \code{\link[reticulate:virtualenv-tools]{reticulate::virtualenv_install()}}, depending on the \code{method} used.}
 
-\item{cuda}{logical \code{TRUE} or \code{FALSE}. If \code{install_tensorflow()} detects the platform is
-Linux, an Nvidia GPU is available, and the TensorFlow version is 2.14 (the
-default), it will install also install the required CUDA libraries through pip.}
+\item{cuda}{logical \code{TRUE} or \code{FALSE}. If \code{install_tensorflow()} detects the
+platform is Linux, an Nvidia GPU is available, and the TensorFlow version
+is 2.14 (the default), it will install also install the required CUDA
+libraries through pip.}
 
 \item{metal}{Whether to install \code{tensorflow-metal} pip package on Arm Macs.
 This enables tensorflow to use the GPU. Pass a string to install a specific
@@ -72,11 +75,12 @@ packages and reinstall all already installed python packages.}
 \item{new_env}{If \code{TRUE}, any existing Python virtual environment and/or
 conda environment specified by \code{envname} is deleted first.}
 
-\item{python_version, conda_python_version}{Pass a string like "3.8" to
-request that conda install a specific Python version. This is ignored when
-attempting to install in a Python virtual environment. Note that the Python
-version must be compatible with the requested Tensorflow version,
-documented here:
+\item{python_version}{Select the Python that will be used to create the
+virtualenv. Pass a string with version constraints like \code{"3.8"}, or
+\code{">=3.9,<=3.11"} or a file path to a \code{python} executable like
+\code{"/path/to/bin/python3"}. The supplied value is passed on to
+\code{reticulate::virtualenv_starter()}. Note that the Python version must be
+compatible with the requested TensorFlow version, documented here:
 \url{https://www.tensorflow.org/install/pip#system-requirements}}
 }
 \description{
@@ -98,8 +102,8 @@ manually install miniconda by running \code{\link[reticulate:install_miniconda]{
 }
 \section{Custom Installation}{
  \code{install_tensorflow()} or
-\code{keras3::install_keras()} isn't required to use tensorflow with the package.
-If you manually configure a python environment with the required
+\code{keras3::install_keras()} isn't required to use tensorflow with the
+package. If you manually configure a python environment with the required
 dependencies, you can tell R to use it by pointing reticulate at it,
 commonly by setting an environment variable:
 
