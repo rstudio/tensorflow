@@ -1,5 +1,8 @@
 # tensorflow (development version)
 
+- Fixed an issue where GPUs would not be found when running on Windows
+  WSL Linux (reported in rstudio/keras3#1456, fixed in #599)
+
 # tensorflow 2.16.0
 
 - The package now Suggest 'keras3' instead of 'keras'

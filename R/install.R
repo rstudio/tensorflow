@@ -156,12 +156,31 @@ function(method = c("auto", "virtualenv", "conda"),
   can_use_gpu <- FALSE
   if (is.null(cuda)) {
 
+    has_nvidia_gpu <- function() {
+      lspci_listed <- tryCatch(
+        as.logical(length(system("lspci | grep -i nvidia", intern = TRUE))),
+        warning = function(w) FALSE, # warning emitted by system for non-0 exit status
+        error = function(e) FALSE
+      )
+      if (lspci_listed)
+        return(TRUE)
+
+      # lspci doens't list GPUs on WSL Linux, but nvidia-smi does.
+      nvidia_smi_listed <- tryCatch(
+        system("nvidia-smi -L", intern = TRUE),
+        warning = function(w) character(),
+        error = function(e) character()
+      )
+      if (isTRUE(any(grepl("^GPU [0-9]: ", nvidia_smi_listed))))
+        return(TRUE)
+      FALSE
+    }
+
     can_use_gpu <-
       is_linux() &&
       (version %in% c("default", "release") ||
          isTRUE(extract_numeric_version(version) >= "2.14")) &&
-      tryCatch(as.logical(length(system("lspci | grep -i nvidia", intern = TRUE))),
-               warning = function(w) FALSE) # warning emitted by system for non-0 exit stat
+      has_nvidia_gpu()
 
     cuda <- can_use_gpu
 
@@ -268,7 +287,7 @@ function(method = c("auto", "virtualenv", "conda"),
   }
 
   if(cuda && is_linux()) {
-    configure_cudnn_symlinks(envname = envname)
+    configure_nvidia_symlinks(envname = envname)
     configure_ptxas_symlink(envname = envname)
   }
 
@@ -332,14 +351,14 @@ extract_numeric_version <- function(x, strict = FALSE) {
 }
 
 
-python_module_dir <- function(python, module) {
+python_module_dir <- function(python, module, stderr = TRUE) {
 
   force(python)
   py_cmd <- sprintf("import %s; print(%1$s.__file__)", module)
 
   module_file <- suppressWarnings(system2(
     python, c("-c", shQuote(py_cmd)),
-    stdout = TRUE, stderr = TRUE))
+    stdout = TRUE, stderr = stderr))
 
   if (!is.null(attr(module_file, "status")) ||
       !is_string(module_file) ||
@@ -351,46 +370,81 @@ python_module_dir <- function(python, module) {
 }
 
 
-configure_cudnn_symlinks <- function(envname) {
+configure_nvidia_symlinks <- function(envname) {
   if(!is_linux()) return()
   python <- reticulate::virtualenv_python(envname)
 
-  # For TF 2.13, this assumes that someone already has cudn 11-8 installed,
-  # e.g., on ubuntu:
-  # sudo apt install cuda-toolkit-11-8
-  # also, that `python -m pip install 'nvidia-cudnn-cu11==8.6.*'`
-
-  cudnn_path <- python_module_dir(python, "nvidia.cudnn")
-  if(is.null(cudnn_path)) return()
+  nvidia_path <- python_module_dir(python, "nvidia")
+  if(is.null(nvidia_path)) return()
   # "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn"
 
-  cudnn_sos <- Sys.glob(paste0(cudnn_path, "/lib/*.so*"))
-  if(!length(cudnn_sos)) return()
-  # [1] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_adv_infer.so.8"
-  # [2] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_adv_train.so.8"
-  # [3] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_cnn_infer.so.8"
-  # [4] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_cnn_train.so.8"
-  # [5] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_ops_infer.so.8"
-  # [6] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn_ops_train.so.8"
-  # [7] "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/nvidia/cudnn/lib/libcudnn.so.8"
+  nvidia_sos <- Sys.glob(paste0(nvidia_path, "/*/lib/*.so*"))
+  if(!length(nvidia_sos)) return()
+  # [1] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cublas/lib/libcublas.so.12"
+  # [2] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cublas/lib/libcublasLt.so.12"
+  # [3] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cublas/lib/libnvblas.so.12"
+  # [4] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libcheckpoint.so"
+  # [5] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libcupti.so.12"
+  # [6] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libnvperf_host.so"
+  # [7] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libnvperf_target.so"
+  # [8] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_cupti/lib/libpcsamplingutil.so"
+  # [9] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_nvrtc/lib/libnvrtc-builtins.so.12.3"
+  # [10] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_nvrtc/lib/libnvrtc.so.12"
+  # [11] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cuda_runtime/lib/libcudart.so.12"
+  # [12] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cudnn/lib/libcudnn.so.8"
+  # [13] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cudnn/lib/libcudnn_adv_infer.so.8"
+  # [14] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cudnn/lib/libcudnn_adv_train.so.8"
+  # [15] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cudnn/lib/libcudnn_cnn_infer.so.8"
+  # [16] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cudnn/lib/libcudnn_cnn_train.so.8"
+  # [17] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cudnn/lib/libcudnn_ops_infer.so.8"
+  # [18] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cudnn/lib/libcudnn_ops_train.so.8"
+  # [19] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cufft/lib/libcufft.so.11"
+  # [20] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cufft/lib/libcufftw.so.11"
+  # [21] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/curand/lib/libcurand.so.10"
+  # [22] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cusolver/lib/libcusolver.so.11"
+  # [23] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cusolver/lib/libcusolverMg.so.11"
+  # [24] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/cusparse/lib/libcusparse.so.12"
+  # [25] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/nccl/lib/libnccl.so.2"
+  # [26] "~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/nvidia/nvjitlink/lib/libnvJitLink.so.12"
+  ## we don't need *all* of these, but as of 2.16, in addition to cudnn, we need
+  ## libcusparse.so.12 libnvJitLink.so.12 libcusolver.so.11 libcufft.so.11 libcublasLt.so.12 libcublas.so.12
+  ## We symlink all of them to (try to be) future proof
 
-  # "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/__init__.py"
-  tf_lib_path <- system2(python, c("-c", shQuote("import tensorflow as tf; print(tf.__file__)")),
-                         stderr = FALSE, stdout = TRUE)
-  tf_lib_path <- dirname(tf_lib_path)
+  # "~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow"
+  tf_lib_path <- python_module_dir(python, "tensorflow", stderr = FALSE)
 
-  from <- sub("^.*/site-packages/", "../", cudnn_sos)
-  to <- file.path(tf_lib_path, basename(cudnn_sos))
+  from <- sub("^.*/site-packages/", "../", nvidia_sos)
+  to <- file.path(tf_lib_path, basename(nvidia_sos))
   writeLines("creating symlinks:")
   writeLines(paste("-", shQuote(to), "->", shQuote(from)))
   # creating symlinks:
-  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_adv_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_adv_infer.so.8'
-  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_adv_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_adv_train.so.8'
-  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_cnn_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_cnn_infer.so.8'
-  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_cnn_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_cnn_train.so.8'
-  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_ops_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_ops_infer.so.8'
-  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn_ops_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_ops_train.so.8'
-  # - '~/.virtualenvs/r-tensorflow/lib/python3.9/site-packages/tensorflow/libcudnn.so.8' -> '../nvidia/cudnn/lib/libcudnn.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcublas.so.12' -> '../nvidia/cublas/lib/libcublas.so.12'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcublasLt.so.12' -> '../nvidia/cublas/lib/libcublasLt.so.12'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libnvblas.so.12' -> '../nvidia/cublas/lib/libnvblas.so.12'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcheckpoint.so' -> '../nvidia/cuda_cupti/lib/libcheckpoint.so'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcupti.so.12' -> '../nvidia/cuda_cupti/lib/libcupti.so.12'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libnvperf_host.so' -> '../nvidia/cuda_cupti/lib/libnvperf_host.so'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libnvperf_target.so' -> '../nvidia/cuda_cupti/lib/libnvperf_target.so'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libpcsamplingutil.so' -> '../nvidia/cuda_cupti/lib/libpcsamplingutil.so'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libnvrtc-builtins.so.12.3' -> '../nvidia/cuda_nvrtc/lib/libnvrtc-builtins.so.12.3'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libnvrtc.so.12' -> '../nvidia/cuda_nvrtc/lib/libnvrtc.so.12'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudart.so.12' -> '../nvidia/cuda_runtime/lib/libcudart.so.12'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudnn.so.8' -> '../nvidia/cudnn/lib/libcudnn.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudnn_adv_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_adv_infer.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudnn_adv_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_adv_train.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudnn_cnn_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_cnn_infer.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudnn_cnn_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_cnn_train.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudnn_ops_infer.so.8' -> '../nvidia/cudnn/lib/libcudnn_ops_infer.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcudnn_ops_train.so.8' -> '../nvidia/cudnn/lib/libcudnn_ops_train.so.8'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcufft.so.11' -> '../nvidia/cufft/lib/libcufft.so.11'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcufftw.so.11' -> '../nvidia/cufft/lib/libcufftw.so.11'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcurand.so.10' -> '../nvidia/curand/lib/libcurand.so.10'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcusolver.so.11' -> '../nvidia/cusolver/lib/libcusolver.so.11'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcusolverMg.so.11' -> '../nvidia/cusolver/lib/libcusolverMg.so.11'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libcusparse.so.12' -> '../nvidia/cusparse/lib/libcusparse.so.12'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libnccl.so.2' -> '../nvidia/nccl/lib/libnccl.so.2'
+  # - '~/.virtualenvs/r-tensorflow/lib/python3.10/site-packages/tensorflow/libnvJitLink.so.12' -> '../nvidia/nvjitlink/lib/libnvJitLink.so.12'
+  # - '~/.virtualenvs/r-tensorflow/bin/ptxas' -> '../../lib/python3.10/site-packages/nvidia/cuda_nvcc/bin/ptxas'
   file.symlink(from = from, to = to)
 
 }
