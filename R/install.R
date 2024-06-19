@@ -336,8 +336,11 @@ parse_tensorflow_version <- function(version) {
   if(version %in% c("default", ""))
     version <- default_version
 
+  if(nchar(gsub("[^.]", "", version)) < 2L)
+    version <- paste0(version, ".*")
+
   if(!grepl("[><=]", version))
-    version <- sprintf("==%s.*", version)
+    version <- sprintf("==%s", version)
 
   paste0(package, version)
 }
