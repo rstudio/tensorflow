@@ -198,6 +198,8 @@ function(method = c("auto", "virtualenv", "conda"),
     as.character(extra_packages)
   ))
 
+  if (isTRUE(extract_numeric_version(version) <= "2.17"))
+    packages <- c("numpy<2", packages)
 
   if (isTRUE(metal)) repeat {
     tf_ver <- extract_numeric_version(tf_package_spec)
@@ -347,7 +349,10 @@ parse_tensorflow_version <- function(version) {
 
 
 extract_numeric_version <- function(x, strict = FALSE) {
-  x <- gsub("[^0-9.]+", "", as.character(x), perl = TRUE)
+  x <- as.character(x)
+  x <- gsub("-", ".", x, fixed = TRUE)
+  x <- gsub("[^0-9.]", "", x, perl = TRUE)
+  x <- gsub("\\.+", ".", x)
   x <- sub("^\\.+", "", x)
   x <- sub("\\.+$", "", x)
   numeric_version(x, strict = strict)
