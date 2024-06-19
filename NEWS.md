@@ -2,6 +2,7 @@
 
 - Fixed an issue where GPUs would not be found when running on Windows
   WSL Linux (reported in rstudio/keras3#1456, fixed in #599)
+- Fixes for NumPy 2.0 (#601)
 
 # tensorflow 2.16.0
 
@@ -9,7 +10,6 @@
 - `install_tensorflow()` installs TensorFlow v2.16 by default.
 - If `install_tensorflow()` detects a GPU on Linux, it will automatically 
   install the cuda package and configure required symlinks for cudnn and ptxax.
-
 
 # tensorflow 2.15.0
 
