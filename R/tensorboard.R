@@ -142,7 +142,7 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
 
 tensorboard_version <- function() {
   if (is.null(ver <- .globals$tensorboard_version)) {
-    ver <- package_version(system("tensorboard --version_tb", intern = TRUE))
+    ver <- package_version(system("tensorboard --version_tb", intern = TRUE, ignore.stderr = TRUE))
     .globals$tensorboard_version <- ver
   }
   ver
