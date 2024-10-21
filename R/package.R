@@ -60,7 +60,8 @@ tf_v2 <- function() {
 
     environment = c(
       "r-tensorflow",
-      if(getNamespaceVersion("reticulate") >= "1.36.0") "r-keras"
+      if (as.package_version(getNamespaceVersion("reticulate")) >= "1.36.0")
+         "r-keras"
     ),
 
     # before_load = function() {
