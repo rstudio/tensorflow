@@ -89,7 +89,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck local::.
+          extra-packages: any::rcmdcheck local::. rstudio/reticulate
           cache-version: 4
           upgrade: 'TRUE'
 
