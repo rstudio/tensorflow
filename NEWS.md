@@ -1,5 +1,6 @@
 # tensorflow (development version)
 
+- `install_tensorflow()` installs TensorFlow v2.18 by default.
 - Fixed an issue where GPUs would not be found when running on Windows
   WSL Linux (reported in rstudio/keras3#1456, fixed in #599)
 - Fixes for NumPy 2.0 (#601)

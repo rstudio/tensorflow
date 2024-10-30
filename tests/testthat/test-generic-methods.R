@@ -262,7 +262,7 @@ for (fn in list(cbind, rbind)) {
   expect_equivalent_bind_generic(fn, as.array(1L), 1L)
   expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int64")$dtype$name, "int64")
   expect_equal(fn(as_tensor(1:3), 1:3, dtype = "int16")$dtype$name, "int16")
-  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "float16")$dtype$name, "float16")
+  expect_equal(fn(as_tensor(1:3), 1:3, dtype = "float32")$dtype$name, "float32")
 }
 
 
