@@ -41,11 +41,13 @@ jobs:
           # - {os: 'macOS-latest'  , tf: 'release', r: 'release'}
 
           ## old keras/tf versions
+          # - {os: 'ubuntu-latest', tf: '2.18', r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.17', r: 'release'}
+          - {os: 'ubuntu-latest', tf: '2.16', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.15', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.14', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.13', r: 'release'}
           - {os: 'ubuntu-latest', tf: '2.12', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.9' , r: 'release'}
 
           # these are allowed to fail
           # - {os: 'ubuntu-latest', tf: '2.14.0rc1', r: 'release'}
