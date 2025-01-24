@@ -51,6 +51,10 @@ tf_v2 <- function() {
   if (!is.null(cpp_log_opt))
     Sys.setenv(TF_CPP_MIN_LOG_LEVEL = max(min(cpp_log_opt, 3), 0))
 
+  # register requirements with py_require()
+  reqs <- get_py_requirements()
+  reticulate::py_require(reqs$packages, reqs$python_version)
+
   # delay load tensorflow
   tryCatch({
 

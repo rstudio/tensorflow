@@ -303,6 +303,65 @@ function(method = c("auto", "virtualenv", "conda"),
   invisible(NULL)
 }
 
+
+has_gpu <- function() {
+
+  has_nvidia_gpu <- function() {
+    lspci_listed <- tryCatch(
+      as.logical(length(
+        system("lspci | grep -i nvidia", intern = TRUE)
+      )),
+      # warning emitted by system for non-0 exit status
+      warning = function(w) FALSE,
+      error = function(e) FALSE
+    )
+
+    if (lspci_listed)
+      return(TRUE)
+
+    # lspci doens't list GPUs on WSL Linux, but nvidia-smi does.
+    nvidia_smi_listed <- tryCatch(
+      system("nvidia-smi -L", intern = TRUE),
+      warning = function(w) character(),
+      error = function(e) character()
+    )
+    if (isTRUE(any(grepl("^GPU [0-9]: ", nvidia_smi_listed))))
+      return(TRUE)
+    FALSE
+  }
+
+  is_linux() && has_nvidia_gpu()
+
+}
+
+
+get_py_requirements <- function() {
+  python_version <- ">=3.10"
+  packages <- "tensorflow"
+
+  if(is_linux()) {
+
+    if(has_gpu()) {
+      packages <- "tensorflow[and-cuda]"
+    } else {
+      packages <- "tensorflow-cpu"
+    }
+
+  } else if (is_mac_arm64()) {
+
+    use_gpu <- FALSE
+    if (use_gpu) {
+      packages <- c("tensorflow-macos", "tensorflow-metal")
+      python_version <- ">=3.9,<=3.11"
+    }
+
+  } else if (is_windows()) {
+
+  }
+
+  list(packages = packages, python_version = python_version)
+}
+
 default_version <- numeric_version("2.18")
 
 parse_tensorflow_version <- function(version) {
