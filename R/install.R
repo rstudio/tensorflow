@@ -336,7 +336,7 @@ has_gpu <- function() {
 
 
 get_py_requirements <- function() {
-  python_version <- ">=3.10"
+  python_version <- ">=3.9,<=3.12"
   packages <- "tensorflow"
 
   if(is_linux()) {
