@@ -336,7 +336,7 @@ has_gpu <- function() {
 
 
 get_py_requirements <- function() {
-  python_version <- ">=3.9,<=3.12"
+  python_version <- ">=3.9,<3.13"
   packages <- "tensorflow"
 
   if(is_linux()) {
@@ -352,7 +352,7 @@ get_py_requirements <- function() {
     use_gpu <- FALSE
     if (use_gpu) {
       packages <- c("tensorflow-macos", "tensorflow-metal")
-      python_version <- ">=3.9,<=3.11"
+      python_version <- ">=3.9,<3.12"
     }
 
   } else if (is_windows()) {
