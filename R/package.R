@@ -215,7 +215,7 @@ print.tensorflow_config <- function(x, ...) {
   if (x$available) {
     aliased <- function(path) sub(Sys.getenv("HOME"), "~", path)
     cat("TensorFlow v", x$version_str, " (", aliased(x$location), ")\n", sep = "")
-    cat("Python v", x$python_version, " (", aliased(x$python), ")\n", sep = "")
+    cat("Python v", as.character(x$python_version), " (", aliased(x$python), ")\n", sep = "")
   } else {
     cat(x$error_message, "\n")
   }

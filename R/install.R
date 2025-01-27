@@ -309,7 +309,7 @@ has_gpu <- function() {
   has_nvidia_gpu <- function() {
     lspci_listed <- tryCatch(
       as.logical(length(
-        system("lspci | grep -i nvidia", intern = TRUE)
+        system("lspci | grep -i nvidia", intern = TRUE, ignore.stderr = TRUE)
       )),
       # warning emitted by system for non-0 exit status
       warning = function(w) FALSE,
@@ -321,7 +321,7 @@ has_gpu <- function() {
 
     # lspci doens't list GPUs on WSL Linux, but nvidia-smi does.
     nvidia_smi_listed <- tryCatch(
-      system("nvidia-smi -L", intern = TRUE),
+      system("nvidia-smi -L", intern = TRUE, ignore.stderr = TRUE),
       warning = function(w) character(),
       error = function(e) character()
     )
