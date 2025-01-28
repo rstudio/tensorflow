@@ -51,6 +51,10 @@ tf_v2 <- function() {
   if (!is.null(cpp_log_opt))
     Sys.setenv(TF_CPP_MIN_LOG_LEVEL = max(min(cpp_log_opt, 3), 0))
 
+  # register requirements with py_require()
+  reqs <- get_py_requirements()
+  reticulate::py_require(reqs$packages, reqs$python_version)
+
   # delay load tensorflow
   tryCatch({
 
@@ -211,7 +215,7 @@ print.tensorflow_config <- function(x, ...) {
   if (x$available) {
     aliased <- function(path) sub(Sys.getenv("HOME"), "~", path)
     cat("TensorFlow v", x$version_str, " (", aliased(x$location), ")\n", sep = "")
-    cat("Python v", x$python_version, " (", aliased(x$python), ")\n", sep = "")
+    cat("Python v", as.character(x$python_version), " (", aliased(x$python), ")\n", sep = "")
   } else {
     cat(x$error_message, "\n")
   }
