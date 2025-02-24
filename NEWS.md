@@ -3,11 +3,11 @@
 - Updates for reticulate 1.41. The tensorflow R package now calls
   `reticuate::py_require()` when it is loaded. Calling `install_tensorflow()`
   in most circumstances is no longer necessary.
-- GPU usage on M-series Macs is once again enabled by default.
 - `install_tensorflow()` installs TensorFlow v2.18 by default.
 - Fixed an issue where GPUs would not be found when running on Windows
   WSL Linux (reported in rstudio/keras3#1456, fixed in #599)
 - Fixes for NumPy 2.0 (#601)
+- Fixes for R-devel (4.5)
 
 # tensorflow 2.16.0
 

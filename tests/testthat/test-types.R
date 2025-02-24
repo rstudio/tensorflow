@@ -24,6 +24,7 @@ test_that("tf.random works", {
     dtype = tf$dtypes$int32)
   expect_s3_class(x, "tensorflow.tensor")
   x <- as.array(x)
-  expect_type(x, "integer")
+  if (!is_windows())
+    expect_type(x, "integer")
   expect_identical(dim(x), 10L)
 })

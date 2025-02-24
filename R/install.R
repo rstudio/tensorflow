@@ -1,6 +1,7 @@
 #' Install TensorFlow and its dependencies
 #'
 #' @description
+#'
 #' Beginning with reticulate version 1.41, in most circumstances, calling the
 #' `install_tensorflow()` function is no longer necessary, because reticulate
 #' automatically registers python requirements with `reticulate::py_require()`
@@ -12,13 +13,16 @@
 #' - On Linux: if a GPU is detected: `"tensorflow[and-cuda]"`, otherwise,
 #' `"tensorflow-cpu"`.
 #'
-#' - On macOS: `c("tensorflow", "tensorflow-metal")`. To prevent TensorFlow usage of
-#' the GPU, call `reticulate::py_require("tensorflow-metal", action = "remove")`
-#' before reticulate has initialized Python.
+#' - On macOS: `"tensorflow"` is declared. The default package is not capable
+#' of using the GPU. To enable TensorFlow usage of the GPU, call
+#' `reticulate::py_require("tensorflow-metal")` before reticulate has
+#' initialized Python. Note that not all features of TensorFlow work correctly
+#' if `tensorflow-metal` is installed. There are known issues with random number
+#' generators like `tf$random$stateless_uniform()`, likely others as well.
 #'
 #' - On Windows: `"tensorflow"` is declared. Note that TensorFlow GPU usage on
-#' Windows is no longer supported. To use a GPU on windows, use TensorFlow via
-#' WSL.
+#' Windows is no longer supported (Since TensorFlow 2.10). To use a GPU on
+#' windows, use TensorFlow via WSL.
 #'
 #' `install_tensorflow()` creates a new virtual environment containing the
 #' `tensorflow` python package and it's direct dependencies. For creating a

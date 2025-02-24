@@ -94,12 +94,15 @@ package:
 \itemize{
 \item On Linux: if a GPU is detected: \code{"tensorflow[and-cuda]"}, otherwise,
 \code{"tensorflow-cpu"}.
-\item On macOS: \code{c("tensorflow", "tensorflow-metal")}. To prevent TensorFlow usage of
-the GPU, call \code{reticulate::py_require("tensorflow-metal", action = "remove")}
-before reticulate has initialized Python.
+\item On macOS: \code{"tensorflow"} is declared. The default package is not capable
+of using the GPU. To enable TensorFlow usage of the GPU, call
+\code{reticulate::py_require("tensorflow-metal")} before reticulate has
+initialized Python. Note that not all features of TensorFlow work correctly
+if \code{tensorflow-metal} is installed. There are known issues with random number
+generators like \code{tf$random$stateless_uniform()}, likely others as well.
 \item On Windows: \code{"tensorflow"} is declared. Note that TensorFlow GPU usage on
-Windows is no longer supported. To use a GPU on windows, use TensorFlow via
-WSL.
+Windows is no longer supported (Since TensorFlow 2.10). To use a GPU on
+windows, use TensorFlow via WSL.
 }
 
 \code{install_tensorflow()} creates a new virtual environment containing the
