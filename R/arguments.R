@@ -2,7 +2,7 @@
 #'
 #' Parse command line arguments of the form `--key=value` and
 #' `--key value`. The values are assumed to be valid `yaml` and
-#' will be converted using [yaml.load()].
+#' will be converted using [yaml::yaml.load()].
 #'
 #' @param arguments A vector of command line arguments. When
 #'   `NULL` (the default), the command line arguments received
