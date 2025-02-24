@@ -96,7 +96,10 @@ jobs:
           upgrade: 'TRUE'
 
       - name: Install TensorFlow
-        run: tensorflow::install_tensorflow(version = '${{ matrix.tf }}')
+        run: |
+          version <- '${{ matrix.tf }}'
+          if (version != "default")
+            tensorflow::install_tensorflow(version = '${{ matrix.tf }}')
 
       - uses: r-lib/actions/check-r-package@v2
         with:

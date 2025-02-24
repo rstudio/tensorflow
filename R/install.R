@@ -371,8 +371,8 @@ get_py_requirements <- function() {
 
   } else if (is_mac_arm64()) {
 
-    use_gpu <- TRUE
-    # https://pypi.org/project/tensorflow-metal/1.2.0/#history
+    use_gpu <- FALSE
+    # https://pypi.org/project/tensorflow-metal/#history
     # https://pypi.org/project/tensorflow-macos/#history
     if (use_gpu) {
       packages <- c("tensorflow", "tensorflow-metal")
