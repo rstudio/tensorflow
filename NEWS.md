@@ -1,5 +1,9 @@
 # tensorflow (development version)
 
+- Updates for reticulate 1.41. The tensorflow R package now calls
+  `reticuate::py_require()` when it is loaded. Calling `install_tensorflow()`
+  in most circumstances is no longer necessary.
+- GPU usage on M-series Macs is once again enabled by default.
 - `install_tensorflow()` installs TensorFlow v2.18 by default.
 - Fixed an issue where GPUs would not be found when running on Windows
   WSL Linux (reported in rstudio/keras3#1456, fixed in #599)
@@ -9,7 +13,7 @@
 
 - The package now Suggest 'keras3' instead of 'keras'
 - `install_tensorflow()` installs TensorFlow v2.16 by default.
-- If `install_tensorflow()` detects a GPU on Linux, it will automatically 
+- If `install_tensorflow()` detects a GPU on Linux, it will automatically
   install the cuda package and configure required symlinks for cudnn and ptxax.
 
 # tensorflow 2.15.0
@@ -33,10 +37,10 @@
   had conversion disabled via `r_to_py()` or `convert = FALSE`.
 - Fixed an issue where Ops group generic dispatch would error one object was a tensor
   and the other was a non-tensor Python object (e.g., a numpy array).
-- Removed long deprecated symbols: 
+- Removed long deprecated symbols:
     `install_tensorflow_extras()`, `tfe_enable_eager_execution()`
-- tfestimator generics `train()` and `train_and_evaluate()` now warn about 
-  their deprecation status when called. The will be removed in a future release. 
+- tfestimator generics `train()` and `train_and_evaluate()` now warn about
+  their deprecation status when called. The will be removed in a future release.
 
 # tensorflow 2.13.0
 

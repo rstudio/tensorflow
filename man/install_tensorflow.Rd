@@ -84,9 +84,28 @@ compatible with the requested TensorFlow version, documented here:
 \url{https://www.tensorflow.org/install/pip#system-requirements}}
 }
 \description{
-\code{install_tensorflow()} installs just the tensorflow python package and it's
-direct dependencies. For a more complete installation that includes
-additional optional dependencies, use \code{\link[keras3:install_keras]{keras3::install_keras()}}.
+Beginning with reticulate version 1.41, in most circumstances, calling the
+\code{install_tensorflow()} function is no longer necessary, because reticulate
+automatically registers python requirements with \code{reticulate::py_require()}
+when tensorflow is loaded.
+
+The Python packages registered with \code{py_require()} by the tensorflow R
+package:
+\itemize{
+\item On Linux: if a GPU is detected: \code{"tensorflow[and-cuda]"}, otherwise,
+\code{"tensorflow-cpu"}.
+\item On macOS: \code{c("tensorflow", "tensorflow-metal")}. To prevent TensorFlow usage of
+the GPU, call \code{reticulate::py_require("tensorflow-metal", action = "remove")}
+before reticulate has initialized Python.
+\item On Windows: \code{"tensorflow"} is declared. Note that TensorFlow GPU usage on
+Windows is no longer supported. To use a GPU on windows, use TensorFlow via
+WSL.
+}
+
+\code{install_tensorflow()} creates a new virtual environment containing the
+\code{tensorflow} python package and it's direct dependencies. For creating a
+virtual environment with more complete set packages that includes additional
+optional dependencies, use \code{\link[keras3:install_keras]{keras3::install_keras()}}.
 }
 \details{
 You may be prompted to download and install miniconda if reticulate
