@@ -336,7 +336,7 @@ has_gpu <- function() {
 
 
 get_py_requirements <- function() {
-  python_version <- ">=3.9,<3.13"
+  python_version <- NULL
   packages <- "tensorflow"
 
   if(is_linux()) {
@@ -349,10 +349,11 @@ get_py_requirements <- function() {
 
   } else if (is_mac_arm64()) {
 
-    use_gpu <- FALSE
+    use_gpu <- TRUE
+    # https://pypi.org/project/tensorflow-metal/1.2.0/#history
+    # https://pypi.org/project/tensorflow-macos/#history
     if (use_gpu) {
-      packages <- c("tensorflow-macos", "tensorflow-metal")
-      python_version <- ">=3.9,<3.12"
+      packages <- c("tensorflow", "tensorflow-metal")
     }
 
   } else if (is_windows()) {

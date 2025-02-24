@@ -40,6 +40,16 @@ tf_v2 <- function() {
 
 .onLoad <- function(libname, pkgname) {
 
+  # if (is.na(Sys.getenv("TF_CPP_MIN_LOG_LEVEL", NA))) {
+  #   ## Doesn't seem to make a difference
+  #   Sys.setenv("TF_CPP_MIN_LOG_LEVEL" = "3")
+  # }
+  # 0 = all messages are logged (default behavior)
+  # 1 = INFO messages are not printed
+  # 2 = INFO and WARNING messages are not printed
+  # 3 = INFO, WARNING, and ERROR messages are not printed
+
+
   # if TENSORFLOW_PYTHON is defined then forward it to RETICULATE_PYTHON
   tensorflow_python <- Sys.getenv("TENSORFLOW_PYTHON", unset = NA)
   if (!is.na(tensorflow_python))
