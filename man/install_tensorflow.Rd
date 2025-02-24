@@ -84,11 +84,6 @@ compatible with the requested TensorFlow version, documented here:
 \url{https://www.tensorflow.org/install/pip#system-requirements}}
 }
 \description{
-\code{install_tensorflow()} installs just the tensorflow python package and it's
-direct dependencies. For a more complete installation that includes
-additional optional dependencies, use \code{\link[keras3:install_keras]{keras3::install_keras()}}.
-}
-\details{
 Beginning with reticulate version 1.41, in most circumstances, calling the
 \code{install_tensorflow()} function is no longer necessary, because reticulate
 automatically registers python requirements with \code{reticulate::py_require()}
@@ -107,6 +102,12 @@ Windows is no longer supported. To use a GPU on windows, use TensorFlow via
 WSL.
 }
 
+\code{install_tensorflow()} creates a new virtual environment containing the
+\code{tensorflow} python package and it's direct dependencies. For creating a
+virtual environment with more complete set packages that includes additional
+optional dependencies, use \code{\link[keras3:install_keras]{keras3::install_keras()}}.
+}
+\details{
 You may be prompted to download and install miniconda if reticulate
 did not find a non-system installation of python. Miniconda is the
 recommended installation method for most users, as it ensures that the R

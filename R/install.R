@@ -1,9 +1,6 @@
 #' Install TensorFlow and its dependencies
 #'
-#' `install_tensorflow()` installs just the tensorflow python package and it's
-#' direct dependencies. For a more complete installation that includes
-#' additional optional dependencies, use [`keras3::install_keras()`].
-#'
+#' @description
 #' Beginning with reticulate version 1.41, in most circumstances, calling the
 #' `install_tensorflow()` function is no longer necessary, because reticulate
 #' automatically registers python requirements with `reticulate::py_require()`
@@ -22,6 +19,11 @@
 #' - On Windows: `"tensorflow"` is declared. Note that TensorFlow GPU usage on
 #' Windows is no longer supported. To use a GPU on windows, use TensorFlow via
 #' WSL.
+#'
+#' `install_tensorflow()` creates a new virtual environment containing the
+#' `tensorflow` python package and it's direct dependencies. For creating a
+#' virtual environment with more complete set packages that includes additional
+#' optional dependencies, use [`keras3::install_keras()`].
 #'
 #' @details You may be prompted to download and install miniconda if reticulate
 #'   did not find a non-system installation of python. Miniconda is the
@@ -105,7 +107,8 @@
 #'   compatible with the requested TensorFlow version, documented here:
 #'   <https://www.tensorflow.org/install/pip#system-requirements>
 #'
-#' @param conda_python_version Passed to conda (only applicable if `method = "conda"`)
+#' @param conda_python_version Passed to conda (only applicable if `method =
+#'   "conda"`)
 #'
 #' @param cuda logical `TRUE` or `FALSE`. If `install_tensorflow()` detects the
 #'   platform is Linux, an Nvidia GPU is available, and the TensorFlow version
