@@ -384,6 +384,8 @@ get_py_requirements <- function() {
 
   } else if (is_windows()) {
 
+    packages <- c(packages, "numpy<2")
+
   }
 
   list(packages = packages, python_version = python_version)
