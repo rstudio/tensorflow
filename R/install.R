@@ -1,6 +1,7 @@
 #' Install TensorFlow and its dependencies
 #'
 #' @description
+#'
 #' Beginning with reticulate version 1.41, in most circumstances, calling the
 #' `install_tensorflow()` function is no longer necessary, because reticulate
 #' automatically registers python requirements with `reticulate::py_require()`
@@ -12,13 +13,18 @@
 #' - On Linux: if a GPU is detected: `"tensorflow[and-cuda]"`, otherwise,
 #' `"tensorflow-cpu"`.
 #'
-#' - On macOS: `c("tensorflow", "tensorflow-metal")`. To prevent TensorFlow usage of
-#' the GPU, call `reticulate::py_require("tensorflow-metal", action = "remove")`
-#' before reticulate has initialized Python.
+#' - On macOS: `"tensorflow"` is declared. The default package is not capable
+#' of using the GPU. To enable TensorFlow usage of the GPU, call
+#' `reticulate::py_require("tensorflow-metal")` before reticulate has
+#' initialized Python. Note that not all features of TensorFlow work correctly
+#' if `tensorflow-metal` is installed. There are known issues with random number
+#' generators like `tf$random$stateless_uniform()`, likely others as well.
 #'
-#' - On Windows: `"tensorflow"` is declared. Note that TensorFlow GPU usage on
-#' Windows is no longer supported. To use a GPU on windows, use TensorFlow via
-#' WSL.
+#' - On Windows: `"tensorflow"` and `"numpy<2"` are declared. Note that
+#' TensorFlow GPU usage on Windows is no longer supported (Since TensorFlow
+#' 2.10). To use a GPU on windows, use TensorFlow via WSL. `"numpy<2"` is
+#' declared because at the time of this publishing, the pre-built binaries of
+#' `tensorflow` for Windows are not compatible with `numpy>2`.
 #'
 #' `install_tensorflow()` creates a new virtual environment containing the
 #' `tensorflow` python package and it's direct dependencies. For creating a
@@ -371,14 +377,16 @@ get_py_requirements <- function() {
 
   } else if (is_mac_arm64()) {
 
-    use_gpu <- TRUE
-    # https://pypi.org/project/tensorflow-metal/1.2.0/#history
+    use_gpu <- FALSE
+    # https://pypi.org/project/tensorflow-metal/#history
     # https://pypi.org/project/tensorflow-macos/#history
     if (use_gpu) {
       packages <- c("tensorflow", "tensorflow-metal")
     }
 
   } else if (is_windows()) {
+
+    packages <- c(packages, "numpy<2")
 
   }
 
