@@ -9,6 +9,10 @@ register_tf_help_handler <- function() {
     help_url <- paste0("https://www.tensorflow.org/versions/r",
                        version[1], ".", version[2], "/api_docs/python/")
 
+    # upstream TF is missing public docs for later version
+    # https://github.com/tensorflow/tensorflow/issues/89084
+    help_url <- "https://www.tensorflow.org/api_docs/python/"
+
     # some adjustments
     name <- sub("^tensorflow", "tf", name)
     name <- sub("python.client.session.", "", name, fixed = TRUE)
