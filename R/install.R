@@ -186,12 +186,14 @@ function(method = c("auto", "virtualenv", "conda"),
 
     has_nvidia_gpu <- function() {
       lspci_listed <- tryCatch(
-        as.logical(length(
-          system("{ lspci | grep -i nvidia; } 2>/dev/null", intern = TRUE)
-          )),
-        warning = function(w) FALSE, # warning emitted by system for non-0 exit status
+        {
+          lspci <- system("lspci", intern = TRUE, ignore.stderr = TRUE)
+          any(grepl("nvidia", lspci, ignore.case = TRUE))
+        },
+        warning = function(w) FALSE,
         error = function(e) FALSE
       )
+
       if (lspci_listed)
         return(TRUE)
 
@@ -342,10 +344,10 @@ has_gpu <- function() {
     # on.exit(options(oop), add = TRUE)
 
     lspci_listed <- tryCatch(
-      as.logical(length(
-        system("{ lspci | grep -i nvidia; } 2>/dev/null", intern = TRUE)
-      )),
-      # warning emitted by system for non-0 exit status
+      {
+        lspci <- system("lspci", intern = TRUE, ignore.stderr = TRUE)
+        any(grepl("nvidia", lspci, ignore.case = TRUE))
+      },
       warning = function(w) FALSE,
       error = function(e) FALSE
     )
