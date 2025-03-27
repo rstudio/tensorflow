@@ -883,3 +883,19 @@ py_to_r.keras.src.utils.tracking.TrackedList <- function(x) import("builtins")$l
 
 #' @export
 py_to_r.keras.src.utils.tracking.TrackedSet <- function(x) import("builtins")$list(x)
+
+
+#' @rdname Ops-python-methods
+#' @rawNamespace if (getRversion() >= "4.3.0") S3method("%*%",python.builtin.object)
+`%*%.tensorflow.tensor` <- function(x, y) {
+  if (is.atomic(x) && is_tensor(y)) {
+    if (length(x) > 1L)
+      x <- as.array(x)
+    x <- tf$convert_to_tensor(x, dtype = y$dtype)
+  } else if (is_tensor(x) && is.atomic(y)) {
+    if (length(y) > 1L)
+      y <- as.array(y)
+    y <- tf$convert_to_tensor(y, dtype = x$dtype)
+  }
+  NextMethod()
+}
