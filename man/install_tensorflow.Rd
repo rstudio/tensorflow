@@ -85,15 +85,31 @@ virtualenv. Pass a string with version constraints like \code{"3.8"}, or
 \code{reticulate::virtualenv_starter()}. Note that the Python version must be
 compatible with the requested TensorFlow version, documented here:
 \url{https://www.tensorflow.org/install/pip#system-requirements}}
+
+\item{use_gpu}{Only consulted if on Linux. It has no effect on macOS or
+Windows. If \code{NA}, the R package will attempt to detect a GPU. If a GPU is
+detected, then this is taken as \code{TRUE}, \code{FALSE} otherwise. If \code{TRUE}, then
+\code{tensorflow[and-cuda]} is declared, otherwise, \code{tensorflow-cpu} is declared
+via \code{py_require()}.}
 }
 \description{
-Beginning with reticulate version 1.41, in most circumstances, calling the
-\code{install_tensorflow()} function is no longer necessary, because reticulate
-automatically registers python requirements with \code{reticulate::py_require()}
-when tensorflow is loaded.
+This function installs TensorFlow into a persistant virtual environment.
+Beginning with reticulate version 1.41, in most circumstances, creating a
+persistent virtual environmentn by calling the \code{install_tensorflow()}
+function is no longer necessary, because reticulate automatically registers
+python requirements with \code{reticulate::py_require()} when tensorflow is
+loaded.
 
-The Python packages registered with \code{py_require()} by the tensorflow R
-package:
+New code is recommended to call \code{py_require_tensorflow()} at the start of an
+R session. In a future package update this will by default be done in
+tensorflow's \code{.onLoad}.
+
+The \code{py_require_tensorflow()} function that can dynamically modify the python
+requirements to enable usage of a GPU if one is available and usable by the R
+session.
+
+The Python packages registered with \code{py_require()} by
+\code{py_require_tensorflow()}:
 \itemize{
 \item On Linux: if a GPU is detected: \code{"tensorflow[and-cuda]"}, otherwise,
 \code{"tensorflow-cpu"}.
@@ -114,18 +130,6 @@ declared because at the time of this publishing, the pre-built binaries of
 \code{tensorflow} python package and it's direct dependencies. For creating a
 virtual environment with more complete set packages that includes additional
 optional dependencies, use \code{\link[keras3:install_keras]{keras3::install_keras()}}.
-}
-\details{
-You may be prompted to download and install miniconda if reticulate
-did not find a non-system installation of python. Miniconda is the
-recommended installation method for most users, as it ensures that the R
-python installation is isolated from other python installations. All python
-packages will by default be installed into a self-contained conda or venv
-environment named "r-reticulate". Note that "conda" is the only supported
-method on M1 Mac.
-
-If you initially declined the miniconda installation prompt, you can later
-manually install miniconda by running \code{\link[reticulate:install_miniconda]{reticulate::install_miniconda()}}.
 }
 \section{Custom Installation}{
  \code{install_tensorflow()} or
