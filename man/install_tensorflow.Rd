@@ -32,7 +32,7 @@ See \strong{Finding Conda} and \code{\link[reticulate:conda_binary]{conda_binary
 
 \item{version}{TensorFlow version to install. Valid values include:
 \itemize{
-\item \code{"default"} installs  2.18
+\item \code{"default"} installs  2.20
 \item \code{"release"} installs the latest release version of tensorflow (which may
 be incompatible with the current version of the R package)
 \item A version specification like \code{"2.4"} or \code{"2.4.0"}. Note that if the patch

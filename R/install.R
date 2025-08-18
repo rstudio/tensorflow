@@ -402,7 +402,7 @@ get_py_requirements <- function() {
   list(packages = packages, python_version = python_version)
 }
 
-default_version <- numeric_version("2.18")
+default_version <- numeric_version("2.20")
 
 parse_tensorflow_version <- function(version) {
   # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'
