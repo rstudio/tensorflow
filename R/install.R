@@ -4,14 +4,14 @@
 #'
 #' This function installs TensorFlow into a persistant virtual environment.
 #' Beginning with reticulate version 1.41, in most circumstances, creating a
-#' persistent virtual environmentn by calling the `install_tensorflow()`
-#' function is no longer necessary, because reticulate automatically registers
-#' python requirements with `reticulate::py_require()` when tensorflow is
-#' loaded.
+#' persistent virtual environment by calling the `install_tensorflow()` function
+#' is no longer necessary, because reticulate automatically will resolve a
+#' python environment that satisfies all python requirements declared with
+#' `reticulate::py_require()`.
 #'
 #' New code is recommended to call `py_require_tensorflow()` at the start of an
-#' R session. In a future package update this will by default be done in
-#' tensorflow's `.onLoad`.
+#' R session to declare tensorflow requirements via `py_requore()`. In a future
+#' package update this will by default be done in tensorflow's `.onLoad` hook.
 #'
 #' The `py_require_tensorflow()` function that can dynamically modify the python
 #' requirements to enable usage of a GPU if one is available and usable by the R
