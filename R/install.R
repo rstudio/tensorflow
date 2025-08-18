@@ -372,13 +372,15 @@ has_gpu <- function() {
 }
 
 
-get_py_requirements <- function() {
+get_py_requirements <- function(use_gpu = NA) {
   python_version <- NULL
   packages <- "tensorflow"
 
   if(is_linux()) {
+    if(is.na(use_gpu))
+      use_gpu <- has_gpu()
 
-    if(has_gpu()) {
+    if(use_gpu) {
       packages <- "tensorflow[and-cuda]"
     } else {
       packages <- "tensorflow-cpu"
