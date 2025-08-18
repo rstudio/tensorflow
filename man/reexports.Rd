@@ -13,6 +13,7 @@
 \alias{use_python}
 \alias{use_virtualenv}
 \alias{use_condaenv}
+\alias{py_require}
 \alias{flags}
 \alias{flag_numeric}
 \alias{flag_integer}
@@ -26,7 +27,7 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{reticulate}{\code{\link[reticulate:with-as-operator]{\%as\%}}, \code{\link[reticulate]{array_reshape}}, \code{\link[reticulate]{dict}}, \code{\link[reticulate]{import}}, \code{\link[reticulate]{iterate}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{tuple}}, \code{\link[reticulate:use_python]{use_condaenv}}, \code{\link[reticulate]{use_python}}, \code{\link[reticulate:use_python]{use_virtualenv}}}
+  \item{reticulate}{\code{\link[reticulate:with-as-operator]{\%as\%}}, \code{\link[reticulate]{array_reshape}}, \code{\link[reticulate]{dict}}, \code{\link[reticulate]{import}}, \code{\link[reticulate]{iterate}}, \code{\link[reticulate]{np_array}}, \code{\link[reticulate]{py_require}}, \code{\link[reticulate]{tuple}}, \code{\link[reticulate:use_python]{use_condaenv}}, \code{\link[reticulate]{use_python}}, \code{\link[reticulate:use_python]{use_virtualenv}}}
 
   \item{tfruns}{\code{\link[tfruns:flags]{flag_boolean}}, \code{\link[tfruns:flags]{flag_integer}}, \code{\link[tfruns:flags]{flag_numeric}}, \code{\link[tfruns:flags]{flag_string}}, \code{\link[tfruns]{flags}}, \code{\link[tfruns]{run_dir}}}
 }}
