@@ -884,9 +884,7 @@ py_to_r.keras.src.utils.tracking.TrackedList <- function(x) import("builtins")$l
 #' @export
 py_to_r.keras.src.utils.tracking.TrackedSet <- function(x) import("builtins")$list(x)
 
-
-#' @rdname Ops-python-methods
-#' @rawNamespace if (getRversion() >= "4.3.0") S3method("%*%",python.builtin.object)
+#' @rawNamespace if (getRversion() >= "4.3.0") S3method("%*%",tensorflow.tensor)
 `%*%.tensorflow.tensor` <- function(x, y) {
   if (is.atomic(x) && is_tensor(y)) {
     if (length(x) > 1L)

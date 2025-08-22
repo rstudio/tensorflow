@@ -1,7 +1,7 @@
 Package: tensorflow
 Type: Package
 Title: R Interface to 'TensorFlow'
-Version: 2.16.0.9000
+Version: 2.20.0.9000
 Authors@R: c(
   person("JJ", "Allaire", role = c("aut", "cph")),
   person("Tomasz", "Kalinowski", role = c("ctb", "cph", "cre"),

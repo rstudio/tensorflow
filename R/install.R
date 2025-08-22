@@ -2,13 +2,23 @@
 #'
 #' @description
 #'
-#' Beginning with reticulate version 1.41, in most circumstances, calling the
-#' `install_tensorflow()` function is no longer necessary, because reticulate
-#' automatically registers python requirements with `reticulate::py_require()`
-#' when tensorflow is loaded.
+#' This function installs TensorFlow into a persistant virtual environment.
+#' Beginning with reticulate version 1.41, in most circumstances, creating a
+#' persistent virtual environment by calling the `install_tensorflow()` function
+#' is no longer necessary, because reticulate automatically will resolve a
+#' python environment that satisfies all python requirements declared with
+#' `reticulate::py_require()`.
 #'
-#' The Python packages registered with `py_require()` by the tensorflow R
-#' package:
+#' New code is recommended to call `py_require_tensorflow()` at the start of an
+#' R session to declare tensorflow requirements via `py_requore()`. In a future
+#' package update this will by default be done in tensorflow's `.onLoad` hook.
+#'
+#' The `py_require_tensorflow()` function that can dynamically modify the python
+#' requirements to enable usage of a GPU if one is available and usable by the R
+#' session.
+#'
+#' The Python packages registered with `py_require()` by
+#' `py_require_tensorflow()`:
 #'
 #' - On Linux: if a GPU is detected: `"tensorflow[and-cuda]"`, otherwise,
 #' `"tensorflow-cpu"`.
@@ -30,17 +40,6 @@
 #' `tensorflow` python package and it's direct dependencies. For creating a
 #' virtual environment with more complete set packages that includes additional
 #' optional dependencies, use [`keras3::install_keras()`].
-#'
-#' @details You may be prompted to download and install miniconda if reticulate
-#'   did not find a non-system installation of python. Miniconda is the
-#'   recommended installation method for most users, as it ensures that the R
-#'   python installation is isolated from other python installations. All python
-#'   packages will by default be installed into a self-contained conda or venv
-#'   environment named "r-reticulate". Note that "conda" is the only supported
-#'   method on M1 Mac.
-#'
-#'   If you initially declined the miniconda installation prompt, you can later
-#'   manually install miniconda by running [`reticulate::install_miniconda()`].
 #'
 #' @section Custom Installation: `install_tensorflow()` or
 #'   `keras3::install_keras()` isn't required to use tensorflow with the
@@ -130,6 +129,12 @@
 #'
 #' @param new_env If `TRUE`, any existing Python virtual environment and/or
 #'   conda environment specified by `envname` is deleted first.
+#'
+#' @param use_gpu Only consulted if on Linux. It has no effect on macOS or
+#'   Windows. If `NA`, the R package will attempt to detect a GPU. If a GPU is
+#'   detected, then this is taken as `TRUE`, `FALSE` otherwise. If `TRUE`, then
+#'   `tensorflow[and-cuda]` is declared, otherwise, `tensorflow-cpu` is declared
+#'   via `py_require()`.
 #'
 #' @param ... other arguments passed to [`reticulate::conda_install()`] or
 #'   [`reticulate::virtualenv_install()`], depending on the `method` used.
@@ -372,13 +377,15 @@ has_gpu <- function() {
 }
 
 
-get_py_requirements <- function() {
+get_py_requirements <- function(use_gpu = NA) {
   python_version <- NULL
   packages <- "tensorflow"
 
   if(is_linux()) {
+    if(is.na(use_gpu))
+      use_gpu <- has_gpu()
 
-    if(has_gpu()) {
+    if(use_gpu) {
       packages <- "tensorflow[and-cuda]"
     } else {
       packages <- "tensorflow-cpu"
@@ -402,7 +409,7 @@ get_py_requirements <- function() {
   list(packages = packages, python_version = python_version)
 }
 
-default_version <- numeric_version("2.18")
+default_version <- numeric_version("2.20")
 
 parse_tensorflow_version <- function(version) {
   # returns unquoted string directly passable to pip, e.g 'tensorflow==2.5.*'

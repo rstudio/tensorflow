@@ -30,6 +30,9 @@ reticulate::use_virtualenv
 #' @export
 reticulate::use_condaenv
 
+#' @export
+reticulate::py_require
+
 #' @importFrom tfruns flags
 #' @export
 tfruns::flags

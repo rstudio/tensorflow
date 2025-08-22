@@ -37,6 +37,13 @@ tf_v2 <- function() {
 .globals <- new.env(parent = emptyenv())
 .globals$tensorboard <- NULL
 
+#' @export
+#' @rdname install_tensorflow
+py_require_tensorflow <- function(use_gpu = NA) {
+  # register requirements with py_require()
+  reqs <- get_py_requirements(use_gpu)
+  reticulate::py_require(reqs$packages, reqs$python_version)
+}
 
 .onLoad <- function(libname, pkgname) {
 
@@ -61,9 +68,9 @@ tf_v2 <- function() {
   if (!is.null(cpp_log_opt))
     Sys.setenv(TF_CPP_MIN_LOG_LEVEL = max(min(cpp_log_opt, 3), 0))
 
-  # register requirements with py_require()
-  reqs <- get_py_requirements()
-  reticulate::py_require(reqs$packages, reqs$python_version)
+  if (tolower(Sys.getenv("PY_REQUIRE_TENSORFLOW")) %in% c("1", "true", "yes")) {
+    py_require_tensorflow()
+  }
 
   # delay load tensorflow
   tryCatch({
@@ -288,5 +295,8 @@ tf_config_error_message <- function() {
 
   message <- paste0(message,
                     "\nYou can install TensorFlow using the install_tensorflow() function.\n")
+  base::message(
+    'Hint: To use tensorflow with `py_require()`, call `py_require("tensorflow")` at the start of the R session'
+  )
   message
 }

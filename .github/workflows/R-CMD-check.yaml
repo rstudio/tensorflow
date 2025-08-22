@@ -42,12 +42,12 @@ jobs:
 
           ## old keras/tf versions
           # - {os: 'ubuntu-latest', tf: '2.18', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.17', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.16', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.15', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.14', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.13', r: 'release'}
-          - {os: 'ubuntu-latest', tf: '2.12', r: 'release'}
+          # - {os: 'ubuntu-latest', tf: '2.17', r: 'release'}
+          # - {os: 'ubuntu-latest', tf: '2.16', r: 'release'}
+          # - {os: 'ubuntu-latest', tf: '2.15', r: 'release'}
+          # - {os: 'ubuntu-latest', tf: '2.14', r: 'release'}
+          # - {os: 'ubuntu-latest', tf: '2.13', r: 'release'}
+          # - {os: 'ubuntu-latest', tf: '2.12', r: 'release'}
 
           # these are allowed to fail
           # - {os: 'ubuntu-latest', tf: '2.14.0rc1', r: 'release'}
@@ -59,6 +59,7 @@ jobs:
     env:
       R_KEEP_PKG_SOURCE: yes
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      PY_REQUIRE_TENSORFLOW: true
       # R_REMOTES_NO_ERRORS_FROM_WARNINGS: 'true'
       # R_COMPILE_AND_INSTALL_PACKAGES: 'never'
 
@@ -91,20 +92,20 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck local::. rstudio/reticulate
-          cache-version: 4
+          extra-packages: any::rcmdcheck local::.
+            # rstudio/reticulate
+          cache-version: 5
           upgrade: 'TRUE'
 
-      - name: Install TensorFlow
-        run: |
-          print(sessionInfo())
-          print(Sys.info())
-          version <- '${{ matrix.tf }}'
-          if (version != "default")
-            tensorflow::install_tensorflow(version = '${{ matrix.tf }}')
-          tensorflow::tf_config()
+      # - name: Install TensorFlow
+      #   run: |
+      #     print(sessionInfo())
+      #     print(Sys.info())
+      #     version <- '${{ matrix.tf }}'
+      #     if (version != "default")
+      #       tensorflow::install_tensorflow(version = '${{ matrix.tf }}')
+      #     tensorflow::tf_config()
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-
