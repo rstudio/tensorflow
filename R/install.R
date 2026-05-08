@@ -1,19 +1,29 @@
-#' Install TensorFlow and its dependencies
+#' Declare TensorFlow requirements or install TensorFlow
 #'
 #' @description
 #'
-#' This function installs TensorFlow into a persistant virtual environment.
-#' Beginning with reticulate version 1.41, in most circumstances, creating a
-#' persistent virtual environment by calling the `install_tensorflow()` function
-#' is no longer necessary, because reticulate automatically will resolve a
-#' python environment that satisfies all python requirements declared with
-#' `reticulate::py_require()`.
+#' `py_require_tensorflow()` declares the Python packages needed to use
+#' TensorFlow with this package. Call it near the start of an R session, before
+#' reticulate initializes Python:
 #'
-#' New code is recommended to call `py_require_tensorflow()` at the start of an
-#' R session to declare tensorflow requirements via `py_requore()`. In a future
-#' package update this will by default be done in tensorflow's `.onLoad` hook.
+#' ```r
+#' library(tensorflow)
+#' py_require_tensorflow()
+#' ```
 #'
-#' The `py_require_tensorflow()` function that can dynamically modify the python
+#' Beginning with reticulate version 1.41, reticulate can automatically resolve a
+#' Python environment that satisfies all Python requirements declared with
+#' `reticulate::py_require()`. Reticulate will take care of the details: it will
+#' choose or create a suitable Python environment, install TensorFlow and its
+#' Python dependencies, and make that environment available to this package. You
+#' do not need to install Python packages or configure a Python environment
+#' manually.
+#'
+#' In most circumstances, creating a persistent virtual environment by calling
+#' `install_tensorflow()` is no longer necessary. In a future package update
+#' this will by default be done in tensorflow's `.onLoad` hook.
+#'
+#' The `py_require_tensorflow()` function can dynamically modify the Python
 #' requirements to enable usage of a GPU if one is available and usable by the R
 #' session.
 #'
@@ -36,10 +46,11 @@
 #' declared because at the time of this publishing, the pre-built binaries of
 #' `tensorflow` for Windows are not compatible with `numpy>2`.
 #'
-#' `install_tensorflow()` creates a new virtual environment containing the
-#' `tensorflow` python package and it's direct dependencies. For creating a
-#' virtual environment with more complete set packages that includes additional
-#' optional dependencies, use [`keras3::install_keras()`].
+#' `install_tensorflow()` remains available for users who want to explicitly
+#' create a persistent virtual environment. It creates a new virtual environment
+#' containing the `tensorflow` Python package and its direct dependencies. For
+#' creating a virtual environment with a more complete set of packages that
+#' includes additional optional dependencies, use [`keras3::install_keras()`].
 #'
 #' @section Custom Installation: `install_tensorflow()` or
 #'   `keras3::install_keras()` isn't required to use tensorflow with the
