@@ -1,5 +1,8 @@
 # tensorflow (development version)
 
+- Updated docs to recommend `py_require_tensorflow()` for TensorFlow setup (#627).
+- Fixed `tensorboard()` startup with recent TensorBoard versions (#626).
+
 # tensorflow 2.20.0
 
 - Updates for reticulate 1.41 and `reticuate::py_require()`. 

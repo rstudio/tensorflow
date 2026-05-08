@@ -142,10 +142,21 @@ tensorboard <- function(log_dir, action = c("start", "stop"),
 
 tensorboard_version <- function() {
   if (is.null(ver <- .globals$tensorboard_version)) {
-    ver <- package_version(system("tensorboard --version_tb", intern = TRUE, ignore.stderr = TRUE))
+    ver <- package_version(system("tensorboard --version", intern = TRUE, ignore.stderr = TRUE))
     .globals$tensorboard_version <- ver
   }
   ver
+}
+
+
+tensorboard_python_warnings <- function() {
+  filter <- "ignore:pkg_resources is deprecated as an API:UserWarning:tensorboard.default"
+  warnings <- Sys.getenv("PYTHONWARNINGS", unset = "")
+
+  if (nzchar(warnings))
+    paste(warnings, filter, sep = ",")
+  else
+    filter
 }
 
 
@@ -172,7 +183,8 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
                                "--port", as.character(port),
                                "--reload_interval", as.integer(reload_interval),
                                "--purge_orphaned_data", purge_orphaned_data),
-                             stdout = "|", stderr = "|")
+                             stdout = "|", stderr = "|",
+                             env = c("current", PYTHONWARNINGS = tensorboard_python_warnings()))
 
   # poll for availability of the http server (continue as long as the
   # process is still alive). note that we used to poll for stdout however
@@ -202,21 +214,10 @@ launch_tensorboard <- function(log_dir, host, port, explicit_port, reload_interv
     err <- p$read_error_lines()
 
     # write it unless it's a port in use error when we are auto-binding
-    if (explicit_port || !any(grepl(paste0("^.*", port, ".*already in use.*$"), err)))
+    if (length(err) && (explicit_port || !any(grepl(paste0("^.*", port, ".*already in use.*$"), err))))
       write(err, stderr())
   }
 
   # return the process
   p
 }
-
-
-
-
-
-
-
-
-
-
-
