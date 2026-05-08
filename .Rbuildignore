@@ -20,3 +20,6 @@ MNIST-data
 ^cran-comments\.md$
 ^CRAN-SUBMISSION$
 ^revdep$
+^\.positai$
+^\.claude$
+^\.codex$
