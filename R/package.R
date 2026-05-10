@@ -124,6 +124,12 @@ py_require_tensorflow <- function(use_gpu = NA) {
       tryCatch(tf$python$util$deprecation$silence()$`__enter__`(),
                error = function(e) NULL)
 
+      if (isNamespaceLoaded("keras")) {
+        keras2_backcompat_hook()
+      } else {
+        setHook(packageEvent("keras", "onLoad"), keras2_backcompat_hook)
+      }
+
       # TODO: move this into .onAttach, where you either emit immediately if
       # already loaded otherwise register emit hook for reticulate
       # emit <- get("packageStartupMessage") # R CMD check
@@ -142,7 +148,6 @@ py_require_tensorflow <- function(use_gpu = NA) {
     "reticulate has initialized Python, or ensure reticulate initialized ",
     "a Python installation where the tensorflow module is installed.", call. = FALSE)
   })
-
 
   # provide a common base S3 class for tensors
   reticulate::register_class_filter(function(classes) {
@@ -166,6 +171,82 @@ py_require_tensorflow <- function(use_gpu = NA) {
 is_string <- function(x) {
   is.character(x) && length(x) == 1L && !is.na(x)
 }
+
+
+keras2_backcompat_hook <- #function(){}
+  function(...) {
+  message("Calling keras2 backcompat hooks")
+  keras_ns <- asNamespace("keras")
+
+  new_model_class_names <- c("keras.src.models.sequential.Sequential",
+                             "keras.models.sequential.Sequential")
+
+  generic <- "compose_layer"
+  method <- keras_ns[["compose_layer.keras.models.Sequential"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  new_model_class_names <- c("keras.src.models.model.Model",
+                             "keras.models.model.Model")
+
+  generic <- "fit"
+  method <- keras_ns[["fit.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "compile"
+  method <- keras_ns[["compile.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "predict"
+  method <- keras_ns[["predict.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "evaluate"
+  method <- keras_ns[["evaluate.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "export_savedmodel"
+  method <- keras_ns[["export_savedmodel.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "format"
+  method <- keras_ns[["format.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "print"
+  method <- keras_ns[["print.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "summary"
+  method <- keras_ns[["summary.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+  generic <- "plot"
+  method <- keras_ns[["plot.keras.engine.training.Model"]]
+  envir <- environment(get(generic, keras_ns))
+  for(name in new_model_class_names)
+    registerS3method(generic, name, method, envir)
+
+}
+
+
 
 #' TensorFlow configuration information
 #'
