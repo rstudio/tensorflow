@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- `py_require_tensorflow()` no longer adds an obsolete NumPy constraint on
+  Windows, allowing TensorFlow to resolve with Python 3.13.
 - Updated docs to recommend `py_require_tensorflow()` for TensorFlow setup (#627).
 - Fixed `tensorboard()` startup with recent TensorBoard versions (#626).
 
