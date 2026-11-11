@@ -824,7 +824,9 @@ as_tensor.double <- function(x, dtype = NULL, ..., name = NULL) {
       # tf.dtypes.saturate_cast() is better, but still can be surprising.
       # Users must opt in to saturate cast (or overflow cast)
       # by casting in a separate call after converting to tensor.
-      if (dtype$max <= .Machine$integer.max)
+      # Compare width and signedness without converting dtype$max to an R
+      # integer, which overflows for int64, uint64, and uint32.
+      if (dtype$size < 4L || (dtype$size == 4L && !dtype$is_unsigned))
         storage.mode(x) <- "integer"
 
       if (anyNA(x))

@@ -1,5 +1,7 @@
 # tensorflow (development version)
 
+- `as_tensor()` preserves large numeric values when converting to `int64`,
+  `uint64`, or `uint32`, and avoids an integer overflow error on Windows.
 - `py_require_tensorflow()` no longer adds an obsolete NumPy constraint on
   Windows, allowing TensorFlow to resolve with Python 3.13.
 - Updated docs to recommend `py_require_tensorflow()` for TensorFlow setup (#627).
