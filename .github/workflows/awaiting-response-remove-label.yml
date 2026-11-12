@@ -11,8 +11,8 @@ jobs:
       - name: Remove 'awaiting response' label and maybe reopen
         if: contains(github.event.issue.labels.*.name, 'awaiting response')
         run: |
-          gh issue edit $ISSUE --remove-label 'awaiting response'
-          gh issue reopen $ISSUE
+          gh issue edit "$ISSUE" --remove-label 'awaiting response'
+          gh issue reopen "$ISSUE"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE: ${{ github.event.issue.html_url }}

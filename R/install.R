@@ -40,11 +40,10 @@
 #' if `tensorflow-metal` is installed. There are known issues with random number
 #' generators like `tf$random$stateless_uniform()`, likely others as well.
 #'
-#' - On Windows: `"tensorflow"` and `"numpy<2"` are declared. Note that
-#' TensorFlow GPU usage on Windows is no longer supported (Since TensorFlow
-#' 2.10). To use a GPU on windows, use TensorFlow via WSL. `"numpy<2"` is
-#' declared because at the time of this publishing, the pre-built binaries of
-#' `tensorflow` for Windows are not compatible with `numpy>2`.
+#' - On Windows: `"tensorflow"` is declared. TensorFlow's package metadata
+#' determines the compatible NumPy versions. TensorFlow 2.10 was the last
+#' release with GPU support on native Windows. To use a GPU with newer
+#' versions, use TensorFlow via WSL.
 #'
 #' `install_tensorflow()` remains available for users who want to explicitly
 #' create a persistent virtual environment. It creates a new virtual environment
@@ -410,10 +409,6 @@ get_py_requirements <- function(use_gpu = NA) {
     if (use_gpu) {
       packages <- c("tensorflow", "tensorflow-metal")
     }
-
-  } else if (is_windows()) {
-
-    packages <- c(packages, "numpy<2")
 
   }
 

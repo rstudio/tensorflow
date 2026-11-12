@@ -97,6 +97,22 @@ test_that("as_tensor works", {
 })
 
 
+test_that("as_tensor preserves values outside R's integer range", {
+  skip_if_no_tensorflow()
+
+  for (dtype in c("int64", "uint64", "uint32")) {
+    value <- if (dtype == "uint32") 2^31 else 2^40
+    for (x in list(value, c(value, value + 1))) {
+      tensor <- as_tensor(x, dtype)
+      expect_identical(tensor$dtype$name, dtype)
+      expect_equal(as.numeric(tensor), x)
+    }
+  }
+
+  expect_equal(as.numeric(as_tensor(-2^40, "int64")), -2^40)
+})
+
+
 test_that("conversion of tf.string dtype tensors", {
 
   xx <- list(array("foo"),
